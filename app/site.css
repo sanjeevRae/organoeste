@@ -4615,3 +4615,759 @@ body{padding-top:112px}
 #site .contact-section .contact-success{position:static;width:100%;height:auto;min-height:220px;display:flex;align-items:center;justify-content:center;text-align:center;padding:32px 24px;background:#f4f8f1;border:1px solid #dfe8d8;border-radius:16px;color:#33402f;font-size:15px;font-weight:600;line-height:1.6;box-shadow:none}
 @media (max-width: 1080px){#site .contact-section.contact-section{padding:72px 0}#site .contact-section .canvas{gap:48px;width:min(960px,calc(100% - 48px))}#site .contact-section .contact-intro{width:44%}#site .contact-section .contact-form{width:52%}} 
 @media (max-width: 800px){#site .contact-section.contact-section{padding:56px 0;min-height:0}#site .contact-section .canvas{width:min(430px,calc(100% - 40px));flex-direction:column;align-items:stretch;gap:28px}#site .contact-section .contact-intro{width:100%;padding-top:0}#site .contact-section .contact-title{font-size:29px}#site .contact-section .contact-form{width:100%;padding:22px}#site .contact-section .contact-success{min-height:200px}}
+
+/* ----- Solucoes page (/solucoes) ----- */
+#site .sol-page {
+  color: #242424;
+  background: #fff;
+  font-family: Montserrat, sans-serif;
+}
+
+#site .sol-wrap {
+  width: min(1120px, 100% - 48px);
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+#site .sol-section {
+  padding: 88px 0;
+}
+
+#site .sol-eyebrow {
+  text-align: center;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: #6ead4a;
+  margin: 0 0 14px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+#site .sol-kicker {
+  text-align: center;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #6b7a5e;
+  max-width: 72ch;
+  margin: 0 auto 18px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.8;
+}
+
+#site .sol-title {
+  text-align: center;
+  color: #545060;
+  letter-spacing: -.01em;
+  max-width: 22ch;
+  margin: 0 auto;
+  font-size: clamp(28px, 3.4vw, 42px);
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+#site .sol-title strong {
+  color: #7dc257;
+  font-weight: 800;
+}
+
+#site .sol-title-narrow {
+  max-width: 24ch;
+}
+
+#site .sol-title-light {
+  color: #fff;
+}
+
+#site .sol-title-dim {
+  color: #ffffffd1;
+  font-weight: 800;
+}
+
+#site .sol-divider {
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin: 22px auto 0;
+  display: flex;
+}
+
+#site .sol-divider span {
+  background: #e3e6e3;
+  border-radius: 2px;
+  width: min(180px, 30vw);
+  height: 2px;
+  display: block;
+}
+
+#site .sol-divider-light span {
+  background: #ffffff73;
+}
+
+#site .sol-divider svg {
+  color: #7dc257;
+  flex: none;
+}
+
+#site .sol-divider-light svg {
+  color: #fff;
+}
+
+#site .sol-btn {
+  border-radius: 100px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 0 30px;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color .2s, color .2s, transform .2s;
+  display: inline-flex;
+}
+
+#site .sol-btn-wa {
+  color: #fff;
+  background: #7dc257;
+}
+
+#site .sol-btn-wa:hover {
+  color: #fff;
+  background: #5d9b42;
+}
+
+#site .sol-btn-ghost {
+  color: #fff;
+  border: 2px solid #ffffffe6;
+}
+
+#site .sol-btn-ghost:hover {
+  color: #2c3a2a;
+  background: #fff;
+}
+
+#site .sol-btn-outline {
+  color: #fff;
+  border: 2px solid #fff;
+}
+
+#site .sol-btn-outline:hover {
+  color: #2f6b2f;
+  background: #fff;
+}
+
+#site .sol-hero {
+  color: #fff;
+  background: #22271f url("/images/solucoes-hero.png") 50% 70% / cover no-repeat;
+  position: relative;
+  overflow: hidden;
+}
+
+#site .sol-hero:before {
+  content: "";
+  background: linear-gradient(#1216129e, #12161273 55%, #121612a8);
+  position: absolute;
+  inset: 0;
+}
+
+#site .sol-hero .sol-wrap {
+  z-index: 1;
+  padding: 104px 0 72px;
+  position: relative;
+}
+
+#site .sol-badge {
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  background: #ffffff24;
+  border: 1px solid #ffffff8c;
+  border-radius: 100px;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 22px;
+  padding: 8px 18px 8px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-flex;
+}
+
+#site .sol-badge-dot {
+  color: #fff;
+  background: #7dc257;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+}
+
+#site .sol-hero-title {
+  letter-spacing: -.015em;
+  max-width: 16ch;
+  margin: 0;
+  font-size: clamp(36px, 4.6vw, 60px);
+  font-weight: 800;
+  line-height: 1.08;
+}
+
+#site .sol-hero-title strong {
+  color: #8fd06a;
+  font-weight: 800;
+}
+
+#site .sol-hero-sub {
+  color: #ffffffeb;
+  max-width: 56ch;
+  margin: 20px 0 0;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+#site .sol-hero-ctas {
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 30px;
+  display: flex;
+}
+
+#site .sol-hero-points {
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  margin: 26px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+}
+
+#site .sol-hero-points li {
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #ffffffe6;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+}
+
+#site .sol-hero-points svg {
+  color: #8fd06a;
+}
+
+#site .sol-segments {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin: 40px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+}
+
+#site .sol-segment {
+  color: #2c3a2a;
+  background: #fff;
+  border-radius: 18px;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  display: flex;
+  box-shadow: 0 18px 40px #00000038;
+}
+
+#site .sol-segment-icon {
+  color: #4c8a3c;
+  background: #eaf5e2;
+  border-radius: 50%;
+  flex: none;
+  justify-content: center;
+  align-items: center;
+  width: 52px;
+  height: 52px;
+  display: inline-flex;
+}
+
+#site .sol-segment span:last-child {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+#site .sol-cards {
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;
+  margin: 48px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+}
+
+#site .sol-card {
+  background: #fff;
+  border: 1px solid #e6eae6;
+  border-radius: 20px;
+  flex-direction: column;
+  padding: 30px 24px;
+  transition: transform .25s, box-shadow .25s;
+  display: flex;
+}
+
+#site .sol-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 44px #3c5a3724;
+}
+
+#site .sol-card-icon {
+  color: #4c8a3c;
+  background: #eaf5e2;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 20px;
+  display: inline-flex;
+}
+
+#site .sol-card h3 {
+  color: #2c3a2a;
+  margin: 0 0 12px;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+#site .sol-card p {
+  color: #545060;
+  flex: 1;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+#site .sol-card-link {
+  color: #5d9b42;
+  margin-top: 18px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+#site .sol-card-link:hover {
+  text-underline-offset: 4px;
+  text-decoration: underline;
+}
+
+#site .sol-process {
+  color: #fff;
+  background: #7dc257;
+}
+
+#site .sol-process .sol-eyebrow {
+  color: #fff;
+}
+
+#site .sol-steps {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  margin: 48px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+}
+
+#site .sol-step {
+  background: #ffffff24;
+  border: 1px solid #ffffff59;
+  border-radius: 22px;
+  padding: 34px 28px 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+#site .sol-step-number {
+  color: #ffffff38;
+  font-size: 88px;
+  font-weight: 800;
+  line-height: 1;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+}
+
+#site .sol-step-icon {
+  color: #4c8a3c;
+  background: #fff;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 20px;
+  display: inline-flex;
+}
+
+#site .sol-step h3 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+#site .sol-step p {
+  color: #fffffff0;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+#site .sol-results {
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  align-items: stretch;
+  gap: 32px;
+  margin-top: 48px;
+  display: grid;
+}
+
+#site .sol-results-photo {
+  border-radius: 24px;
+  min-height: 420px;
+  margin: 0;
+  overflow: hidden;
+}
+
+#site .sol-results-photo img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  display: block;
+}
+
+#site .sol-benefits {
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+}
+
+#site .sol-benefit {
+  background: #fff;
+  border: 1px solid #e6eae6;
+  border-radius: 20px;
+  padding: 28px 24px;
+}
+
+#site .sol-benefit-icon {
+  color: #4c8a3c;
+  background: #eaf5e2;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 16px;
+  display: inline-flex;
+}
+
+#site .sol-benefit h3 {
+  color: #2c3a2a;
+  margin: 0 0 10px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+#site .sol-benefit p {
+  color: #545060;
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+#site .sol-segments-section {
+  background: #f4f6f2;
+}
+
+#site .sol-audiences {
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 48px 0 0;
+  display: grid;
+}
+
+#site .sol-audience {
+  background: #fff;
+  border: 1px solid #e6eae6;
+  border-radius: 24px;
+  flex-direction: column;
+  display: flex;
+  overflow: hidden;
+}
+
+#site .sol-segment-photo {
+  background-position: center;
+  background-size: cover;
+  min-height: 300px;
+}
+
+#site .sol-segment-photo-coleta {
+  background-image: url("/images/solucoes-atendimento-coleta.png");
+}
+
+#site .sol-segment-photo-esg {
+  background-image: url("/images/solucoes-atendimento-esg.png");
+}
+
+#site .sol-audience-body {
+  padding: 30px 30px 32px;
+  position: relative;
+}
+
+#site .sol-audience-icon {
+  color: #fff;
+  background: #7dc257;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 64px;
+  height: 64px;
+  display: inline-flex;
+  position: absolute;
+  top: -32px;
+  left: 30px;
+  box-shadow: 0 12px 26px #3c5a374d;
+}
+
+#site .sol-audience-body h3 {
+  color: #2c3a2a;
+  margin: 36px 0 10px;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+#site .sol-audience-body p {
+  color: #545060;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+#site .sol-tags {
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+}
+
+#site .sol-tags li {
+  color: #3f6b35;
+  background: #eef4ea;
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+#site .sol-audience-link {
+  color: #5d9b42;
+  align-items: center;
+  gap: 8px;
+  margin-top: 22px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+}
+
+#site .sol-audience-link:hover {
+  text-underline-offset: 4px;
+  text-decoration: underline;
+}
+
+#site .sol-faq {
+  flex-direction: column;
+  gap: 14px;
+  max-width: 860px;
+  margin: 44px auto 0;
+  display: flex;
+}
+
+#site .sol-faq-item {
+  background: #fff;
+  border: 1px solid #e2e6e2;
+  border-radius: 18px;
+  transition: border-color .2s;
+  overflow: hidden;
+}
+
+#site .sol-faq-open {
+  border-color: #7dc257;
+}
+
+#site .sol-faq-toggle {
+  cursor: pointer;
+  color: #2c3a2a;
+  text-align: left;
+  background: none;
+  border: 0;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 22px 26px;
+  font-family: Montserrat, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+}
+
+#site .sol-faq-toggle:hover {
+  color: #4c8a3c;
+}
+
+#site .sol-faq-plus {
+  color: #4c8a3c;
+  background: #eaf5e2;
+  border-radius: 50%;
+  flex: none;
+  justify-content: center;
+  align-items: center;
+  width: 34px;
+  height: 34px;
+  font-size: 20px;
+  font-weight: 700;
+  display: inline-flex;
+}
+
+#site .sol-faq-open .sol-faq-plus {
+  color: #fff;
+  background: #7dc257;
+}
+
+#site .sol-faq-panel p {
+  color: #545060;
+  margin: 0;
+  padding: 0 26px 24px;
+  font-size: 14.5px;
+  line-height: 1.75;
+}
+
+#site .sol-diagnosis {
+  color: #fff;
+  background: #243024 url("/images/solucoes-diagnostico.png") center / cover no-repeat;
+  border-radius: 28px;
+  margin-top: 56px;
+  position: relative;
+  overflow: hidden;
+}
+
+#site .sol-diagnosis:before {
+  content: "";
+  background: linear-gradient(100deg, #141e14c7 20%, #141e1473 60%, #141e1440);
+  position: absolute;
+  inset: 0;
+}
+
+#site .sol-diagnosis-copy {
+  z-index: 1;
+  max-width: 560px;
+  padding: 72px 20px 72px 64px;
+  position: relative;
+}
+
+#site .sol-diagnosis-copy h2 {
+  margin: 0 0 14px;
+  font-size: clamp(26px, 3vw, 38px);
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+#site .sol-diagnosis-copy p {
+  color: #ffffffe6;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+#site .sol-diagnosis-ctas {
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+  display: flex;
+}
+
+@media (max-width: 1080px) {
+  #site .sol-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  #site .sol-segments {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  #site .sol-steps {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  #site .sol-results {
+    grid-template-columns: 1fr;
+  }
+
+  #site .sol-results-photo, #site .sol-results-photo img {
+    min-height: 320px;
+  }
+}
+
+@media (max-width: 800px) {
+  #site .sol-section {
+    padding: 64px 0;
+  }
+
+  #site .sol-hero .sol-wrap {
+    padding: 72px 0 56px;
+  }
+
+  #site .sol-segments {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  #site .sol-segment {
+    padding: 14px;
+  }
+
+  #site .sol-segment-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  #site .sol-segment span:last-child {
+    font-size: 14px;
+  }
+
+  #site .sol-cards, #site .sol-steps, #site .sol-benefits, #site .sol-audiences {
+    grid-template-columns: 1fr;
+  }
+
+  #site .sol-segment-photo {
+    min-height: 220px;
+  }
+
+  #site .sol-diagnosis-copy {
+    max-width: none;
+    padding: 48px 24px;
+  }
+
+  #site .sol-faq-toggle {
+    padding: 18px 20px;
+    font-size: 15px;
+  }
+
+  #site .sol-faq-panel p {
+    padding: 0 20px 20px;
+  }
+}

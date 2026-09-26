@@ -8,7 +8,7 @@ const WA_LINK = "https://wa.me/5567992401937";
 
 const NAV_LINKS = [
   { label: "Sobre", href: "https://www.youtube.com/watch?v=i2hexNUtN9Y&t=2s", external: true },
-  { label: "Soluções", href: "https://www.organoeste.com.br/solucoes", external: false },
+  { label: "Soluções", href: "/solucoes", external: false },
   { label: "Produtos", href: "https://www.fertipower.com.br", external: true },
 ];
 
@@ -40,7 +40,7 @@ export default function Navbar() {
   return (
     <header className={hidden ? "navbar navbar-hidden" : "navbar"}>
       <div className="navbar-inner">
-        <a className="navbar-brand" href="#topo" aria-label="Organoeste — início">
+        <a className="navbar-brand" href="/" aria-label="Organoeste — início">
          <img src="/images/logo.png" alt="Organoeste" width={640} height={320} decoding="async" />
         </a>
         <nav className="navbar-links" aria-label="Navegação principal">
