@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 98.4 98.4" width="98.4" height="98.4">
+    <style>
+        @keyframes a0_t {
+            0% {
+                transform: translate(49.2px, 49.2px) scale(0, 0);
+                animation-timing-function: cubic-bezier(0, 0, .6, 1);
+            }
+
+            100% {
+                transform: translate(49.2px, 49.2px) scale(1, 1);
+            }
+        }
+
+        @keyframes a0_o {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
+    <ellipse class="pulse" rx="32" ry="32" fill="#001a22" transform="translate(49.2,49.2) scale(0,0)"
+        style="animation: 2s linear infinite both a0_t, 2s linear infinite both a0_o;" />
+    <ellipse cx="49.2" cy="49.2" class="dot" rx="15" ry="15" fill="#001a22" />
+    <path d="M55 49.2l-9-6.2v12c0 0 9-5.8 9-5.8Z" fill="#fff" />
+</svg>
