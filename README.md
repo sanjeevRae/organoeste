@@ -76,8 +76,30 @@ são exports mortos do gerador original, mantidas intactas (nunca casam com o
 markup atual).
 
 Estados adicionados em tempo de execução: `hero-enter`/`hero-loaded` (hero),
-`reveal-pending`/`reveal-in` (revelações no scroll), `navbar-hidden`,
-`has-error`; condicionais de UI: `contact-success`, `about-lightbox*`.
+`reveal-pending`/`reveal-in` (revelações no scroll), `navbar-hidden`, `navbar-overlay` (cabeçalho transparente no topo da home), `navbar-links a.is-active` (página atual no menu),
+`has-error`;
+condicionais de UI: `contact-success`, `about-lightbox*`.
+
+O cabeçalho é fixo (`112px` no desktop, `76px` no mobile) e segue a barra de
+referência (`images/navbar.png`): logo da empresa à esquerda (intocado), cinco
+links no centro (`Início`, `Sobre Nós`, `Soluções`, `Sustentabilidade`, `Contato`
+— 14px/700, espaçados 44px) e o pill verde de WhatsApp à direita (marca de
+contorno + "Fale Conosco" + seta). A linha de conteúdo (`min(1210px,
+100% - 80px)`) é um pouco mais larga que o canvas da faixa para o pill ficar
+perto da borda como na referência. A página atual vai em verde escuro com
+sublinhado de 2px (`is-active`, definido via `usePathname`); os rótulos com
+âncora (`/#sobre`, `/#sustentabilidade`, `/#contato`) rolam suave até as seções
+da home, parando exatamente abaixo do cabeçalho (`scroll-margin-top:112px`;
+os wrappers `Reveal` em volta das seções têm o `transform` neutralizado para
+não deslocar o pouso da âncora).
+O `body` reserva o espaço do cabeçalho (`body{padding-top:112px}`), exceto em
+páginas cuja primeira seção passa por trás dele — hoje só a home, que contém a
+faixa `heading-section`. Nessas páginas o `padding-top` vai a zero
+(`body:has(.heading-section)`) e o `Navbar` recebe a prop `overlay`: parado no
+topo (até 4px de scroll) ele fica transparente sobre a faixa (`navbar-overlay`) e
+troca o logo pela cópia sem a placa branca (`images/logo-transparent.png`); no
+primeiro scroll volta a ser a barra branca mesmo com a faixa ainda na tela, e o
+esconder/voltar no scroll segue igual.
 
 ## Formulário
 

@@ -1,0 +1,641 @@
+/* Soluções page — single-file section set for /solucoes (replica of the public
+   reference page). Contains the copy, the inline icon set and every section;
+   styles are namespaced as .sol-* in app/site.css. */
+"use client";
+
+import { useState } from "react";
+
+import Reveal from "./Reveal";
+
+/* --- content ------------------------------------------------------------ */
+
+const WA_MAIN = "https://wa.me/5567992401937";
+const WA_SUPPORT = "https://wa.me/5567999915740";
+
+type ServiceCard = { icon: string; title: string; description: string };
+
+const SERVICES: ServiceCard[] = [
+  {
+    icon: "clipboard",
+    title: "Gestão de coleta",
+    description:
+      "Planejamos e executamos a coleta dos resíduos de forma organizada e eficiente, garantindo regularidade, segurança operacional e conformidade ambiental.",
+  },
+  {
+    icon: "truck",
+    title: "Transporte OLAM",
+    description:
+      "Nossa divisão de logística ambiental realiza o transporte licenciado dos resíduos com frota própria, rastreabilidade e total segurança durante todo o percurso.",
+  },
+  {
+    icon: "filter",
+    title: "Triagem",
+    description:
+      "Realizamos a separação e classificação dos resíduos recebidos, assegurando o direcionamento correto para cada etapa do processo de tratamento.",
+  },
+  {
+    icon: "recycle",
+    title: "Compostagem",
+    description:
+      "Transformamos resíduos orgânicos em matéria-prima sustentável por meio de um processo controlado que reduz impactos ambientais e promove a economia circular.",
+  },
+  {
+    icon: "sprout",
+    title: "Fertilizante",
+    description:
+      "Produzimos fertilizantes orgânicos de alta qualidade, contribuindo para a recuperação do solo, aumento da produtividade e agricultura sustentável.",
+  },
+];
+
+type Step = { icon: string; title: string; description: string };
+
+const PROCESS_STEPS: Step[] = [
+  {
+    icon: "truck-clock",
+    title: "Transporte Licenciado de Resíduos",
+    description:
+      "Frota própria, motoristas treinados e monitoramento operacional para garantir segurança e eficiência em cada coleta.",
+  },
+  {
+    icon: "bin-clock",
+    title: "Recebimento e Triagem",
+    description:
+      "Cada carga recebida passa por processos rigorosos de controle e separação.",
+  },
+  {
+    icon: "recycle",
+    title: "Compostagem Industrial",
+    description:
+      "Transformamos resíduos orgânicos em soluções sustentáveis por meio de processos controlados e tecnologia especializada.",
+  },
+];
+
+type Benefit = { icon: string; title: string; description: string };
+
+const BENEFITS: Benefit[] = [
+  {
+    icon: "badge-check",
+    title: "Conformidade ambiental",
+    description:
+      "Garantimos que todo o processo de coleta, transporte e destinação dos resíduos esteja de acordo com a legislação ambiental vigente, proporcionando segurança e tranquilidade para sua empresa.",
+  },
+  {
+    icon: "chart",
+    title: "Redução de Custos Operacionais",
+    description:
+      "Transformamos a gestão de resíduos em um processo mais eficiente, reduzindo desperdícios, riscos e custos relacionados ao descarte inadequado.",
+  },
+  {
+    icon: "file-check",
+    title: "Certificados de Destinação",
+    description:
+      "Fornecemos documentação e certificados que comprovam a destinação correta dos resíduos, assegurando transparência e conformidade em auditorias e fiscalizações.",
+  },
+  {
+    icon: "target",
+    title: "Apoio às Metas ESG",
+    description:
+      "Contribuímos para que sua empresa fortaleça seus indicadores ambientais, sociais e de governança, gerando impacto positivo e agregando valor à sua marca.",
+  },
+];
+
+type Faq = { question: string; answer: string };
+
+const FAQS: Faq[] = [
+  {
+    question: "Quais tipos de resíduos a Organoeste recebe?",
+    answer:
+      "Recebemos diversos tipos de resíduos orgânicos provenientes de supermercados, indústrias alimentícias, restaurantes, frigoríficos, centros de distribuição, hotéis e outros grandes geradores.",
+  },
+  {
+    question: "A Organoeste realiza a coleta dos resíduos?",
+    answer:
+      "Sim. Contamos com a OLAM, nossa operação de logística ambiental, responsável pela coleta e transporte licenciado dos resíduos com segurança e rastreabilidade.",
+  },
+  {
+    question: "Minha empresa recebe comprovante da destinação dos resíduos?",
+    answer:
+      "Sim. Emitimos relatórios e certificados de destinação que comprovam o tratamento adequado dos resíduos e auxiliam em auditorias e exigências ambientais.",
+  },
+  {
+    question: "Como a destinação sustentável pode ajudar minha empresa?",
+    answer:
+      "Além de garantir conformidade ambiental, a destinação correta reduz riscos, fortalece as práticas ESG e demonstra compromisso com a sustentabilidade.",
+  },
+  {
+    question: "A Organoeste atende apenas Mato Grosso do Sul?",
+    answer:
+      "Nossa operação está localizada em Campo Grande/MS e atende todo o estado, com capacidade de expansão para outras regiões conforme a demanda.",
+  },
+  {
+    question: "Como solicitar uma avaliação para minha empresa?",
+    answer:
+      "Basta entrar em contato com nossa equipe. Analisamos sua operação, volume de resíduos e necessidades específicas para apresentar a melhor solução ambiental.",
+  },
+];
+
+const HERO_SEGMENTS = [
+  { icon: "factory", label: "Indústrias" },
+  { icon: "cart", label: "Supermercados" },
+  { icon: "kit", label: "Frigoríficos" },
+  { icon: "utensils", label: "Restaurantes" },
+];
+
+const AUDIENCES = [
+  {
+    photo: "sol-segment-photo sol-segment-photo-coleta",
+    icon: "monitor",
+    title: "Atendimento para Grandes Geradores",
+    description:
+      "Atendemos empresas que geram grandes volumes de resíduos orgânicos com uma operação completa, segura e eficiente",
+    tags: ["Coleta", "Triagem", "Adubos"],
+    href: WA_MAIN,
+    linkLabel: "Falar sobre coleta",
+  },
+  {
+    photo: "sol-segment-photo sol-segment-photo-esg",
+    icon: "at",
+    title: "Consultoria Ambiental Estratégica",
+    description:
+      "Nossa equipe realiza diagnósticos, análises operacionais e orientações técnicas para otimizar a gestão de resíduos e reduzir riscos ambientais.",
+    tags: ["Assessoria", "ESG", "Suporte"],
+    href: WA_SUPPORT,
+    linkLabel: "Falar sobre consultoria",
+  },
+];
+
+/* --- inline icon set (stroke style, currentColor) ----------------------- */
+
+const PATHS: Record<string, React.ReactNode> = {
+  leaf: (
+    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2.5 1.5 6.5-1.5 11-2 3-5.5 6-8.5 7Zm0 0c-1.5-4 1-9 5-11" />
+  ),
+  clipboard: (
+    <>
+      <rect x="8" y="2" width="8" height="4" rx="1" />
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+      <path d="m9 14 2 2 4-4" />
+    </>
+  ),
+  truck: (
+    <>
+      <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
+      <path d="M15 18h-5" />
+      <path d="M15 8h4l3 4v5a1 1 0 0 1-1 1h-2" />
+      <circle cx="7" cy="18" r="2" />
+      <circle cx="17" cy="18" r="2" />
+    </>
+  ),
+  filter: (
+    <>
+      <path d="M3 5h18l-7 8v5l-4 2v-7L3 5Z" />
+      <path d="M7 4v3M4 7h6" />
+    </>
+  ),
+  recycle: (
+    <>
+      <path d="m7 19-4-7 3.5-1L8 14l-1 5Z" />
+      <path d="m17 19 4-7-3.5-1L16 14l1 5Z" />
+      <path d="M12 4 9 9h6l-3-5Z" />
+      <path d="M8.5 10.5h7M9 16.5c-1.5-.8-2-2.5-1-4M15 16.5c1.5-.8 2-2.5 1-4M12 6.5V9" />
+    </>
+  ),
+  sprout: (
+    <>
+      <path d="M7 20h10" />
+      <path d="M12 20v-8" />
+      <path d="M12 12C12 8 9 5 4 5c0 5 3 7 8 7Z" />
+      <path d="M12 12c0-3 2.5-6 8-6 0 4.5-3.5 6.5-8 6Z" />
+    </>
+  ),
+  factory: (
+    <>
+      <path d="M2 20h20" />
+      <path d="M4 20v-9l5 3V9l5 3V4h6v16" />
+      <path d="M8 17h2M13 17h2M17 17h1" />
+    </>
+  ),
+  cart: (
+    <>
+      <circle cx="9" cy="20" r="1.5" />
+      <circle cx="17" cy="20" r="1.5" />
+      <path d="M3 3h2l2.5 12.5a1 1 0 0 0 1 .5h8.5a1 1 0 0 0 1-.8L20 8H6" />
+    </>
+  ),
+  kit: (
+    <>
+      <rect x="3" y="7" width="18" height="13" rx="2" />
+      <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+      <path d="M12 11v5M9.5 13.5h5" />
+    </>
+  ),
+  utensils: (
+    <>
+      <path d="M7 3v8M4 3v4a3 3 0 0 0 6 0V3M7 13v8" />
+      <path d="M17 3c-2 2-2.5 5-2.5 8H17v10M17 3v10" />
+    </>
+  ),
+  shield: (
+    <>
+      <path d="M12 2 4 5v6c0 5 3.5 9.5 8 11 4.5-1.5 8-6 8-11V5l-8-3Z" />
+      <path d="m9 12 2 2 4-4" />
+    </>
+  ),
+  headset: (
+    <>
+      <path d="M4 14v-2a8 8 0 0 1 16 0v2" />
+      <rect x="3" y="13" width="4" height="7" rx="1.5" />
+      <rect x="17" y="13" width="4" height="7" rx="1.5" />
+    </>
+  ),
+  "badge-check": (
+    <>
+      <circle cx="12" cy="10" r="6" />
+      <path d="m9.5 10 1.8 1.8 3.2-3.6" />
+      <path d="m9 15-1.5 6L12 19l4.5 2L15 15" />
+    </>
+  ),
+  chart: (
+    <>
+      <path d="M3 3v18h18" />
+      <path d="M7 15v3M12 10v8M17 6v12" />
+    </>
+  ),
+  "file-check": (
+    <>
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Z" />
+      <path d="M14 2v6h6" />
+      <path d="m9 15 2 2 4-4" />
+    </>
+  ),
+  target: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="12" cy="12" r="1" />
+    </>
+  ),
+  "truck-clock": (
+    <>
+      <path d="M13 17V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11h2" />
+      <path d="M13 8h4l3 4v5h-2" />
+      <circle cx="7" cy="17.5" r="1.8" />
+      <circle cx="17" cy="17.5" r="1.8" />
+      <circle cx="17" cy="9" r="4.5" />
+      <path d="M17 7v2l1.5 1" />
+    </>
+  ),
+  "bin-clock": (
+    <>
+      <path d="M4 8h13M9 8V5a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v3" />
+      <path d="M6 8l1 12a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1l1-12" />
+      <circle cx="17.5" cy="15.5" r="4" />
+      <path d="M17.5 13.5v2l1.4 1" />
+    </>
+  ),
+  sparkles: (
+    <>
+      <path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1" />
+      <circle cx="12" cy="12" r="2.5" />
+    </>
+  ),
+  at: (
+    <>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8" />
+    </>
+  ),
+  monitor: (
+    <>
+      <rect x="2" y="4" width="20" height="13" rx="2" />
+      <path d="M8 21h8M12 17v4" />
+    </>
+  ),
+};
+
+function SolIcon({ name, size = 24 }: { name: string; size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      {PATHS[name] ?? PATHS.leaf}
+    </svg>
+  );
+}
+
+function WhatsappGlyph({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.347-.347.52-.52.174-.174.232-.298.347-.497.116-.198.058-.372-.03-.52-.086-.148-.66-1.59-.905-2.174-.238-.57-.48-.494-.66-.503l-.56-.01c-.198 0-.52.075-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347zm-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884zm8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z" />
+    </svg>
+  );
+}
+
+/* --- sections ----------------------------------------------------------- */
+
+function HeroSection() {
+  return (
+    <section className="sol-hero">
+      <div className="sol-wrap">
+        <p className="sol-badge">
+          <span className="sol-badge-dot" aria-hidden="true">
+            <SolIcon name="leaf" size={12} />
+          </span>
+          Nós cuidamos de todo o processo.
+        </p>
+        <h1 className="sol-hero-title">
+          Transformamos <strong>Resíduos</strong> em <strong>Valor</strong>
+          <br />
+          para sua <strong>Empresa</strong>
+        </h1>
+        <p className="sol-hero-sub">
+          Soluções completas para coleta, transporte, tratamento e destinação
+          sustentável de resíduos orgânicos.
+        </p>
+        <div className="sol-hero-ctas">
+          <a className="sol-btn sol-btn-wa" href={WA_MAIN} target="_blank" rel="noopener noreferrer">
+            <WhatsappGlyph />
+            Fale pelo WhatsApp
+          </a>
+          <a className="sol-btn sol-btn-ghost" href="#como-funciona">
+            Entender como funciona ↓
+          </a>
+        </div>
+        <ul className="sol-hero-points" aria-label="Diferenciais">
+          <li>
+            <SolIcon name="shield" size={16} />
+            Segurança e responsabilidade
+          </li>
+          <li>
+            <SolIcon name="headset" size={16} />
+            Atendimento personalizado
+          </li>
+        </ul>
+        <ul className="sol-segments" aria-label="Segmentos atendidos">
+          {HERO_SEGMENTS.map((seg) => (
+            <li key={seg.label} className="sol-segment">
+              <span className="sol-segment-icon" aria-hidden="true">
+                <SolIcon name={seg.icon} size={26} />
+              </span>
+              <span>{seg.label}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+function ServicesSection() {
+  return (
+    <section className="sol-section" aria-labelledby="sol-servicos-titulo">
+      <div className="sol-wrap">
+        <p className="sol-kicker">
+          Atendemos supermercados, indústrias, centros de distribuição,
+          frigoríficos, restaurantes, hospitais, hotéis e grandes geradores de
+          resíduos.
+        </p>
+        <h2 className="sol-title" id="sol-servicos-titulo">
+          Seu <strong>resíduo</strong> está gerando <strong>custo</strong> ou{" "}
+          <strong>valor</strong>?
+        </h2>
+        <p className="sol-divider" aria-hidden="true">
+          <span />
+          <SolIcon name="leaf" size={18} />
+          <span />
+        </p>
+        <ul className="sol-cards">
+          {SERVICES.map((service) => (
+            <li key={service.title} className="sol-card">
+              <span className="sol-card-icon" aria-hidden="true">
+                <SolIcon name={service.icon} size={30} />
+              </span>
+              <h3>{service.title}</h3>
+              <p>{service.description}</p>
+              <a className="sol-card-link" href="#diagnostico">
+                Saiba mais <span aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+function ProcessSection() {
+  return (
+    <section className="sol-section sol-process" id="como-funciona" aria-labelledby="sol-processo-titulo">
+      <div className="sol-wrap">
+        <p className="sol-eyebrow">A solução Organoeste</p>
+        <h2 className="sol-title sol-title-light" id="sol-processo-titulo">
+          <span className="sol-title-dim">Uma</span> operação completa{" "}
+          <span className="sol-title-dim">do início ao fim</span>
+        </h2>
+        <p className="sol-divider sol-divider-light" aria-hidden="true">
+          <span />
+          <SolIcon name="sparkles" size={18} />
+          <span />
+        </p>
+        <ol className="sol-steps">
+          {PROCESS_STEPS.map((step, index) => (
+            <li key={step.title} className="sol-step">
+              <span className="sol-step-number" aria-hidden="true">
+                {index + 1}
+              </span>
+              <span className="sol-step-icon" aria-hidden="true">
+                <SolIcon name={step.icon} size={34} />
+              </span>
+              <div>
+                <h3>{step.title}</h3>
+                <p>{step.description}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+function ResultsSection() {
+  return (
+    <section className="sol-section" aria-labelledby="sol-resultados-titulo">
+      <div className="sol-wrap">
+        <p className="sol-divider" aria-hidden="true">
+          <span />
+          <SolIcon name="leaf" size={18} />
+          <span />
+        </p>
+        <p className="sol-eyebrow">Resultados reais</p>
+        <h2 className="sol-title sol-title-narrow" id="sol-resultados-titulo">
+          Quando sua empresa escolhe a Organoeste
+        </h2>
+        <div className="sol-results">
+          <figure className="sol-results-photo">
+            <img
+              src="/images/solucoes-compostagem.png"
+              alt="Compostagem industrial da Organoeste"
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+          <ul className="sol-benefits">
+            {BENEFITS.map((benefit) => (
+              <li key={benefit.title} className="sol-benefit">
+                <span className="sol-benefit-icon" aria-hidden="true">
+                  <SolIcon name={benefit.icon} size={28} />
+                </span>
+                <h3>{benefit.title}</h3>
+                <p>{benefit.description}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SegmentsSection() {
+  return (
+    <section className="sol-section sol-segments-section" aria-labelledby="sol-segmentos-titulo">
+      <div className="sol-wrap">
+        <p className="sol-eyebrow">Atendimento que se adapta a sua empresa</p>
+        <h2 className="sol-title" id="sol-segmentos-titulo">
+          Transformando <strong>resíduos</strong> em <strong>impacto positivo</strong>
+        </h2>
+        <p className="sol-divider" aria-hidden="true">
+          <span />
+          <SolIcon name="leaf" size={18} />
+          <span />
+        </p>
+        <div className="sol-audiences">
+          {AUDIENCES.map((card) => (
+            <article key={card.title} className="sol-audience">
+              <div className={card.photo} aria-hidden="true" />
+              <div className="sol-audience-body">
+                <span className="sol-audience-icon" aria-hidden="true">
+                  <SolIcon name={card.icon} size={30} />
+                </span>
+                <h3>{card.title}</h3>
+                <p>{card.description}</p>
+                <ul className="sol-tags" aria-label={card.title}>
+                  {card.tags.map((tag) => (
+                    <li key={tag}>{tag}</li>
+                  ))}
+                </ul>
+                <a className="sol-audience-link" href={card.href} target="_blank" rel="noopener noreferrer">
+                  {card.linkLabel} <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FaqSection() {
+  const [open, setOpen] = useState<number | null>(0);
+
+  return (
+    <section className="sol-section" aria-labelledby="sol-faq-titulo">
+      <div className="sol-wrap">
+        <p className="sol-eyebrow">Dúvidas frequentes</p>
+        <h2 className="sol-title sol-title-narrow" id="sol-faq-titulo">
+          Vamos <strong>encontrar</strong> a melhor <strong>solução</strong> para
+          sua <strong>empresa</strong>?
+        </h2>
+        <div className="sol-faq" role="list">
+          {FAQS.map((faq, index) => {
+            const expanded = open === index;
+            return (
+              <div key={faq.question} className={"sol-faq-item" + (expanded ? " sol-faq-open" : "")} role="listitem">
+                <button
+                  type="button"
+                  className="sol-faq-toggle"
+                  aria-expanded={expanded}
+                  aria-controls={"sol-faq-panel-" + index}
+                  id={"sol-faq-button-" + index}
+                  onClick={() => setOpen(expanded ? null : index)}
+                >
+                  <span>{faq.question}</span>
+                  <span className="sol-faq-plus" aria-hidden="true">
+                    {expanded ? "–" : "+"}
+                  </span>
+                </button>
+                <div
+                  className="sol-faq-panel"
+                  id={"sol-faq-panel-" + index}
+                  role="region"
+                  aria-labelledby={"sol-faq-button-" + index}
+                  hidden={!expanded}
+                >
+                  <p>{faq.answer}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <aside className="sol-diagnosis" id="diagnostico" aria-labelledby="sol-diagnostico-titulo">
+          <div className="sol-diagnosis-copy">
+            <h2 id="sol-diagnostico-titulo">Solicite um diagnóstico sem compromisso.</h2>
+            <p>
+              Nossa equipe está pronta para analisar sua operação e apresentar
+              uma solução personalizada para sua necessidade.
+            </p>
+            <div className="sol-diagnosis-ctas">
+              <a className="sol-btn sol-btn-wa" href={WA_MAIN} target="_blank" rel="noopener noreferrer">
+                <WhatsappGlyph />
+                Falar no WhatsApp
+              </a>
+              <a className="sol-btn sol-btn-outline" href={WA_MAIN} target="_blank" rel="noopener noreferrer">
+                Quero falar com um especialista
+              </a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  );
+}
+
+/* --- page body ---------------------------------------------------------- */
+
+export default function Solutions() {
+  return (
+    <>
+      <Reveal delay={0}>
+        <HeroSection />
+      </Reveal>
+      <Reveal delay={0}>
+        <ServicesSection />
+      </Reveal>
+      <Reveal delay={0}>
+        <ProcessSection />
+      </Reveal>
+      <Reveal delay={0}>
+        <ResultsSection />
+      </Reveal>
+      <Reveal delay={0}>
+        <SegmentsSection />
+      </Reveal>
+      <Reveal delay={0}>
+        <FaqSection />
+      </Reveal>
+    </>
+  );
+}
+

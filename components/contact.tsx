@@ -52,7 +52,7 @@ export default function Contact() {
     touched[field] && errors[field] ? `organoeste-${field}-error` : undefined;
 
   return (
-    <section className="contact-section" aria-labelledby="contact-title">
+    <section className="contact-section" id="contato" aria-labelledby="contact-title">
       <div className="block-overlay" />
       <div className="canvas">
         <div className="contact-intro">

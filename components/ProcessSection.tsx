@@ -2,7 +2,7 @@
 
 export default function ProcessSection() {
   return (
-    <section className="process-section">
+    <section className="process-section" id="sustentabilidade">
       <div className="block-overlay" />
       <div className="canvas">
         <div className="process-card-1"><div className="card-content" /></div>

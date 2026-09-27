@@ -41,7 +41,7 @@ export default function About() {
   }, [videoOpen, closeVideo]);
   return (
     <div ref={rootRef as any}>
-    <section className="about-section-top">
+    <section className="about-section-top" id="sobre" style={{ marginTop: "32px" }}>
       <div className="block-overlay" />
       <div className="canvas">
         <div className="about-top-image" data-aos="fade-up" data-aos-delay="0"><div className="image-content" /></div>

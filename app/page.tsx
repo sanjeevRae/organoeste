@@ -1,6 +1,7 @@
 /* Home page — composes the sections in page order; each section is wrapped in
    Reveal so it fades in the first time it enters the viewport. */
 import Navbar from "@/components/navbar";
+import Heading from "@/components/Heading";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
 import ProductsSection from "@/components/ProductsSection";
@@ -13,10 +14,11 @@ import Reveal from "@/components/Reveal";
 export default function Home() {
   return (
     <>
-      <Navbar />
-      <Reveal delay={80}>
-        <Hero />
+      <Navbar overlay />
+      <Reveal delay={0}>
+        <Heading />
       </Reveal>
+     
       <Reveal delay={0}>
         <About />
       </Reveal>

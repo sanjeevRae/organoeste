@@ -1321,7 +1321,7 @@ option:disabled{
   text-decoration:none;
   float:left;
   z-index:1798;
-  background-color:rgb(125,194,87);
+  background-color:#7DC257;
   background-image:none;
   color:rgb(255,255,255);
   border:0px;
@@ -1331,7 +1331,7 @@ option:disabled{
 }
 
 #site .products-section .products-cta :is(.about-play-button,.button-content,.card-content,.divider-h-content,.divider-v-content,.form-content,.icon-content,.image-content,.social-content,.text-content,.title-content):hover, #site .products-section .products-cta :is(.about-play-button,.button-content,.card-content,.divider-h-content,.divider-v-content,.form-content,.icon-content,.image-content,.social-content,.text-content,.title-content):active{
-  background-color:#538a35;
+  background-color:#2f8f36;
 }
 
 #site .products-section .products-cta :is(.about-play-button,.button-content,.card-content,.divider-h-content,.divider-v-content,.form-content,.icon-content,.image-content,.social-content,.text-content,.title-content):hover, #site .products-section .products-cta :is(.about-play-button,.button-content,.card-content,.divider-h-content,.divider-v-content,.form-content,.icon-content,.image-content,.social-content,.text-content,.title-content):active{
@@ -4451,13 +4451,15 @@ button.button-primary{font:inherit;cursor:pointer;-webkit-appearance:none;appear
 @media (prefers-reduced-motion: reduce){#site .hero-section.hero-enter .hero-title, #site .hero-section.hero-enter .hero-subtitle{opacity:1;transform:none}
 #site .hero-section.hero-loaded .hero-title, #site .hero-section.hero-loaded .hero-subtitle{transition:none}}
 
-#site .trusted-strip{background:#fff;padding:38px 0 26px;text-align:center;overflow:hidden}
+#site .trusted-strip{background:#fff;padding:42px 0 36px;text-align:center;overflow:hidden;border-bottom:1px solid #e8ece7}
 
-#site .trusted-strip-label{margin:0 0 50px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#6b7a5e}
+#site .trusted-strip-label{margin:0 0 40px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#6b7a5e}
 
 #site .trusted-marquee{overflow:hidden;-webkit-mask-image:linear-gradient(to right,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(to right,transparent,#000 8%,#000 92%,transparent)}
 
-#site .trusted-track{display:flex;align-items:center;gap:72px;width:max-content;animation:trusted-scroll 38s linear infinite}
+#site .trusted-track{display:flex;align-items:center;gap:72px;width:max-content;padding-bottom:12px;animation:trusted-scroll 46s linear infinite}
+
+#site .trusted-track:hover{animation-play-state:paused}
 
 #site .trusted-logo{height:72px;width:auto;max-width:200px;object-fit:contain;flex:0 0 auto;filter:grayscale(1);opacity:.75;transition:filter .3s ease,opacity .3s ease}
 
@@ -4465,7 +4467,7 @@ button.button-primary{font:inherit;cursor:pointer;-webkit-appearance:none;appear
 
 @keyframes trusted-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-@media (max-width: 800px){#site .trusted-track{gap:44px;animation-duration:28s}
+@media (max-width: 800px){#site .trusted-track{gap:44px;animation-duration:34s}
 #site .trusted-logo{height:54px;max-width:150px}}
 
 @media (prefers-reduced-motion: reduce){#site .trusted-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center}}
@@ -4487,32 +4489,71 @@ button.button-primary{font:inherit;cursor:pointer;-webkit-appearance:none;appear
 
 .navbar-hidden{transform:translateY(-110%)}
 
+/* Overlay state — the header floats transparently over the band (the home heading
+   band, Heading.tsx) instead of sitting in its own white box: no background and no
+   shadow, so the band photo runs behind it. Only while the page is at the very top;
+   any scroll brings the white bar back. Navbar.tsx swaps the logo for the keyed
+   copy (no white plate) while this state is on. */
+.navbar-overlay{background:transparent;box-shadow:none}
+
 @media (prefers-reduced-motion: reduce){.navbar{transition:none}}
 
 body{padding-top:112px}
 
 @media (max-width: 800px){body{padding-top:76px}}
 
-.navbar-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:32px;padding:14px 24px}
+/* A page whose first section sits behind the fixed header (it contains the
+   heading band) starts flush with the viewport top at every width; all other
+   pages keep the header offset above. */
+body:has(.heading-section){padding-top:0}
+
+/* Bar content row: a touch wider than the band canvas so the CTA sits closer to
+   the viewport edge like the reference bar (public/images/navbar.png) — at
+   1440px this is exactly the reference's 8% side margins. */
+.navbar-inner{width:min(1400px,100% - 32px);margin:0 auto;display:flex;align-items:center;gap:32px;padding:14px 0}
 
 .navbar-brand{display:inline-flex;align-items:center;flex:0 0 auto}
 
 .navbar-brand img{display:block;height:84px;width:auto}
 
-.navbar-links{display:flex;align-items:center;gap:28px;margin-left:auto}
+/* Links ride the bar centre line between the logo and the CTA; 44px gap and
+   14px/700 type are the measurements taken from the reference bar. */
+.navbar-links{display:flex;align-items:center;gap:44px;margin-left:auto;margin-right:auto}
 
-.navbar-links a{color:#1d2b1f;text-decoration:none;font-family:Montserrat,sans-serif;font-size:16px;font-weight:700;line-height:1.2}
+.navbar-links a{color:#0b2621;text-decoration:none;font-family:Montserrat,sans-serif;font-size:14px;font-weight:700;line-height:1.2;position:relative}
 
-.navbar-links a:hover, .navbar-links a:focus-visible{color:#3f7a3a;text-decoration:underline;text-underline-offset:4px}
+.navbar-links a:hover, .navbar-links a:focus-visible{color:#006f23}
 
-.navbar-cta{display:inline-flex;align-items:center;justify-content:center;min-width:140px;height:44px;padding:0 22px;border-radius:100px;background:#7dc257;color:#fff;font-family:Montserrat,sans-serif;font-size:15px;font-weight:700;text-decoration:none}
+/* Current page: deep green text and the 2px underline of the reference bar. */
+.navbar-links a.is-active{color:#006f23}
 
-.navbar-cta:hover, .navbar-cta:focus-visible{background:#547f3c;color:#fff;text-decoration:none}
+.navbar-links a.is-active:after{content:"";background:#006f23;border-radius:1px;height:2px;position:absolute;left:0;right:0;bottom:-13px}
 
-@media (max-width: 800px){.navbar-inner{gap:16px;padding:10px 16px}
+/* Pill: WhatsApp outline mark, label, arrow — 44px tall, flush with the right
+   edge of the canvas, #169346 fill taken from the reference bar. */
+.navbar-cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:44px;padding:0 16px 0 22px;border-radius:100px;background:#169346;color:#fff;font-family:Montserrat,sans-serif;font-size:14px;font-weight:700;text-decoration:none;flex:0 0 auto}
+
+.navbar-cta svg{flex:none}
+
+.navbar-cta:hover, .navbar-cta:focus-visible{background:#0f7a3a;color:#fff;text-decoration:none}
+
+/* The bar's anchor targets sit directly inside Reveal wrappers: the wrapper's
+   24px reveal transform shifts the sections while pending, so the browser's
+   anchor landing (computed against offsetTop) lands low. Anchor targets clear
+   the wrapper transform; their children keep their own reveal. */
+.reveal:has(> #sobre), .reveal:has(> #sustentabilidade), .reveal:has(> #contato){transform:none}
+
+/* Anchors used by the bar (`/#sobre`, `/#sustentabilidade`, `/#contato`) stop
+   below the fixed header. */
+#sobre, #sustentabilidade, #contato{scroll-margin-top:112px}
+
+@media (prefers-reduced-motion: no-preference){html{scroll-behavior:smooth}}
+
+@media (max-width: 800px){.navbar-inner{width:calc(100% - 32px);gap:16px;padding:10px 0}
 .navbar-brand img{height:56px}
 .navbar-links{display:none}
-.navbar-cta{min-width:0;height:38px;padding:0 18px;font-size:14px;margin-left:auto}}
+.navbar-cta{gap:8px;height:38px;padding:0 16px;font-size:13px;margin-left:auto}
+.navbar-cta-arrow{display:none}}
 
 #site .site-footer .footer-email{width:240px}
 
@@ -4589,24 +4630,24 @@ body{padding-top:112px}
 
 /* ----- Contact section: minimal premium clean (flat, no shadows) ----- */
 #site .contact-section.contact-section{height:auto;min-height:0;background:#f4f5f4;padding:96px 0;display:flex;justify-content:center}
-#site .contact-section .canvas{transform:none;display:flex;align-items:flex-start;justify-content:space-between;gap:80px;max-width:1120px;width:min(1120px,calc(100% - 64px))}
-#site .contact-section .contact-intro{position:static;width:min(480px,44%);display:flex;flex-direction:column;gap:18px;padding-top:8px}
+#site .contact-section .canvas{transform:none;display:flex;align-items:flex-start;justify-content:space-between;gap:64px;max-width:1240px;width:min(1240px,calc(100% - 64px))}
+#site .contact-section .contact-intro{position:static;width:min(560px,45%);display:flex;flex-direction:column;gap:22px;padding-top:8px;transform:translateX(-75.1px)}
 #site .contact-section .contact-eyebrow{position:static;width:auto;margin:0;color:rgb(110,173,74);font-size:15px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;line-height:1.4}
-#site .contact-section .contact-title{position:static;width:auto;margin:0;color:#161616;font-size:clamp(30px,3.2vw,42px);line-height:1.12;font-weight:800;letter-spacing:-.015em}
-#site .contact-section .contact-description{position:static;width:auto;margin:0;color:#5b6470;font-size:16px;line-height:1.7;max-width:44ch}
-#site .contact-section .contact-form{position:relative;left:auto;top:auto;transform:none;width:min(520px,48%);height:auto;background:#fff;border:1px solid #e4e7e4;border-radius:16px;padding:28px;box-shadow:none}
+#site .contact-section .contact-title{position:static;width:auto;margin:0;color:#161616;font-size:clamp(32px,3.4vw,46px);line-height:1.12;font-weight:800;letter-spacing:-.015em}
+#site .contact-section .contact-description{position:static;width:auto;margin:0;color:#5b6470;font-size:17px;line-height:1.7;max-width:48ch}
+#site .contact-section .contact-form{position:relative;left:auto;top:auto;transform:none;width:min(600px,49%);height:auto;background:#fff;border:1px solid #e4e7e4;border-radius:16px;padding:36px;box-shadow:none}
 #site .contact-section .contact-form .form-content{display:flex;flex-direction:column;gap:14px}
 #site .contact-section .contact-form fieldset{width:100%;transform:none;display:flex;flex-direction:column;gap:12px;border:0;margin:0;padding:0;min-width:0}
 #site .contact-section .contact-form :is(.field-input,.field-textarea){position:static;width:100%;padding:0;display:flex;flex-direction:column;gap:6px}
 #site .contact-section .contact-form .field-control{margin:0;width:100%}
-#site .contact-section .contact-form :is(.field-input,.field-textarea) .field-control .input-control{width:100%;height:52px;min-height:52px;padding:13px 15px;font-size:15px;line-height:1.5;color:#1c2420;background:#fbfbfb;border:1px solid #dfe3df;border-radius:10px;transition:border-color .15s ease,background-color .15s ease;box-shadow:none}
-#site .contact-section .contact-form .field-textarea .field-control .input-control{height:auto;min-height:128px;resize:vertical}
+#site .contact-section .contact-form :is(.field-input,.field-textarea) .field-control .input-control{width:100%;height:56px;min-height:56px;padding:15px 17px;font-size:16px;line-height:1.5;color:#1c2420;background:#fbfbfb;border:1px solid #dfe3df;border-radius:10px;transition:border-color .15s ease,background-color .15s ease;box-shadow:none}
+#site .contact-section .contact-form .field-textarea .field-control .input-control{height:auto;min-height:160px;resize:vertical}
 #site .contact-section .contact-form :is(.field-input,.field-textarea) .field-control .input-control::placeholder{color:#98a0aa;-webkit-text-fill-color:#98a0aa}
 #site .contact-section .contact-form :is(.field-input,.field-textarea) .field-control .input-control:hover{border-color:#c9cfc9;background:#fff}
 #site .contact-section .contact-form :is(.field-input,.field-textarea) .field-control .input-control:focus{outline:none;border-color:#6ead4a;background:#fff;box-shadow:none}
 #site .contact-section .contact-form :is(.field-input,.field-textarea).has-error .field-control .input-control{border-color:#d34a4a;background:#fff;box-shadow:none}
 #site .contact-section .contact-form .field-message{margin:0;font-size:13px;font-weight:500;color:#b02a2a;line-height:1.45}
-#site .contact-section .contact-form .button-primary{position:static;float:none;left:auto;top:auto;transform:none;width:100%;height:54px;border:0;border-radius:10px;background:#6ead4a;color:#fff;font-size:15px;font-weight:700;letter-spacing:.01em;text-align:center;cursor:pointer;transition:background-color .15s ease;padding:0;box-shadow:none}
+#site .contact-section .contact-form .button-primary{position:static;float:none;left:auto;top:auto;transform:none;width:100%;height:58px;border:0;border-radius:10px;background:#6ead4a;color:#fff;font-size:16px;font-weight:700;letter-spacing:.01em;text-align:center;cursor:pointer;transition:background-color .15s ease;padding:0;box-shadow:none}
 #site .contact-section .contact-form .button-primary span{display:flex;align-items:center;justify-content:center;min-height:100%;background:transparent;border-radius:inherit;padding:0 16px}
 #site .contact-section .contact-form .button-primary:hover:not(:disabled){background:#639d43;box-shadow:none;transform:none;filter:none}
 #site .contact-section .contact-form .button-primary:active:not(:disabled){background:#598e3c;transform:none}
@@ -5369,5 +5410,361 @@ body{padding-top:112px}
 
   #site .sol-faq-panel p {
     padding: 0 20px 20px;
+  }
+}
+
+/* ----- Home heading band (Heading.tsx) ----- */
+#site .heading-section {
+  background: #f2f7f1;
+  position: relative;
+}
+
+#site .heading-canvas {
+  width: min(1400px, 100% - 32px);
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+}
+
+#site .heading-photo {
+  /* Full-bleed background: the art fills the band (cover) with the copy
+     overlaid on top — no split, no separated image. */
+  background: #cfe0e6 url("/images/solution.png") 50% 35% / cover no-repeat;
+  padding: 214px 0 64px;
+  position: relative;
+  overflow: hidden;
+}
+
+#site .heading-photo-img {
+  display: none;
+}
+
+#site .heading-photo .heading-segments {
+  margin-top: 72px;
+}
+
+/* Copy sits below the art: no wash, no fade, no overlay over the photo. */
+
+#site .heading-eyebrow {
+  color: #23492a;
+  background: #ffffffd9;
+  border-radius: 100px;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 22px;
+  padding: 6px 20px 6px 6px;
+  font-size: 15px;
+  font-weight: 600;
+  display: inline-flex;
+  box-shadow: 0 6px 18px #1b3d1e14;
+}
+
+#site .heading-eyebrow-icon {
+  color: #4c8a3c;
+  background: #dff0d4;
+  border-radius: 50%;
+  flex: none;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+}
+
+#site .heading-title {
+  color: #1d3b23;
+  letter-spacing: -.02em;
+  max-width: 720px;
+  margin: 0;
+  font-size: clamp(28px, 3.1vw, 46px);
+  font-weight: 800;
+  line-height: 1.06;
+}
+
+#site .heading-title span, #site .heading-title strong {
+  display: block;
+}
+
+#site .heading-title strong {
+  color: #2f9e44;
+  font-weight: 800;
+}
+
+#site .heading-subtitle {
+  color: #2f3a33;
+  max-width: 52ch;
+  margin: 20px 0 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+#site .heading-ctas {
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 30px;
+  display: flex;
+}
+
+#site .heading-btn {
+  border-radius: 100px;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  min-height: 48px;
+  padding: 0 22px;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color .2s, color .2s, transform .2s;
+  display: inline-flex;
+}
+
+#site .heading-btn svg {
+  flex: none;
+}
+
+#site .heading-btn-wa {
+  color: #fff;
+  background: #2f8f36;
+  box-shadow: 0 12px 26px #2f8f3640;
+}
+
+#site .heading-btn-wa:hover, #site .heading-btn-wa:focus-visible {
+  color: #fff;
+  background: #256e2b;
+  transform: translateY(-1px);
+}
+
+#site .heading-btn-ghost {
+  color: #2f8f36;
+  background: #fff;
+  border: 2px solid #2f8f36;
+}
+
+#site .heading-btn-ghost:hover, #site .heading-btn-ghost:focus-visible {
+  color: #fff;
+  background: #2f8f36;
+}
+
+#site .heading-points {
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 30px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+}
+
+#site .heading-points li {
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: #5f6f63;
+  align-items: center;
+  gap: 12px;
+  padding-right: 28px;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.45;
+  display: inline-flex;
+}
+
+#site .heading-points li + li {
+  border-left: 1px solid #dfe4dc;
+  padding-left: 28px;
+}
+
+#site .heading-points-label {
+  display: grid;
+  gap: 1px;
+}
+
+#site .heading-points svg {
+  color: #2f8f36;
+  flex: none;
+}
+
+/* Hidden: the photo already carries this line baked in; the HTML block doubled
+   it on top of the image (already off at <=1080px). */
+#site .heading-script {
+  display: none;
+}
+
+#site .heading-script-line {
+  color: #4c8a3c;
+  width: 168px;
+  height: 12px;
+  margin-top: 2px;
+}
+
+/* (heading-script markup was removed from Heading.tsx: the line is baked into
+   the photo; the rules above stay for reference.) */
+
+/* Card block lives inside the photo band now (moved from the old strip). */
+
+#site .heading-segments {
+  background: #fff;
+  border-radius: 24px;
+  grid-template-columns: repeat(4, 1fr);
+  /* Sits below the photo with a gap — never pulls up over the image, so the
+     full photo (road + baked-in curve) stays visible. */
+  margin: 24px 0 0;
+  padding: 28px 8px;
+  list-style: none;
+  display: grid;
+  position: relative;
+  box-shadow: none;
+}
+
+#site .heading-segment {
+  align-items: flex-start;
+  gap: 14px;
+  padding: 4px 24px;
+  display: flex;
+}
+
+#site .heading-segment + .heading-segment {
+  border-left: 1px solid #e8ece7;
+}
+
+#site .heading-segment-icon {
+  color: #3e8f3e;
+  background: #e6f4dc;
+  border-radius: 50%;
+  flex: none;
+  justify-content: center;
+  align-items: center;
+  width: 58px;
+  height: 58px;
+  display: inline-flex;
+}
+
+#site .heading-segment-body {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+#site .heading-segment-title {
+  color: #1d3b23;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 0 0;
+  font-size: 17px;
+  font-weight: 700;
+  display: flex;
+}
+
+#site .heading-segment-title svg {
+  color: #2f8f36;
+  flex: none;
+}
+
+#site .heading-segment-text {
+  color: #5c6b5f;
+  margin: 8px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+@media (max-width: 1080px) {
+  #site .heading-subtitle {
+    max-width: 40ch;
+  }
+
+  #site .heading-segments {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 0;
+  }
+
+  #site .heading-segment:nth-child(odd) {
+    border-left: 0;
+  }
+
+  #site .heading-segment:nth-child(n + 3) {
+    border-top: 1px solid #e8ece7;
+    margin-top: 18px;
+    padding-top: 22px;
+  }
+}
+
+@media (max-width: 810px) {
+  #site .heading-canvas {
+    width: min(100% - 40px, 560px);
+  }
+
+  #site .heading-photo .heading-canvas {
+    padding: 40px 0 48px;
+  }
+
+  #site .heading-eyebrow {
+    margin-bottom: 18px;
+    font-size: 13px;
+  }
+
+  #site .heading-title {
+    font-size: clamp(26px, 7.6vw, 36px);
+  }
+
+  #site .heading-subtitle {
+    margin-top: 18px;
+    font-size: 15px;
+  }
+
+  #site .heading-ctas {
+    margin-top: 24px;
+  }
+
+  #site .heading-btn {
+    width: 100%;
+    padding: 0 18px;
+    font-size: 14px;
+  }
+
+  #site .heading-points {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 26px;
+  }
+
+  #site .heading-points li {
+    padding-right: 0;
+    font-size: 12px;
+  }
+
+  #site .heading-points li + li {
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  #site .heading-segments {
+    grid-template-columns: 1fr;
+    margin-top: 24px;
+    padding: 22px 14px;
+  }
+
+  #site .heading-segment {
+    padding: 4px 8px;
+  }
+
+  #site .heading-segment:nth-child(even) {
+    border-left: 0;
+  }
+
+  #site .heading-segment + .heading-segment,
+  #site .heading-segment:nth-child(n + 3) {
+    border-top: 1px solid #e8ece7;
+    margin-top: 16px;
+    padding-top: 20px;
+  }
+
+  #site .heading-segment-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  #site .heading-segment-title {
+    font-size: 16px;
   }
 }
