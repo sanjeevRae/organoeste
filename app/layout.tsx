@@ -8,7 +8,11 @@ export const metadata: Metadata = {
   description:
     "Coleta licenciada de resíduos orgânicos, compostagem própria e adubo orgânico de alta performance. Um único ecossistema, da indústria ao campo.",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.png", type: "image/png" },
+    ],
+    apple: [{ url: "/icon-180.png", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
     title: "Grupo Organoeste Ltda",

@@ -3,6 +3,7 @@
 export default function Footer() {
   return (
     <footer className="site-footer">
+      <div className="footer-top-divider" aria-hidden="true" />
       <div className="block-overlay" />
       <div className="canvas">
         <div className="footer-logo"><div className="image-content" /></div>

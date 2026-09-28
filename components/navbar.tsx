@@ -1,29 +1,17 @@
-/* Navbar — fixed header with logo, main navigation and WhatsApp CTA.
-   Slides out of view while scrolling down (navbar-hidden) and returns on scroll up.
-   With `overlay` (the home page, whose heading band starts behind the header) the
-   header floats transparent (navbar-overlay) only while the page is at the very
-   top; the first pixel of scroll brings the white bar back — even with the band
-   still on screen — and the hide-on-scroll behaviour above resumes as usual. */
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
 const WA_LINK = "https://wa.me/5567992401937";
-
-/* Reference bar (public/images/navbar.png): logo on the left, five links on the
-   bar centre line — the current one in deep green with an underline — and the
-   WhatsApp pill flush with the right edge of the content. */
 const NAV_LINKS = [
   { label: "Início", href: "/" },
-  { label: "Sobre Nós", href: "/#sobre" },
   { label: "Soluções", href: "/solucoes" },
-  { label: "Sustentabilidade", href: "/#sustentabilidade" },
+  { label: "Produtos", href: "https://www.fertipower.com.br/", external: true },
+  { label: "Blog", href: "/blog" },
   { label: "Contato", href: "/#contato" },
 ];
 
-/* Outline mark + arrow used inside the CTA pill (outline WhatsApp mark from
-   Bootstrap Icons, MIT; arrow path shared with components/Heading.tsx). */
 function WhatsappMark({ size = 18 }: { size?: number }) {
   return (
     <svg
@@ -58,18 +46,11 @@ function ArrowMark({ size = 24 }: { size?: number }) {
     </svg>
   );
 }
-
-
-/* Scroll offset (px) still considered "at the top" while the header floats. */
 const TOP_EPS = 4;
-
-/* logo.png carries a white plate, invisible on the white bar but visible over the
-   band photo — logo-transparent.png is the same mark keyed to transparency. */
 const LOGO_BAR = "/images/logo.png";
 const LOGO_OVERLAY = "/images/logo-transparent.png";
 
 type NavbarProps = {
-  /* The page starts with a full-bleed band that runs behind the header. */
   overlay?: boolean;
 };
 
@@ -85,9 +66,6 @@ export default function Navbar({ overlay = false }: NavbarProps) {
     let ticking = false;
 
     const sync = (y: number, prev: number) => {
-      // Transparent over the band only at the very top: the first pixel of scroll
-      // turns the header back into the plain white bar, band still on screen or
-      // not. Hide-on-scroll-down / show-on-scroll-up is untouched.
       setFloating(overlay && y <= TOP_EPS);
       if (y > 140 && y > prev + 4) {
         setHidden(true);
@@ -107,7 +85,6 @@ export default function Navbar({ overlay = false }: NavbarProps) {
       });
     };
 
-    // A restored scroll position or a deep link can load already scrolled.
     sync(lastY.current, lastY.current);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
@@ -136,14 +113,15 @@ export default function Navbar({ overlay = false }: NavbarProps) {
         <nav className="navbar-links" aria-label="Navegação principal">
           {NAV_LINKS.map((link) => {
             const [path, hash] = link.href.split("#");
-            // Anchors point at the home page, so only a plain path highlights.
-            const active = !hash && path === pathname;
+            const active = !link.external && !hash && path === pathname;
             return (
               <a
                 key={link.label}
                 href={link.href}
                 className={active ? "is-active" : undefined}
                 aria-current={active ? "page" : undefined}
+                target={link.external ? "_blank" : undefined}
+                rel={link.external ? "noopener noreferrer" : undefined}
               >
                 {link.label}
               </a>

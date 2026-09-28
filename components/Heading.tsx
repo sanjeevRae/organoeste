@@ -1,7 +1,14 @@
 /* Heading — top band of the home page (before Hero): the OLAM trucks artwork
    (public/images/solution.png) as the full-width background, carrying the main
    headline, the two CTAs, the trust badges and the four segments card.
-   Styles are namespaced as .heading-* in app/site.css. */
+   Styles are namespaced as .heading-* in app/site.css.
+   The band copy flies up once on load: the first frame after mount swaps
+   `heading-enter` for `heading-loaded` (same pattern as the sol-page Hero),
+   and the staggered transitions in app/site.css take over. */
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { useAosReveal } from "./useAosReveal";
 
 const WA_LINK = "https://wa.me/5567992401937";
 
@@ -47,9 +54,6 @@ const SEGMENTS = [
 /* --- inline icon set (stroke style, currentColor) ----------------------- */
 
 const PATHS: Record<string, React.ReactNode> = {
-  leaf: (
-    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2.5 1.5 6.5-1.5 11-2 3-5.5 6-8.5 7Zm0 0c-1.5-4 1-9 5-11" />
-  ),
   shield: (
     <>
       <path d="M12 2 4 5v6c0 5 3.5 9.5 8 11 4.5-1.5 8-6 8-11V5l-8-3Z" />
@@ -107,7 +111,26 @@ const PATHS: Record<string, React.ReactNode> = {
   arrow: <path d="M5 12h13M12.5 6.5 19 12l-6.5 5.5" />,
 };
 
+/* Bootstrap Icons `bi-leaf` (MIT): the 16x16 solid leaf mark, drawn filled
+   with currentColor and scaled by `size` — used wherever the icon named "leaf"
+   or "sprout" is requested (the dividers, badges and service cards). */
+function LeafMark({ size = 16 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 16 16"
+      fill="currentColor"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M1.4 1.7c.216.289.65.84 1.725 1.274 1.093.44 2.884.774 5.834.528l.37-.023c1.823-.06 3.117.598 3.956 1.579C14.16 6.082 14.5 7.41 14.5 8.5c0 .58-.032 1.285-.229 1.997q.198.248.382.54c.756 1.2 1.19 2.563 1.348 3.966a1 1 0 0 1-1.98.198c-.13-.97-.397-1.913-.868-2.77C12.173 13.386 10.565 14 8 14c-1.854 0-3.32-.544-4.45-1.435-1.125-.887-1.89-2.095-2.391-3.383C.16 6.62.16 3.646.509 1.902L.73.806zm-.05 1.39c-.146 1.609-.008 3.809.74 5.728.457 1.17 1.13 2.213 2.079 2.961.942.744 2.185 1.22 3.83 1.221 2.588 0 3.91-.66 4.609-1.445-1.789-2.46-4.121-1.213-6.342-2.68-.74-.488-1.735-1.323-1.844-2.308-.023-.214.237-.274.38-.112 1.4 1.6 3.573 1.757 5.59 2.045 1.227.215 2.21.526 3.033 1.158.058-.39.075-.782.075-1.158 0-.91-.288-1.988-.975-2.792-.626-.732-1.622-1.281-3.167-1.229l-.316.02c-3.05.253-5.01-.08-6.291-.598a5.3 5.3 0 0 1-1.4-.811" />
+    </svg>
+  );
+}
+
 function Glyph({ name, size = 20 }: { name: string; size?: number }) {
+  if (name === "leaf" || name === "sprout") return <LeafMark size={size} />;
   return (
     <svg
       viewBox="0 0 24 24"
@@ -144,13 +167,21 @@ function WhatsappGlyph({ size = 20 }: { size?: number }) {
 /* --- section ------------------------------------------------------------ */
 
 export default function Heading() {
+  const [loaded, setLoaded] = useState(false);
+  const aosRef = useRef<HTMLElement | null>(null);
+  useAosReveal(aosRef);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setLoaded(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
   return (
-    <section className="heading-section">
+    <section className={"heading-section" + (loaded ? " heading-loaded" : " heading-enter")} ref={aosRef as any}>
+
       <div className="heading-photo">
         <div className="heading-canvas">
           <h1
             className="heading-title"
-            style={{ fontSize: "clamp(30px, 3.4vw, 50px)", fontWeight: 900, WebkitTextStroke: "0.4px currentColor" }}
+            style={{ fontSize: "clamp(25px, 2.8vw, 41px)", fontWeight: 900, WebkitTextStroke: "0.4px currentColor" }}
           >
             <span>Transformamos</span>
             <strong>Resíduos em Valor</strong>
@@ -165,29 +196,29 @@ export default function Heading() {
           <div className="heading-ctas">
             <a
               className="heading-btn heading-btn-wa"
-              style={{ fontSize: "14.5px", minHeight: "52px", padding: "0 26px" }}
+              style={{ fontSize: "13px", minHeight: "47px", padding: "0 23px" }}
               href={WA_LINK}
               target="_blank"
               rel="noopener noreferrer"
             >
               <WhatsappGlyph />
               Fale pelo WhatsApp
-              <Glyph name="arrow" size={18} />
+              <Glyph name="arrow" size={16} />
             </a>
             <a
               className="heading-btn heading-btn-ghost"
-              style={{ fontSize: "14.5px", minHeight: "52px", padding: "0 26px" }}
+              style={{ fontSize: "13px", minHeight: "47px", padding: "0 23px" }}
               href="/solucoes#como-funciona"
             >
-              <Glyph name="play" size={18} />
+              <Glyph name="play" size={16} />
               Cómo funciona
             </a>
           </div>
 
-          <ul className="heading-points" style={{ transform: "translateY(10px)" }}>
+          <ul className="heading-points" style={{ transform: "translateY(9px)" }}>
             {POINTS.map((point) => (
               <li key={point.icon}>
-                <Glyph name={point.icon} size={26} />
+                <Glyph name={point.icon} size={23} />
                 <span className="heading-points-label">
                   <span>{point.lines[0]}</span>
                   <span>{point.lines[1]}</span>
@@ -196,16 +227,16 @@ export default function Heading() {
             ))}
           </ul>
 
-          <ul className="heading-segments" style={{ transform: "translateY(-10px)" }}>
+          <ul className="heading-segments">
             {SEGMENTS.map((segment) => (
               <li key={segment.label} className="heading-segment">
                 <span className="heading-segment-icon">
-                  <Glyph name={segment.icon} size={24} />
+                  <Glyph name={segment.icon} size={22} />
                 </span>
                 <div className="heading-segment-body">
                   <p className="heading-segment-title">
                     {segment.label}
-                    <Glyph name="arrow" size={17} />
+                    <Glyph name="arrow" size={15} />
                   </p>
                   <p className="heading-segment-text">{segment.description}</p>
                 </div>
@@ -215,7 +246,7 @@ export default function Heading() {
         </div>
       </div>
 
-      <div className="trusted-strip" aria-label="Empresas que confiam na Organoeste">
+      <div className="trusted-strip" data-aos="fade-up" aria-label="Empresas que confiam na Organoeste">
         <p className="trusted-strip-label">Empresas que confiam na Organoeste</p>
         <div className="trusted-marquee">
           <div className="trusted-track">
