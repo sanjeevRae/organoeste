@@ -4435,10 +4435,10 @@ button.button-primary{font:inherit;cursor:pointer;-webkit-appearance:none;appear
 @media (min-width: 801px){#site .hero-section .canvas{height:100%}
 #site .hero-section .hero-title{top:36%;transform:none;width:min(560px,60%)}
 #site .hero-section .hero-title :is(.about-play-button,.button-content,.card-content,.divider-h-content,.divider-v-content,.form-content,.icon-content,.image-content,.social-content,.text-content,.title-content){font-size:clamp(22px,2.4vw,32px);line-height:1.3}
-#site .hero-section .hero-subtitle{top:60%;transform:none;width:min(720px,76%)}
-#site .hero-section .hero-subtitle :is(.about-play-button,.button-content,.card-content,.divider-h-content,.divider-v-content,.form-content,.icon-content,.image-content,.social-content,.text-content,.title-content){font-size:clamp(18px,1.7vw,25px);line-height:1.7}}
+#site .hero-section .hero-subtitle{top:64%;transform:none;width:min(720px,76%)}
+#site .hero-section .hero-subtitle :is(.about-play-button,.button-content,.card-content,.divider-h-content,.divider-v-content,.form-content,.icon-content,.image-content,.social-content,.text-content,.title-content){font-size:clamp(16px,1.5vw,22px);line-height:1.7}}
 
-#site .hero-section .hero-subtitle p, #site .hero-section .hero-subtitle p{font-size:clamp(16px,2.4vh,24px);line-height:1.6}
+#site .hero-section .hero-subtitle p, #site .hero-section .hero-subtitle p{font-size:clamp(14px,2.2vh,21px);line-height:1.6}
 
 @media (max-width: 800px){#site .hero-section .hero-subtitle p, #site .hero-section .hero-subtitle p{font-size:clamp(15px,2.2vw,20px)}}
 
@@ -4934,9 +4934,14 @@ body:has(.heading-section){padding-top:0}
   font-weight: 700;
 }
 
+#site .sol-wrap-services{
+  width:min(1480px,100% - 40px);
+  max-width:1480px;
+}
+
 #site .sol-cards {
   grid-template-columns: repeat(5, 1fr);
-  gap: 18px;
+  gap: 22px;
   margin: 48px 0 0;
   padding: 0;
   list-style: none;
@@ -4948,9 +4953,14 @@ body:has(.heading-section){padding-top:0}
   border: 1px solid #e6eae6;
   border-radius: 20px;
   flex-direction: column;
-  padding: 30px 24px;
+  padding: 36px 30px;
   transition: transform .25s, box-shadow .25s;
   display: flex;
+  min-width:0;
+}
+
+#site .sol-card p{
+  overflow-wrap:anywhere;
 }
 
 #site .sol-card:hover {
@@ -4973,7 +4983,7 @@ body:has(.heading-section){padding-top:0}
 #site .sol-card h3 {
   color: #2c3a2a;
   margin: 0 0 12px;
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 800;
   line-height: 1.3;
 }
@@ -4982,7 +4992,7 @@ body:has(.heading-section){padding-top:0}
   color: #545060;
   flex: 1;
   margin: 0;
-  font-size: 14px;
+  font-size: 14.5px;
   line-height: 1.7;
 }
 
