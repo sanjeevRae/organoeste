@@ -1,0 +1,184 @@
+"use client";
+
+/* Full-page editor opened via the panel head's "Open in new tab" menu.
+   Same EditorPanel as /admin, shown as a centered page card. On mount it
+   first tries the draft handed over through sessionStorage (so unsaved
+   edits travel to the new tab); otherwise it loads the post from the
+   server and redirects to /admin when signed out. */
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import type { BlogPost } from "@/data/blog-posts";
+import { BLANK_POST, toForm, type PostForm } from "@/lib/admin-format";
+import {
+  adminBootstrap,
+  adminSavePost,
+  adminUploadImage,
+  type AdminState,
+} from "../actions";
+import { EditorPanel, Login, download } from "../AdminClient";
+
+type Post = BlogPost & { id?: number };
+
+export default function FullPageEditor({
+  slug,
+  initial,
+  authed,
+}: {
+  slug: string | null;
+  initial: AdminState;
+  authed: boolean;
+}) {
+  const router = useRouter();
+  const [ok, setOk] = useState(authed);
+  const [posts, setPosts] = useState<Post[]>(initial.posts as Post[]);
+  const [categories, setCategories] = useState<string[]>(initial.categories);
+  const [form, setForm] = useState<PostForm | null>(null);
+  const [isNew, setIsNew] = useState(slug === null);
+  const [saving, setSaving] = useState(false);
+  const [notice, setNotice] = useState("");
+  const [missing, setMissing] = useState(false);
+
+  useEffect(() => {
+    if (!ok) return;
+    const key = slug === null ? "dash-popout:new" : `dash-popout:${slug}`;
+    try {
+      const raw = sessionStorage.getItem(key);
+      if (raw) {
+        const parsed = JSON.parse(raw) as PostForm;
+        if (slug === null || parsed.slug === slug || !parsed.slug) {
+          setForm(parsed);
+          setIsNew(slug === null);
+          return;
+        }
+      }
+    } catch {
+      /* unreadable draft — fall through to server data */
+    }
+    if (slug === null) {
+      setForm(BLANK_POST(categories[0] ?? "Compostagem"));
+      setIsNew(true);
+      return;
+    }
+    const target = posts.find((p) => p.slug === slug);
+    if (target) {
+      setForm(toForm(target));
+      setIsNew(false);
+    } else {
+      setMissing(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ok]);
+
+  async function refresh() {
+    const state = await adminBootstrap();
+    setPosts(state.posts as Post[]);
+    setCategories(state.categories);
+    setNotice("");
+  }
+
+  async function uploadFile(file: File): Promise<string | null> {
+    const data = new FormData();
+    data.append("file", file);
+    const res = await adminUploadImage(data);
+    if (!res.ok || !res.url) {
+      setNotice(res.error ?? "Could not upload image.");
+      return null;
+    }
+    return res.url;
+  }
+
+  async function save() {
+    if (!form || saving) return;
+    setSaving(true);
+    setNotice("");
+    const res = await adminSavePost({ form });
+    setSaving(false);
+    if (res.download) download(res.download.name, res.download.text);
+    if (!res.ok) {
+      setNotice(res.error ?? "Could not save.");
+      return;
+    }
+    if (res.posts) setPosts(res.posts as Post[]);
+    try {
+      sessionStorage.removeItem(slug === null ? "dash-popout:new" : `dash-popout:${form.slug}`);
+    } catch {
+      /* ignore */
+    }
+    if (isNew) setIsNew(false);
+    setNotice(isNew ? "Post published." : "Changes saved.");
+    if (res.ok && form.slug && form.slug !== slug) {
+      router.replace(`/admin/post/${form.slug}`);
+    }
+  }
+
+  function backToList() {
+    router.push("/admin");
+  }
+
+  if (!ok) {
+    return (
+      <div className="dash-editpage">
+        <Login
+          onOk={() => {
+            setOk(true);
+            void refresh();
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (missing) {
+    return (
+      <div className="dash-editpage">
+        <div className="dash-panel" role="alert">
+          <div className="dash-panel-head">
+            <h2 className="dash-panel-title">Post not found</h2>
+          </div>
+          <div className="dash-panel-body">
+            <p className="dash-sub">This post no longer exists.</p>
+            <div className="dash-actions">
+              <button type="button" className="dash-btn-primary" onClick={backToList}>
+                Back to list
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!form) {
+    return (
+      <div className="dash-editpage">
+        <p className="dash-loading">Loading editor…</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="dash-editpage">
+      <EditorPanel
+        form={form}
+        setForm={setForm}
+        categories={categories.length ? categories : [form.category].filter(Boolean)}
+        notice={notice}
+        saving={saving}
+        isNew={isNew}
+        onClose={backToList}
+        onSave={save}
+        onCancel={() => {
+          if (isNew) backToList();
+          else {
+            const current = posts.find((p) => p.slug === (slug ?? form.slug));
+            if (current) setForm(toForm(current));
+            setNotice("");
+          }
+        }}
+        onUpload={uploadFile}
+        showPopout={false}
+      />
+    </div>
+  );
+}

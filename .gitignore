@@ -4,3 +4,5 @@ out/
 *.tsbuildinfo
 next-env.d.ts
 .history/
+.env
+.env*.local

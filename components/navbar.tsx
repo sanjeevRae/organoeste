@@ -101,7 +101,7 @@ export default function Navbar({ overlay = false }: NavbarProps) {
   return (
     <header ref={headerRef} className={classes.join(" ")}>
       <div className="navbar-inner">
-        <a className="navbar-brand" href="/" aria-label="Organoeste — início">
+        <a className="navbar-brand" href="/" aria-label="Organoeste, página inicial">
           <img
             src={floating ? LOGO_OVERLAY : LOGO_BAR}
             alt="Organoeste"

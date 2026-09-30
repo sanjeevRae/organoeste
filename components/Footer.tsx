@@ -19,7 +19,7 @@ export default function Footer() {
         <div className="footer-social-instagram"><a className="social-content" href="https://www.instagram.com/organoeste/" target="_blank" rel="noopener noreferrer" /></div>
         <div className="footer-social-whatsapp"><a className="social-content" href="https://wa.me/5567992401937" /></div>
         <div className="footer-divider"><div className="divider-h-content" /></div>
-        <div className="footer-copyright"><div className="text-content"><p><span>Copyright © Organoeste – Todos os direitos reservados. </span></p></div></div>
+        <div className="footer-copyright"><div className="text-content"><p><span>Copyright © Organoeste. Todos os direitos reservados. </span></p></div></div>
       </div>
     </footer>
   );

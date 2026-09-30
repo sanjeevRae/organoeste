@@ -718,7 +718,12 @@ function FaqSection() {
       ref={aosRef as any}
     >
       <div className="sol-wrap">
-        <div className="sol-faq-head" data-aos="fade-up" data-aos-delay="0">
+        <div
+          className="sol-faq-head"
+          data-aos="fade-up"
+          data-aos-delay="0"
+          style={{ opacity: 1, transform: "none" }}
+        >
           <p className="sol-faq-eyebrow">Dúvidas frequentes</p>
           <h2 className="sol-faq-title" id="sol-faq-titulo">
             Vamos <strong>encontrar</strong> a melhor <strong>solução</strong> para
@@ -735,6 +740,7 @@ function FaqSection() {
                 role="listitem"
                 data-aos="fade-up"
                 data-aos-delay={index * 60}
+                style={{ opacity: 1, transform: "none" }}
               >
                 <button
                   type="button"
@@ -769,6 +775,7 @@ function FaqSection() {
           aria-labelledby="sol-diagnostico-titulo"
           data-aos="fade-up"
           data-aos-delay="120"
+          style={{ opacity: 1, transform: "none" }}
         >
           <div className="sol-diagnosis-copy">
             <h2 id="sol-diagnostico-titulo">Solicite um diagnóstico sem compromisso.</h2>
