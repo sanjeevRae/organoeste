@@ -1,6 +1,10 @@
 import { SITE_URL } from "@/lib/blog";
 import { publishedPosts } from "@/lib/posts";
 
+/* Rebuilt hourly (and purged after every dashboard save) so a newly published
+   post lands in the sitemap without a redeploy. */
+export const revalidate = 3600;
+
 export default async function sitemap() {
   const base = [
     { url: `${SITE_URL}/`, lastModified: new Date() },

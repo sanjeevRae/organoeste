@@ -147,6 +147,9 @@ export function EditorPanel({
 }: EditorPanelProps) {
   const [coverBusy, setCoverBusy] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  /** Editing an existing post must never rewrite its slug behind the user's
+      back; a new post follows the title until the slug field is touched. */
+  const [slugTouched, setSlugTouched] = useState(!isNew);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const menuRef = useRef<HTMLSpanElement | null>(null);
   const excerptCount = form.excerpt.trim().length;
@@ -184,6 +187,7 @@ export function EditorPanel({
       navigator.clipboard.writeText(form.slug).catch(() => {});
     }
   }
+
 
   async function pickCover(file: File | undefined) {
     if (!file) return;
@@ -271,7 +275,7 @@ export function EditorPanel({
               setForm({
                 ...form,
                 title,
-                slug: form.slug || !isNew ? form.slug : slugify(title),
+                slug: isNew && !slugTouched ? slugify(title) : form.slug,
               });
             }}
             placeholder="Post title"
@@ -284,7 +288,7 @@ export function EditorPanel({
             <input
               className="dash-input"
               value={form.slug}
-              onChange={(e) => set("slug", slugify(e.target.value))}
+              onChange={(e) => { setSlugTouched(true); set("slug", slugify(e.target.value)); }}
               placeholder="post-url-slug"
               aria-label="Slug"
             />
@@ -666,6 +670,14 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
                 </button>
               ))}
             </div>
+
+            {initial.source === "file" ? (
+              <p className="dash-dbwarn" role="status">
+                <strong>MySQL offline</strong> — showing the bundled data/blog-posts.ts. Saves are
+                written to a downloadable file instead of the database.
+                {initial.dbError ? <span className="dash-dbwarn-err"> {initial.dbError}</span> : null}
+              </p>
+            ) : null}
 
             {notice && !form ? <p className="dash-notice" role="status">{notice}</p> : null}
 

@@ -2,7 +2,7 @@
 // data/blog-posts.ts fallback, so pages keep building with no DATABASE_URL.
 // Never import this (or mysql2) from a client component.
 import { blogPosts, BLOG_CATEGORIES, type BlogPost } from "@/data/blog-posts";
-import { db } from "./db";
+import { db, dbConfigured, dbPing } from "./db";
 import { sortPublished } from "./blog";
 
 export const BLOG_SOURCE: "mysql" | "file" = process.env.BLOG_SOURCE === "file" ? "file" : "mysql";
@@ -72,4 +72,28 @@ export async function blogCategories(): Promise<string[]> {
   } catch {
     return fallback;
   }
+}
+
+export interface StoreStatus {
+  /** Where the last read came from: the database or the bundled file. */
+  source: "mysql" | "file";
+  /** Rows in the database (0 while it is unreachable). */
+  posts: number;
+  /** True when credentials exist but the server/tables did not answer. */
+  configured: boolean;
+  error?: string;
+}
+
+/** Admin-facing diagnostics: is the dashboard really talking to MySQL? Used by
+    adminBootstrap() so the dashboard can warn when it silently fell back to the
+    bundled posts (wrong credentials, missing schema, server down). */
+export async function storeStatus(): Promise<StoreStatus> {
+  if (BLOG_SOURCE === "file") {
+    return { source: "file", posts: blogPosts.length, configured: dbConfigured() };
+  }
+  const health = await dbPing();
+  if (!health.ok) {
+    return { source: "file", posts: blogPosts.length, configured: health.configured, error: health.error };
+  }
+  return { source: "mysql", posts: health.posts, configured: true };
 }

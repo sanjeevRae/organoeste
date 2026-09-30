@@ -8,6 +8,12 @@ import { BlogPostListen, BlogPostShare } from "@/components/BlogPostTools";
 import { getPost, publishedPosts } from "@/lib/posts";
 import { formatDateBR, readingTime, speakingTime, tocFromHtml, SITE_URL } from "@/lib/blog";
 
+/* Live MySQL content with ISR: known slugs are prerendered at build time and
+   any slug added later renders on demand (dynamicParams), so a post created in
+   the dashboard is reachable immediately and cached afterwards. */
+export const revalidate = 60;
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
   return (await publishedPosts()).map((p) => ({ slug: p.slug }));
 }

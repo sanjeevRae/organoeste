@@ -5,7 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "serve": "node server.js",
+    "db:seed": "node scripts/seed-mysql.cjs",
+    "db:push": "node scripts/db-apply.cjs",
+    "db:check": "node scripts/db-apply.cjs --check"
   },
   "dependencies": {
     "mysql2": "^3.24.4",

@@ -111,12 +111,88 @@ de envio e mensagem de sucesso ("Enviado com sucesso!"). Como não existe
 backend no escopo, o envio é simulado no cliente — para integrar de verdade,
 basta trocar o `setTimeout` por um `fetch` para a API desejada.
 
+## Blog dinâmico (MySQL) e deploy no cPanel
+
+> Guia completo de implantação (banco, servidor, o que copiar e o que rodar):
+> **[DEPLOYMENT.md](DEPLOYMENT.md)**. Abaixo o resumo.
+
+O blog tem dois modos, escolhidos automaticamente:
+
+| Modo | Quando | O que acontece |
+| --- | --- | --- |
+| **MySQL** | `DATABASE_URL` ou `DB_HOST` definidos e o banco respondendo | `/blog`, `/blog/[slug]`, o sitemap e o painel `/admin` leem e gravam no banco |
+| **Arquivo** | sem credenciais, ou banco fora do ar | usa `data/blog-posts.ts`; o painel mostra o aviso **"MySQL offline"** e, ao salvar, baixa o arquivo atualizado em vez de gravar |
+
+O `npm run build` funciona nos dois casos (sem banco ele apenas registra um aviso no log), então nunca existe deploy quebrado por causa da conexão.
+
+### 1. Criar as tabelas e o seed
+
+**cPanel (phpMyAdmin)** — o usuário do cPanel não tem permissão de `CREATE DATABASE`:
+
+1. cPanel → **MySQL® Databases**: crie o banco e o usuário e adicione o usuário ao banco com **ALL PRIVILEGES**. Guarde os nomes com o prefixo da conta (ex.: `conta_organoeste`).
+2. phpMyAdmin: selecione o banco na lateral → aba **Import** → escolha **`scripts/db_setup.cpanel.sql`** → Go. Esse arquivo não tem `CREATE DATABASE` nem `USE` justamente por isso.
+
+**Servidor com acesso root (MySQL local):**
+
+```bash
+mysql -u root -p < scripts/db_setup.sql   # cria o banco, as tabelas e o seed
+```
+
+**Pelo Node (aplica direto, sem importar SQL):**
+
+```bash
+npm run db:push    # cria as tabelas + insere/atualiza o seed (idempotente)
+npm run db:check   # confere conexão, tabelas e contagem de linhas
+npm run db:seed    # regenera os dois .sql a partir de data/blog-posts.ts
+```
+
+Os dois `.sql` são **gerados** a partir de `data/blog-posts.ts` (3 posts, 5 categorias, 9 tags), então o seed acompanha o conteúdo real: rode `npm run db:seed` depois de mexer nos posts. Ambos podem ser reexecutados sem duplicar linhas (`INSERT ... ON DUPLICATE KEY UPDATE`), e o script Node detecta a mensagem de erro do MySQL e diz exatamente o que corrigir.
+
+### 2. Variáveis de ambiente
+
+Copie `.env.example` para `.env` e preencha. Em cPanel use os campos separados — senhas com `@`, `#` ou `!` quebrariam uma URL de conexão:
+
+```env
+DB_HOST="localhost"
+DB_USER="conta_organoeste"
+DB_PASSWORD="a-senha-do-painel"
+DB_NAME="conta_organoeste"
+```
+
+`DATABASE_URL` continua funcionando (senha com `@` escrita como `%40`), e ainda existem `DB_SSL=true` (TLS), `DB_POOL_SIZE`, `BLOG_SOURCE=file` (força o modo arquivo) e `ADMIN_PASSWORD` (senha do painel).
+
+### 3. Como o site se atualiza
+
+`/blog` e `/blog/[slug]` usam ISR (`revalidate = 60`): uma edição feita direto no phpMyAdmin aparece em no máximo 1 minuto, sem rebuild. Já uma publicação/exclusão feita no painel chama `revalidatePath()` e aparece **na hora** em `/blog`, `/blog/<slug>` e no sitemap.
+
+### 4. Checklist do deploy no cPanel
+
+- [ ] Banco criado, usuário com ALL PRIVILEGES e `scripts/db_setup.cpanel.sql` importado.
+- [ ] `.env` na raiz do app com `DB_*` e um `ADMIN_PASSWORD` forte.
+- [ ] `npm install` e `npm run build` (Node 20+) com `NODE_ENV=production`.
+- [ ] App Node publicado (`npm start`) e **reiniciado** depois de alterar o `.env`.
+- [ ] `public/uploads` com permissão de escrita (é onde ficam as imagens enviadas pelo editor).
+- [ ] `npm run db:check` ou `/admin` confirmando que o aviso "MySQL offline" não aparece.
+
+### 5. Diagnóstico rápido
+
+| Mensagem | Causa provável |
+| --- | --- |
+| `ECONNREFUSED` | host/porta errados — no cPanel use `DB_HOST=localhost` |
+| `ETIMEDOUT` / `ENOTFOUND` | firewall, host errado ou Remote MySQL não liberado para o seu IP |
+| `ER_ACCESS_DENIED_ERROR` | usuário/senha errados (no cPanel o usuário tem o prefixo da conta) |
+| `ER_BAD_DB_ERROR` | banco inexistente — crie em MySQL Databases |
+| `ER_DBACCESS_DENIED_ERROR` | adicione o usuário ao banco no cPanel |
+| `ER_NO_SUCH_TABLE` | importe `scripts/db_setup.cpanel.sql` (ou rode `npm run db:push`) |
+
 ## Manutenção
 
 Edições são feitas direto no código: `components/*.tsx`, `app/page.tsx` e
 `app/site.css`. Não existe etapa de geração — o que você editar é o que roda.
 
 ### Changelog
+
+- 2026-09-30: **blog dinâmico em MySQL**. `/blog`, `/blog/[slug]` e o sitemap passaram a usar ISR (`revalidate = 60`) e o painel chama `revalidatePath()` ao publicar/excluir, então a alteração aparece na hora e sem rebuild. `lib/db.ts` aceita `DATABASE_URL` ou `DB_*` (com `DB_SSL`, pool configurável e keep-alive contra queda de socket em hospedagem compartilhada) e `dbPing()` distingue "sem credenciais", "não conecta" e "tabelas ausentes"; `/admin` mostra o aviso "MySQL offline" quando cai para `data/blog-posts.ts`. Seed gerado em duas versões — `scripts/db_setup.sql` (com `CREATE DATABASE`) e `scripts/db_setup.cpanel.sql` (sem, para importar no phpMyAdmin) — mais `npm run db:push`/`db:check` e o `VALUES()` do upsert trocado por literais repetidos (compatível com MySQL 5.7/8.x e MariaDB). O slug de um post novo agora acompanha o título até ser editado à mão (antes congelava na primeira letra).
 
 - 2026-09-25: **`city-cta-section` com o prefixo completo nos elementos**:
   `city-image` → `city-cta-image`, `city-title` → `city-cta-title`,

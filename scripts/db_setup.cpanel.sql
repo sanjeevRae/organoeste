@@ -1,11 +1,12 @@
--- Organoeste blog store: schema + seed (local dev / server with root access).
--- Run against MySQL 5.7+, MariaDB 10.4+ (utf8mb4, InnoDB FULLTEXT):
---   mysql -u root -p < scripts/db_setup.sql
+-- Organoeste blog store: tables + seed for cPanel (phpMyAdmin import).
+-- 1. cPanel > MySQL Databases: create the database AND a user, then add the
+--    user to the database with ALL PRIVILEGES. cPanel users have no
+--    CREATE DATABASE right, so this file deliberately has no CREATE DATABASE
+--    and no USE statement.
+-- 2. phpMyAdmin: select that database in the left sidebar, open the Import
+--    tab, choose this file and press Go.
 -- Safe to re-run: tables are created IF NOT EXISTS and seed rows use
 -- ON DUPLICATE KEY UPDATE, so re-running only refreshes the content.
-
-CREATE DATABASE IF NOT EXISTS `organoeste` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `organoeste`;
 
 CREATE TABLE IF NOT EXISTS blog_categories (
   id INT AUTO_INCREMENT PRIMARY KEY,

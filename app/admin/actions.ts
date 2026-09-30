@@ -2,9 +2,11 @@
 
 /* Server actions behind /admin: login/logout, validation, and the two
    writers (MySQL when reachable, data/blog-posts.ts as the download fallback).
-   The app router prerender requires static page shells, so callers must
-   handle the returned payloads — no redirect() or revalidatePath() here. */
+   The app router prerender needs static page shells, so no redirect() here —
+   callers handle the returned payloads. Writes DO purge the public blog cache
+   (revalidateBlog below) so an edit is live on /blog without a rebuild. */
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import {
   ADMIN_COOKIE,
@@ -16,7 +18,7 @@ import {
   toBlogPost,
 } from "@/lib/admin";
 import type { BlogPost } from "@/data/blog-posts";
-import { allPosts, blogCategories, BLOG_SOURCE } from "@/lib/posts";
+import { allPosts, blogCategories, storeStatus } from "@/lib/posts";
 import { serializePosts } from "@/lib/admin";
 import { todayISO, validateForm, type PostForm } from "@/lib/admin-format";
 import { sanitizeContentHtml, saveUpload } from "@/lib/admin-upload";
@@ -24,6 +26,8 @@ import { sanitizeContentHtml, saveUpload } from "@/lib/admin-upload";
 export interface AdminState {
   source: "mysql" | "file";
   configured: boolean;
+  /** Why the dashboard fell back to the bundled posts, when it did. */
+  dbError?: string;
   posts: (BlogPost & { id?: number })[];
   categories: string[];
 }
@@ -37,9 +41,14 @@ async function requireAdmin(): Promise<string | null> {
 export async function adminBootstrap(): Promise<AdminState> {
   const denied = await requireAdmin();
   if (denied) return { source: "file", configured: adminConfigured(), posts: [], categories: [] };
-  const posts = (await allPosts()) as (BlogPost & { id?: number })[];
-  const categories = await blogCategories();
-  return { source: BLOG_SOURCE === "file" ? "file" : "mysql", configured: adminConfigured(), posts, categories };
+  const [posts, categories, status] = await Promise.all([allPosts(), blogCategories(), storeStatus()]);
+  return {
+    source: status.source,
+    configured: adminConfigured(),
+    dbError: status.error,
+    posts: posts as (BlogPost & { id?: number })[],
+    categories,
+  };
 }
 
 function takenSlugs(posts: (BlogPost & { id?: number })[], selfId: number | null): Set<string> {
@@ -53,6 +62,21 @@ function takenSlugs(posts: (BlogPost & { id?: number })[], selfId: number | null
 
 function orderByPublishedDesc(posts: (BlogPost & { id?: number })[]): (BlogPost & { id?: number })[] {
   return [...posts].sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
+}
+
+/** The public blog is ISR-cached: purge the touched paths after a write so an
+    edit or delete is visible immediately instead of after the 60s window.
+    Wrapped because revalidatePath throws outside a request scope (build time). */
+function revalidateBlog(...slugs: (string | undefined)[]): void {
+  try {
+    revalidatePath("/blog");
+    revalidatePath("/sitemap.xml");
+    for (const slug of slugs) {
+      if (slug) revalidatePath(`/blog/${slug}`);
+    }
+  } catch {
+    /* not inside a request — nothing to purge */
+  }
 }
 
 export async function adminLogin(input: { password: string }): Promise<{ ok: boolean; error?: string }> {
@@ -147,8 +171,10 @@ export async function adminSavePost(input: { form: PostForm }): Promise<SaveResu
   const withId = { ...post, id: postId } as BlogPost & { id?: number };
   const merged = orderByPublishedDesc([...posts.filter((p) => p.slug !== withId.slug && (p.id ?? null) !== withId.id), withId]);
   const categories = categoriesWith(await blogCategories(), withId.category);
+  const previousSlug = form.id !== null ? posts.find((p) => (p.id ?? null) === form.id)?.slug : undefined;
   try {
     await writePostRow(withId, withId.tags || []);
+    revalidateBlog(withId.slug, previousSlug);
     return { ok: true, posts: merged };
   } catch {
     return {
@@ -173,6 +199,7 @@ export async function adminDeletePost(input: { slug: string }): Promise<SaveResu
     if (id === null) throw new Error("missing id");
     await pool.query("DELETE FROM blog_tags WHERE post_id = ?", [id]);
     await pool.query("DELETE FROM blog_posts WHERE id = ?", [id]);
+    revalidateBlog(input.slug);
     return { ok: true, posts: posts.filter((p) => p.slug !== input.slug) };
   } catch {
     const merged = posts.filter((p) => p.slug !== input.slug);

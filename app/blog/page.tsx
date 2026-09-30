@@ -10,6 +10,11 @@ export const metadata = {
   alternates: { canonical: "/blog" },
 };
 
+/* Reads live from MySQL. ISR keeps the page static-fast and re-checks the
+   database at most once a minute, so posts edited straight in phpMyAdmin show
+   up without a rebuild; adminSavePost/adminDeletePost purge it instantly. */
+export const revalidate = 60;
+
 export default async function BlogPage() {
   const posts = await publishedPosts();
   const categories = await blogCategories();

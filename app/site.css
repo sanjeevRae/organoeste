@@ -6818,6 +6818,9 @@ body:has(.dash-editpage){padding-top:0;--dash-zoom:.95;zoom:var(--dash-zoom)}
 #site .dash-empty{padding:28px 20px;text-align:center;color:#7d8b99;font-size:13.5px;display:flex;flex-direction:column;gap:12px;align-items:center}
 #site .dash-src-note{margin:12px 2px 0;font-size:12px;color:#9aa7b2}
 #site .dash-notice{background:#eef7f1;border:1px solid #cfe6d8;color:#1c6a44;border-radius:10px;padding:10px 14px;font-size:13px;margin:0 0 14px}
+/* Shown when the dashboard could not reach MySQL and fell back to the file. */
+#site .dash-dbwarn{background:#fff6e6;border:1px solid #f1dcae;color:#8a5a12;border-radius:10px;padding:10px 14px;font-size:12.5px;line-height:1.55;margin:0 0 14px}
+#site .dash-dbwarn-err{color:#a3711f;word-break:break-word}
 #site .dash-error{color:#b3261e;font-size:13px;margin:4px 0 0}
 
 #site .dash-panel{border-left:1px solid #eef0f2;background:#fff;min-height:calc(100vh / var(--dash-zoom) - 61px);position:sticky;top:61px;max-height:calc(100vh / var(--dash-zoom) - 61px);display:flex;flex-direction:column;overflow:hidden}
