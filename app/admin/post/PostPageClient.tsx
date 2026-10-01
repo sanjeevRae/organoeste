@@ -1,11 +1,4 @@
 "use client";
-
-/* Full-page editor opened via the panel head's "Open in new tab" menu.
-   Same EditorPanel as /admin, shown as a centered page card. On mount it
-   first tries the draft handed over through sessionStorage (so unsaved
-   edits travel to the new tab); otherwise it loads the post from the
-   server and redirects to /admin when signed out. */
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { BlogPost } from "@/data/blog-posts";

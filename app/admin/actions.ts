@@ -1,10 +1,4 @@
 "use server";
-
-/* Server actions behind /admin: login/logout, validation, and the two
-   writers (MySQL when reachable, data/blog-posts.ts as the download fallback).
-   The app router prerender needs static page shells, so no redirect() here —
-   callers handle the returned payloads. Writes DO purge the public blog cache
-   (revalidateBlog below) so an edit is live on /blog without a rebuild. */
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";

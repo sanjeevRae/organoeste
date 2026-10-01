@@ -1,13 +1,3 @@
--- Organoeste blog store: tables + seed for cPanel (phpMyAdmin import).
--- 1. cPanel > MySQL Databases: create the database AND a user, then add the
---    user to the database with ALL PRIVILEGES. cPanel users have no
---    CREATE DATABASE right, so this file deliberately has no CREATE DATABASE
---    and no USE statement.
--- 2. phpMyAdmin: select that database in the left sidebar, open the Import
---    tab, choose this file and press Go.
--- Safe to re-run: tables are created IF NOT EXISTS and seed rows use
--- ON DUPLICATE KEY UPDATE, so re-running only refreshes the content.
-
 CREATE TABLE IF NOT EXISTS blog_categories (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL UNIQUE,

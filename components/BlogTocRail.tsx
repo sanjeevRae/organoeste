@@ -1,8 +1,4 @@
 "use client";
-
-/* Table of contents for the article's left rail, with a scroll spy: the section
-   currently under the header stays black and bold, the rest stay grey. */
-
 import { useEffect, useState } from "react";
 import type { TocItem } from "@/lib/blog";
 
@@ -21,8 +17,6 @@ export default function BlogTocRail({ items }: { items: TocItem[] }) {
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
         if (top) setActive(top.target.id);
       },
-      // Anything in the band between the fixed navbar and ~40% of the viewport
-      // counts as "being read".
       { rootMargin: "-140px 0px -60% 0px" }
     );
     targets.forEach((el) => observer.observe(el));

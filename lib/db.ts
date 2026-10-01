@@ -1,19 +1,11 @@
-// MySQL connection for the blog store. Used by the /admin dashboard and the
-// public blog pages — never import this from a client component.
-// Configure with DATABASE_URL (preferred) or the discrete DB_* variables
-// (the safer route on cPanel, where generated passwords often contain @ # !).
 import mysql from "mysql2/promise";
 
 let pool: mysql.Pool | null = null;
 
-/** Is a database configured at all? Without it everything falls back to the
-    bundled data/blog-posts.ts, so the site still builds and serves. */
 export function dbConfigured(): boolean {
   return !!(process.env.DATABASE_URL?.trim() || process.env.DB_HOST?.trim());
 }
 
-/** mysql://user:pass@host:3306/dbname?ssl=true — parsed like mysql2 does
-    (percent-decoded credentials) so a password with @ or # cannot break it. */
 function configFromUrl(raw: string): mysql.ConnectionOptions {
   const u = new URL(raw);
   return {
@@ -25,7 +17,6 @@ function configFromUrl(raw: string): mysql.ConnectionOptions {
   };
 }
 
-/** Shared pool (created once, reused everywhere). Throws only when used. */
 export function db(): mysql.Pool {
   if (pool) return pool;
   const url = process.env.DATABASE_URL?.trim();
@@ -38,8 +29,6 @@ export function db(): mysql.Pool {
     waitForConnections: true,
     connectionLimit: Number(process.env.DB_POOL_SIZE || 5),
     connectTimeout: 8000,
-    // Shared hosting drops idle sockets; keeping them warm avoids the first
-    // query after a quiet period failing with PROTOCOL_CONNECTION_LOST.
     enableKeepAlive: true,
     keepAliveInitialDelay: 10000,
     ...(ssl ? { ssl } : {}),
@@ -59,17 +48,12 @@ export function db(): mysql.Pool {
 
 export interface DbHealth {
   ok: boolean;
-  /** False when no DATABASE_URL/DB_HOST is set, i.e. file mode on purpose. */
   configured: boolean;
   posts: number;
-  /** False when the server answered but the tables were never imported. */
   tables: boolean;
   error?: string;
 }
 
-/** Reachability check used by the admin bootstrap: server up + table readable.
-    Distinguishes "no credentials", "cannot connect" and "schema missing" so the
-    dashboard can say what to fix after the first deploy. */
 export async function dbPing(): Promise<DbHealth> {
   if (!dbConfigured()) {
     return { ok: false, configured: false, posts: 0, tables: false, error: "Sem DATABASE_URL/DB_HOST no ambiente." };

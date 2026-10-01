@@ -1,5 +1,3 @@
-/* Reveal — wrapper that fades its children in the first time they enter the
-   viewport (reveal-pending → reveal-in), with an optional stagger delay. */
 "use client";
 
 import { useEffect, useRef, useState } from "react";

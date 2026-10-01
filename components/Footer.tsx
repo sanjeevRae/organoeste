@@ -1,4 +1,3 @@
-/* Footer — logo, quick links, contact details, social icons and copyright. */
 
 export default function Footer() {
   return (

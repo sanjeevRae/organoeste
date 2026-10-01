@@ -1,6 +1,3 @@
-/* Clients — combined "empresas que já confiam" logo band plus the
-   "leve a Organoeste para sua cidade" CTA (photo, cards and WhatsApp button). */
-
 export default function Clients() {
   return (
     <div className="clients">

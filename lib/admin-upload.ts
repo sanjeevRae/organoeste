@@ -1,11 +1,4 @@
-// Upload + sanitize helpers for the admin rich-text editor (server-only).
-// Images are stored as real files under public/uploads, so the article HTML
-// references small /uploads/<name> URLs instead of huge data: blobs.
-//
-// The sanitizer is the gate between the browser editor and the database: it
-// keeps only an allowlist of formatting tags plus a small set of safe inline
-// style declarations, so pasted Word/Google-Docs markup cannot smuggle scripts
-// or layout-breaking CSS into the published article.
+
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 

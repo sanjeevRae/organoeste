@@ -1,10 +1,4 @@
 "use client";
-
-/* Blog dashboard matching the product mockup: left nav, searchable post
-   table with status pills, and a slide-in "Edit Blog Post" panel that hosts
-   the Word-style RichEditor. Data still flows through adminBootstrap() and
-   the MySQL/file server actions. */
-
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { BlogPost } from "@/data/blog-posts";
 import { BLANK_POST, toForm, type PostForm } from "@/lib/admin-format";
@@ -209,7 +203,7 @@ export function EditorPanel({
         <div className="dash-panel-head-actions">
           {showPopout && popoutHref ? (
             <span className="dash-popout" ref={menuRef}>
-              <button type="button" className="dash-iconbtn" aria-label="More options" title="More options" aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuOpen((v) => !v)}><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8" /><circle cx="12" cy="12" r="1.8" /><circle cx="19" cy="12" r="1.8" /></svg></button>
+              <button type="button" className="dash-iconbtn" aria-label="More options" title="More options" aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuOpen((v) => !v)}>Open</button>
               {menuOpen ? (
                 <span className="dash-rowmenu-pop" role="menu">
                   <a role="menuitem" href={popoutHref} target="_blank" rel="noopener" onClick={() => setMenuOpen(false)}>Open in new tab</a>
@@ -597,9 +591,16 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
     <div className="dash">
       <aside className="dash-side" aria-label="Primary">
         <div className="dash-side-top">
-          <span className="dash-home" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h5v-6h4v6h5V9.5" /></svg></span>
-          <span className="dash-side-title">Dashboard</span>
+          <div className="dash-side-brand">
+            <span className="dash-home" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h5v-6h4v6h5V9.5" /></svg></span>
+            <span className="dash-side-title">Dashboard</span>
+          </div>
+          <a className="dash-side-blog" href="#blog-posts" aria-label="Blog posts">
+            <span className="dash-blog-ico" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="3" /><path d="M3 8.5h18M7.5 4v4.5" /><circle cx="15" cy="12.6" r="2.3" /><path d="M13.2 16.6 10 19.5M17.6 10.5 20 7" /></svg></span>
+            <span>Blog</span>
+          </a>
         </div>
+          
         <div className="dash-help">
           <div className="dash-help-head">
             <span className="dash-help-ico" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="3.4" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1" /></svg></span>

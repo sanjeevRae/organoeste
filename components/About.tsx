@@ -1,5 +1,3 @@
-/* About section — two stacked bands: the OLAM block (licensed collection) and the
-   bioconversion block, with scroll reveals (data-aos) and the video lightbox. */
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 

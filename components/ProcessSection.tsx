@@ -1,4 +1,3 @@
-/* Process section — logistics, own methodology and composting yard highlights. */
 
 export default function ProcessSection() {
   return (

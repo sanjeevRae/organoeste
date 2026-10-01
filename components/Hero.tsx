@@ -1,5 +1,3 @@
-/* Hero section — full-width banner with the background image plus the one-time
-   first-load entrance (fade + rise) for the title and subtitle. */
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useAosReveal } from "./useAosReveal";

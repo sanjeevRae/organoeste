@@ -1,6 +1,3 @@
-/* Static blog store. Full CMS field shape so a future dashboard can
-   create/edit/hide posts without touching templates. Only published shown. */
-
 export type BlogStatus = "draft" | "published";
 
 export interface BlogPost {

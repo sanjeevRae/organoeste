@@ -1,10 +1,3 @@
-/* Heading — top band of the home page (before Hero): the OLAM trucks artwork
-   (public/images/solution.png) as the full-width background, carrying the main
-   headline, the two CTAs, the trust badges and the four segments card.
-   Styles are namespaced as .heading-* in app/site.css.
-   The band copy flies up once on load: the first frame after mount swaps
-   `heading-enter` for `heading-loaded` (same pattern as the sol-page Hero),
-   and the staggered transitions in app/site.css take over. */
 "use client";
 
 import { useEffect, useRef, useState } from "react";

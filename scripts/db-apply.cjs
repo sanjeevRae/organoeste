@@ -1,18 +1,3 @@
-#!/usr/bin/env node
-/* Database helper for the blog store. One entry point, three modes:
-
-     node scripts/db-apply.cjs           # create tables + seed (idempotent)
-     node scripts/db-apply.cjs --check   # read-only: can the app reach the DB?
-     node scripts/db-apply.cjs --dry     # print what it would run, no connection
-
-   Credentials come from .env (DATABASE_URL or DB_HOST/DB_PORT/DB_USER/
-   DB_PASSWORD/DB_NAME) or from flags (--host --port --user --password
-   --database --url). Schema is read from scripts/db_setup.sql (so it can never
-   drift from the phpMyAdmin import file) and rows are inserted with real
-   placeholders, which avoids every quoting/escaping problem of raw SQL.
-
-   Created for the cPanel push: run --check first, then the seeder, and only
-   start the Node app once the check reports the tables as ready. */
 const fs = require("fs");
 const path = require("path");
 

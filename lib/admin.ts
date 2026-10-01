@@ -1,6 +1,4 @@
-// SERVER ONLY — do not import from client components (uses node:crypto).
-// Helpers for the /admin dashboard: password gate + regeneration of
-// data/blog-posts.ts as a validated, drop-in TypeScript file.
+
 import { createHash } from "crypto";
 import type { BlogPost } from "@/data/blog-posts";
 import { type PostForm, toStorage } from "./admin-format";

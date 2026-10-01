@@ -1,9 +1,4 @@
 "use client";
-
-/* The toolbar under the article title: "Ouvir artigo" (Speech Synthesis, used as
-   a progressive enhancement: the row degrades to a plain duration where the API
-   is missing) and "Compartilhar" (native share sheet, clipboard fallback). */
-
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const ARTICLE_SELECTOR = ".blg-content";

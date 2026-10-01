@@ -1,9 +1,3 @@
--- Organoeste blog store: schema + seed (local dev / server with root access).
--- Run against MySQL 5.7+, MariaDB 10.4+ (utf8mb4, InnoDB FULLTEXT):
---   mysql -u root -p < scripts/db_setup.sql
--- Safe to re-run: tables are created IF NOT EXISTS and seed rows use
--- ON DUPLICATE KEY UPDATE, so re-running only refreshes the content.
-
 CREATE DATABASE IF NOT EXISTS `organoeste` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `organoeste`;
 

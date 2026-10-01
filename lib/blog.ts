@@ -2,9 +2,6 @@ import { type BlogPost } from "@/data/blog-posts";
 
 export const SITE_URL = "https://www.organoeste.com.br";
 
-/** Pure helpers only — safe to import from client components.
-    Post reads live behind lib/posts.ts (MySQL first, TS file fallback);
-    keep server-only modules (db, fs, crypto) out of this file. */
 
 export function sortPublished(posts: BlogPost[]): BlogPost[] {
   return [...posts]

@@ -1,26 +1,13 @@
 "use client";
 
-/* Editor visual estilo Word para o painel do blog, sem dependências externas:
-   contentEditable + comandos do navegador + manipulação própria de DOM.
-
-   Recursos: estilos de bloco, fonte/tamanho/cor, marca-texto, listas, recuos,
-   alinhamento, links, imagens (upload, URL, colar e arrastar), vídeo do YouTube,
-   tabelas editáveis, código, sobrescrito/subscrito, caracteres especiais,
-   localizar/substituir, atalhos de Markdown, modo foco, contagem de palavras e
-   rascunho automático no navegador. */
-
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export interface RichEditorProps {
   value: string;
   onChange: (html: string) => void;
-  /** Uploads a file and resolves to its public URL (null when it failed). */
   onUpload: (file: File) => Promise<string | null>;
-  /** Called by Ctrl/Cmd+S so the page can save without a trip to the toolbar. */
   onSave?: () => void;
-  /** Used to keep an automatic draft in localStorage. */
   draftKey?: string;
-  /** Compact dashboard mode: hides the full footer behind a single "Words: N" line. */
   minimalFoot?: boolean;
 }
 
@@ -278,7 +265,6 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
     return el;
   }
 
-  /** Runs a browser editing command on the remembered selection. */
   const run = useCallback(
     (command: string, argument?: string) => {
       const el = focusDoc();
@@ -742,7 +728,6 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
     return true;
   }
 
-  /** "# ", "## ", "> ", "- " and "1. " turn the current line into a block. */
   function markdownBlock(): boolean {
     const block = currentBlock();
     if (!block) return false;
@@ -796,7 +781,6 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
     return true;
   }
 
-  /** **negrito**, *itálico* and `código` convert as the closing mark is typed. */
   function markdownInline(marker: "*" | "`"): boolean {
     const sel = window.getSelection();
     if (!sel || sel.rangeCount === 0) return false;
@@ -955,7 +939,6 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
       /* storage may be unavailable */
     }
     // Only checked when the editor opens another post.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draftKey]);
 
   useEffect(() => {

@@ -1,10 +1,3 @@
-/* Generates the SQL seed from the live data/blog-posts.ts content
-   (run: node scripts/seed-mysql.cjs). Transpiles the TS store so the seed
-   always matches the real posts instead of a hand copy. Writes two files:
-     scripts/db_setup.sql         — full setup (local dev / root user)
-     scripts/db_setup.cpanel.sql  — tables + seed only, no CREATE DATABASE
-                                    (paste into phpMyAdmin after creating the
-                                    database in the cPanel panel) */
 const fs = require("fs");
 const ts = require("typescript");
 

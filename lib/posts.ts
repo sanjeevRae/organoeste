@@ -1,6 +1,3 @@
-// SERVER ONLY — reads the live blog store. MySQL first, then the bundled
-// data/blog-posts.ts fallback, so pages keep building with no DATABASE_URL.
-// Never import this (or mysql2) from a client component.
 import { blogPosts, BLOG_CATEGORIES, type BlogPost } from "@/data/blog-posts";
 import { db, dbConfigured, dbPing } from "./db";
 import { sortPublished } from "./blog";

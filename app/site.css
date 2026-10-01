@@ -6742,7 +6742,11 @@ body:has(.dash-editpage){padding-top:0;--dash-zoom:.95;zoom:var(--dash-zoom)}
 /* ----- Dashboard mockup UI (dash-*): sidebar + table + editor panel ----- */
 #site .dash{min-height:calc(100vh / var(--dash-zoom));display:flex;background:#fff;color:#1e2a36;font-family:Inter,Montserrat,Arial,sans-serif}
 #site .dash-side{width:184px;flex:none;border-right:1px solid #eef0f2;background:#fbfbfb;display:flex;flex-direction:column;justify-content:space-between;padding:20px 14px 16px;position:sticky;top:0;height:calc(100vh / var(--dash-zoom));overflow-y:auto}
-#site .dash-side-top{display:flex;align-items:center;gap:12px;color:#66788a;font-weight:500;font-size:15px}
+#site .dash-side-top{display:flex;flex-direction:column;align-items:stretch;gap:10px;color:#66788a;font-weight:500;font-size:15px}
+#site .dash-side-brand{display:flex;align-items:center;gap:12px;padding-top:10px}
+#site .dash-side-blog{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:#0d7e6f;color:#fff;font-size:14px;font-weight:600;text-decoration:none}
+#site .dash-side-blog:hover{background:#0a6d60}
+#site .dash-side-blog .dash-blog-ico{display:inline-flex}
 #site .dash-side-title{font-weight:600;font-size:14.5px;color:#22303d}
 #site .dash-home{width:22px;height:22px;color:#66788a;display:inline-flex}
 #site .dash-home svg{width:22px;height:22px}
