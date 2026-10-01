@@ -1,8 +1,8 @@
 
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { uploadsDir } from "./upload-dir";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 const MAX_BYTES = 5 * 1024 * 1024;
 
 const ALLOWED_EXT: Record<string, string> = {
@@ -20,9 +20,6 @@ export function uploadErrorFor(file: File): string | null {
   if (!ext) return "Formato não suportado. Use JPG, PNG, WebP, GIF ou SVG.";
   return null;
 }
-
-/** Absolute path where admin uploads are written (public/uploads). */
-export const UPLOADS_DIR = UPLOAD_DIR;
 
 export interface SavedUpload {
   /** Public URL the post must store, e.g. /media/1700000000000-ab12cd-capa.png */
@@ -46,9 +43,10 @@ export async function saveUpload(file: File): Promise<SavedUpload> {
       .replace(/^-+|-+$/g, "")
       .slice(0, 40) || "imagem";
   const name = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${base}${ext}`;
-  await mkdir(UPLOAD_DIR, { recursive: true });
+  const dir = uploadsDir();
+  await mkdir(dir, { recursive: true });
   const bytes = Buffer.from(await file.arrayBuffer());
-  const target = path.join(UPLOAD_DIR, name);
+  const target = path.join(dir, name);
   await writeFile(target, bytes);
   // Served by the /media route (app/media/[name]/route.ts) instead of plain
   // /uploads: on hosts where the static file server does not expose freshly

@@ -1,13 +1,14 @@
 import { createReadStream, promises as fs } from "node:fs";
 import { Readable } from "node:stream";
 import path from "node:path";
+import { uploadsDir } from "@/lib/upload-dir";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/** Same directory the uploader writes to (lib/admin-upload.ts), so the file is
-    always found even when the host serves `public/` from somewhere else. */
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+// NOTE: never hardcode the folder here — uploadsDir() is the single source of
+// truth shared with the uploader (lib/admin-upload.ts), plus the optional
+// UPLOAD_DIR env override for hosts with an exotic layout.
 
 const MIME: Record<string, string> = {
   ".jpg": "image/jpeg",
@@ -28,9 +29,10 @@ function notFound(): Response {
 /** Validated absolute path for a request name, or null (traversal / bad ext). */
 function resolveUploadPath(name: string): string | null {
   if (!SAFE_NAME.test(name)) return null;
-  const resolved = path.resolve(UPLOAD_DIR, name);
-  // Comparing against the resolved basename keeps reads inside public/uploads.
-  return resolved === path.join(UPLOAD_DIR, path.basename(name)) ? resolved : null;
+  const dir = uploadsDir();
+  const resolved = path.resolve(dir, name);
+  // Comparing against the resolved basename keeps reads inside the folder.
+  return resolved === path.join(dir, path.basename(name)) ? resolved : null;
 }
 
 function headersFor(size: number, type: string): Headers {
