@@ -1,6 +1,6 @@
 import { blogPosts, BLOG_CATEGORIES, type BlogPost } from "@/data/blog-posts";
 import { db, dbConfigured, dbPing } from "./db";
-import { sortPublished } from "./blog";
+import { absoluteAttrs, mediaSrc, sortPublished } from "./blog";
 
 export const BLOG_SOURCE: "mysql" | "file" = process.env.BLOG_SOURCE === "file" ? "file" : "mysql";
 
@@ -29,6 +29,12 @@ async function rowsFromDb(): Promise<BlogPost[] | null> {
       const { id, featured, showToc, ...rest } = r;
       return {
         ...rest,
+        // Rows hand-edited in phpMyAdmin may carry a relative image path or a
+        // relative src inside the HTML; make them root-relative so the browser
+        // never resolves the file against the current page URL.
+        image: mediaSrc(rest.image as string | null),
+        ogImage: mediaSrc(rest.ogImage as string | null) || undefined,
+        contentHtml: absoluteAttrs(rest.contentHtml as string),
         featured: featured ? true : undefined,
         // undefined means "show" everywhere downstream
         showToc: showToc === 0 || showToc === false ? false : undefined,

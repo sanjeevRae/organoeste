@@ -53,3 +53,48 @@ export function tocFromHtml(html: string): TocItem[] {
   }
   return items;
 }
+
+/** True for "https://…", "data:…", "mailto:…" — anything already absolute. */
+function hasScheme(value: string): boolean {
+  return /^[a-z][a-z0-9+.-]*:/i.test(value);
+}
+
+/** Folders that live directly under public/ — a bare "images/x.png" belongs there. */
+const PUBLIC_DIRS = /^(?:images|uploads|media|icons|fonts)\//i;
+
+/** Turns a relative value into a root-relative one. Unknown names are assumed to
+    be panel uploads (that is where the editor puts its files). */
+function rootRelative(value: string, fallback: "/uploads" | "/"): string {
+  const bare = value.replace(/^(?:\.\/)+/, "").replace(/^\/+/, "");
+  if (!bare) return "";
+  if (PUBLIC_DIRS.test(bare)) return `/${bare}`;
+  return fallback === "/" ? `/${bare}` : `/uploads/${bare}`;
+}
+
+/** Cover/OG image path that always starts at the site root.
+    Rows edited straight in phpMyAdmin (or written by older versions) sometimes
+    lose the leading slash; without it the browser resolves the image against
+    the current page and the file 404s with only its name in the console. */
+export function mediaSrc(value: string | null | undefined): string {
+  const src = (value ?? "").trim();
+  if (!src) return "";
+  if (src.startsWith("/") || hasScheme(src)) return src; // /media/…, /images/…, https://…
+  return rootRelative(src, "/uploads");
+}
+
+/** Same repair for src/href inside the stored HTML (src="foto.png").
+    <img> points at a file (/uploads by default), <a> at a page (/ by default). */
+export function absoluteAttrs(html: string): string {
+  if (!html) return html;
+  return html.replace(
+    /(\s(?:src|href)\s*=\s*)("([^"]*)"|'([^']*)')/gi,
+    (full, prefix: string, quoted: string, dbl: string | undefined, single: string | undefined) => {
+      const value = (dbl ?? single ?? "").trim();
+      if (!value || value.startsWith("/") || value.startsWith("#") || hasScheme(value)) return full;
+      const fixed = rootRelative(value, /\bsrc\b/i.test(prefix) ? "/uploads" : "/");
+      if (!fixed) return full;
+      const quote = quoted.startsWith("'") ? "'" : '"';
+      return `${prefix}${quote}${fixed}${quote}`;
+    },
+  );
+}

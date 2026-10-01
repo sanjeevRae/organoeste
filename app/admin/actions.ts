@@ -139,14 +139,14 @@ function categoriesWith(categories: string[], category: string): string[] {
   return categories.includes(category) ? categories : [...categories, category];
 }
 
-export async function adminUploadImage(input: FormData): Promise<{ ok: boolean; url?: string; error?: string }> {
+export async function adminUploadImage(input: FormData): Promise<{ ok: boolean; url?: string; error?: string; file?: string }> {
   const denied = await requireAdmin();
   if (denied) return { ok: false, error: denied };
   const file = input.get("file");
   if (!(file instanceof File)) return { ok: false, error: "Nenhum arquivo recebido." };
   try {
-    const url = await saveUpload(file);
-    return { ok: true, url };
+    const saved = await saveUpload(file);
+    return { ok: true, url: saved.url, file: saved.file };
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : "Não foi possível salvar a imagem." };
   }

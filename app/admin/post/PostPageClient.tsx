@@ -85,8 +85,9 @@ export default function FullPageEditor({
       const probe = await fetch(res.url, { method: "HEAD", cache: "no-store" });
       if (!probe.ok && probe.status !== 405 && probe.status !== 501) {
         setNotice(
-          `Imagem salva, mas o site respondeu ${probe.status} ao abrir ${res.url}. ` +
-          `Confira as permissões de public/uploads e as regras de proxy/rewrite do servidor.`,
+          `Imagem salva em ${res.file ?? "public/uploads"}, mas o site respondeu ` +
+          `${probe.status} ao abrir ${res.url}. Confira se essa pasta é a mesma que o ` +
+          `processo Node usa (cwd) e as regras de proxy/rewrite do servidor.`,
         );
       }
     } catch {

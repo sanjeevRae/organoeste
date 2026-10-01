@@ -529,8 +529,9 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
       const probe = await fetch(res.url, { method: "HEAD", cache: "no-store" });
       if (!probe.ok && probe.status !== 405 && probe.status !== 501) {
         setNotice(
-          `Imagem salva, mas o site respondeu ${probe.status} ao abrir ${res.url}. ` +
-          `Confira as permissões de public/uploads e as regras de proxy/rewrite do servidor.`,
+          `Imagem salva em ${res.file ?? "public/uploads"}, mas o site respondeu ` +
+          `${probe.status} ao abrir ${res.url}. Confira se essa pasta é a mesma que o ` +
+          `processo Node usa (cwd) e as regras de proxy/rewrite do servidor.`,
         );
       }
     } catch {
@@ -639,10 +640,9 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
           <div className="dash-top-right">
             <button type="button" className="dash-iconbtn dash-bell" aria-label="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6" /><path d="M10 20a2 2 0 0 0 4 0" /></svg></button>
             <div className="dash-user" ref={menuRef}>
-              <span className="dash-avatar" aria-hidden="true">SS</span>
+              <span className="dash-avatar" aria-hidden="true">A</span>
               <span className="dash-user-meta">
-                <span className="dash-user-name">Sanjeev Shrestha</span>
-                <span className="dash-user-role">Admin</span>
+                <span className="dash-user-name">admin</span>
               </span>
               <button
                 type="button"
@@ -685,14 +685,6 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
                 </button>
               ))}
             </div>
-
-            {initial.source === "file" ? (
-              <p className="dash-dbwarn" role="status">
-                <strong>MySQL offline</strong> — showing the bundled data/blog-posts.ts. Saves are
-                written to a downloadable file instead of the database.
-                {initial.dbError ? <span className="dash-dbwarn-err"> {initial.dbError}</span> : null}
-              </p>
-            ) : null}
 
             {notice && !form ? <p className="dash-notice" role="status">{notice}</p> : null}
 

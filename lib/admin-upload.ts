@@ -21,8 +21,19 @@ export function uploadErrorFor(file: File): string | null {
   return null;
 }
 
-/** Saves an uploaded image and returns its public URL (/media/xxx.ext). */
-export async function saveUpload(file: File): Promise<string> {
+/** Absolute path where admin uploads are written (public/uploads). */
+export const UPLOADS_DIR = UPLOAD_DIR;
+
+export interface SavedUpload {
+  /** Public URL the post must store, e.g. /media/1700000000000-ab12cd-capa.png */
+  url: string;
+  /** Where the file was written on the server (shown in the dashboard when the
+      image is saved but the site cannot open it). */
+  file: string;
+}
+
+/** Saves an uploaded image and returns its URL plus the file that was written. */
+export async function saveUpload(file: File): Promise<SavedUpload> {
   const bad = uploadErrorFor(file);
   if (bad) throw new Error(bad);
   const ext = ALLOWED_EXT[file.type];
@@ -37,11 +48,12 @@ export async function saveUpload(file: File): Promise<string> {
   const name = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${base}${ext}`;
   await mkdir(UPLOAD_DIR, { recursive: true });
   const bytes = Buffer.from(await file.arrayBuffer());
-  await writeFile(path.join(UPLOAD_DIR, name), bytes);
+  const target = path.join(UPLOAD_DIR, name);
+  await writeFile(target, bytes);
   // Served by the /media route (app/media/[name]/route.ts) instead of plain
   // /uploads: on hosts where the static file server does not expose freshly
   // uploaded files, /uploads/xxx 404s even though the write succeeded.
-  return `/media/${name}`;
+  return { url: `/media/${name}`, file: target };
 }
 
 // ---------- sanitizer allowlists ----------
