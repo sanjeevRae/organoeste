@@ -171,7 +171,7 @@ DB_NAME="conta_organoeste"
 - [ ] `.env` na raiz do app com `DB_*` e um `ADMIN_PASSWORD` forte.
 - [ ] `npm install` e `npm run build` (Node 20+) com `NODE_ENV=production`.
 - [ ] App Node publicado (`npm start`) e **reiniciado** depois de alterar o `.env`.
-- [ ] `public/uploads` com permissão de escrita (é onde ficam as imagens enviadas pelo editor).
+- [ ] `public/uploads` com permissão de escrita (é onde ficam as imagens enviadas pelo editor; o site as entrega por `/media/<arquivo>`).
 - [ ] `npm run db:check` ou `/admin` confirmando que o aviso "MySQL offline" não aparece.
 
 ### 5. Diagnóstico rápido

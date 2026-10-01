@@ -522,6 +522,20 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
       setNotice(res.error ?? "Could not upload image.");
       return null;
     }
+    // Self-check: the image must also be reachable through the browser. Hosts
+    // that serve public/uploads from another folder would otherwise store a
+    // cover nobody can see.
+    try {
+      const probe = await fetch(res.url, { method: "HEAD", cache: "no-store" });
+      if (!probe.ok && probe.status !== 405 && probe.status !== 501) {
+        setNotice(
+          `Imagem salva, mas o site respondeu ${probe.status} ao abrir ${res.url}. ` +
+          `Confira as permissões de public/uploads e as regras de proxy/rewrite do servidor.`,
+        );
+      }
+    } catch {
+      /* probe blocked or offline — keep the URL the server returned */
+    }
     return res.url;
   }
 

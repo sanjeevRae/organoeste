@@ -117,8 +117,8 @@ export function validateForm(p: PostForm, taken: Set<string>, selfId: number | n
   if (!p.category.trim()) return "Categoria é obrigatória.";
   if (!p.author.trim()) return "Autor é obrigatório.";
   if (!DATE_RE.test(p.publishedAt)) return "Data de publicação inválida (aaaa-mm-dd).";
-  if (!p.image.trim() || !/^(\/images\/|\/uploads\/|https?:\/\/)/.test(p.image.trim()))
-    return "Capa precisa ser um caminho de /images/ ou /uploads/, ou uma URL https:// (ou envie pela galeria).";
+  if (!p.image.trim() || !/^(\/images\/|\/uploads\/|\/media\/|https?:\/\/)/.test(p.image.trim()))
+    return "Capa precisa ser um caminho de /images/, /uploads/ ou /media/, ou uma URL https:// (ou envie pela galeria).";
   if (!p.contentHtml.trim() || p.contentHtml.trim() === "<p></p>")
     return "O conteúdo do artigo está vazio.";
   return null;

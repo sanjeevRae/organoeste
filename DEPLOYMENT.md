@@ -50,12 +50,26 @@ npm run db:check     # conexão + tabelas + contagem de linhas
 | --- | --- | --- |
 | `app/`, `components/`, `lib/`, `data/` | código do site e do painel | só leitura em produção |
 | `public/` | imagens, fontes, ícones | servido direto pelo Next |
-| `public/uploads/` | **imagens enviadas pelo painel** | precisa ser **gravável** pelo processo Node |
+| `public/uploads/` | **imagens enviadas pelo painel** | precisa ser **gravável** pelo processo Node; entregues pela rota `/media/<arquivo>` |
 | `scripts/` | criar tabelas, semear, conferir o banco | pode rodar por SSH ou local |
 | `.env` | senha do painel + credenciais do MySQL | **nunca** versionar; criar no servidor |
 | `package.json` / `package-lock.json` | dependências (`mysql2`, `next`, `react`) | instalar no servidor com `npm ci`/`npm install` |
 | `.next/` | build de produção | gerado por `npm run build` |
 | `server.js` | startup file para cPanel/Passenger | usa o mesmo build do `next start` |
+
+### Como as imagens do painel são servidas
+
+O painel grava o arquivo em `public/uploads/` e guarda no post a URL
+`/media/<arquivo>`. Quem entrega a imagem é a rota `app/media/[name]/route.ts`,
+que lê `public/uploads` **do mesmo processo Node** que recebeu o upload. Isso
+resolve o caso clássico do cPanel em que o arquivo até é salvo, mas
+`/uploads/<arquivo>` responde **404**: o Apache procura o arquivo no *document
+root* (por exemplo `public_html/`) enquanto o app Node guarda em outra pasta.
+
+URLs antigas, já salvas no banco como `/uploads/<arquivo>`, continuam abrindo:
+o `next.config.ts` faz `rewrite` de `/uploads/:name` para `/media/:name`. O
+rewrite só entra quando **não** existe arquivo estático com esse nome, então
+nada muda em servidor onde o `public/` já é servido corretamente.
 
 ### Pastas que **não** devem ser enviadas
 
@@ -522,6 +536,7 @@ npm run db:push      # aplica no banco configurado
 | `ETIMEDOUT` / `ENOTFOUND` | firewall, host errado, banco remoto não liberado | libere o IP em **Remote MySQL®** |
 | Acentos viram `?` ou `Ã©` | banco/charset não é `utf8mb4` | recrie com o SQL do projeto; no import use `utf-8` (phpMyAdmin) ou `--default-character-set=utf8mb4` (CLI) |
 | Upload de imagem falha | permissão ou limite | `chmod 755 public/uploads`; máx. 5 MB (JPG/PNG/WebP/GIF/SVG) |
+| Upload "dá certo" (o arquivo aparece na pasta) mas a imagem **não aparece** no site | a URL antiga `/uploads/<arquivo>` era resolvida pelo Apache/document root e não pelo app Node; ou existem duas cópias do projeto e o arquivo foi para a pasta que não é servida | atualize o código (a capa passa a usar `/media/<arquivo>`, servido por `app/media/[name]/route.ts`), rode `npm run build` + **Restart** e confira que só existe **uma** cópia do app no Passenger |
 | Site mostra conteúdo antigo | cache ISR (até 60 s) ou banco trocado sem restart | aguarde 1 min, confira o *Source:* no painel e reinicie se trocou o `.env` |
 | Não consigo entrar em `/admin` | `ADMIN_PASSWORD` diferente da digitada | ajuste no `.env` + Restart (sem definir, o padrão é `admin123`) |
 | Build falha com *Cannot find module 'typescript'* | instalou com `--omit=dev` | rode `npm install` completo (o build usa devDependencies) |
