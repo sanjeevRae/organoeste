@@ -14,6 +14,7 @@ import {
 import type { BlogPost } from "@/data/blog-posts";
 import { allPosts, blogCategories, storeStatus } from "@/lib/posts";
 import { serializePosts } from "@/lib/admin";
+import { ensureSchema, schemaState, type SchemaState } from "@/lib/schema";
 import { todayISO, validateForm, type PostForm } from "@/lib/admin-format";
 import { sanitizeContentHtml, saveUpload } from "@/lib/admin-upload";
 
@@ -22,6 +23,8 @@ export interface AdminState {
   configured: boolean;
   /** Why the dashboard fell back to the bundled posts, when it did. */
   dbError?: string;
+  /** Result of ensuring the tables exist (created/repair/error). */
+  schema: SchemaState;
   posts: (BlogPost & { id?: number })[];
   categories: string[];
 }
@@ -34,12 +37,16 @@ async function requireAdmin(): Promise<string | null> {
 
 export async function adminBootstrap(): Promise<AdminState> {
   const denied = await requireAdmin();
-  if (denied) return { source: "file", configured: adminConfigured(), posts: [], categories: [] };
+  if (denied) return { source: "file", configured: adminConfigured(), schema: schemaState(), posts: [], categories: [] };
+  // Opening the dashboard is what creates/repairs the tables, so a database
+  // created in cPanel starts working without importing any SQL file.
+  await ensureSchema();
   const [posts, categories, status] = await Promise.all([allPosts(), blogCategories(), storeStatus()]);
   return {
     source: status.source,
     configured: adminConfigured(),
     dbError: status.error,
+    schema: schemaState(),
     posts: posts as (BlogPost & { id?: number })[],
     categories,
   };
@@ -133,6 +140,8 @@ export interface SaveResult {
   fileOnly?: boolean;
   download?: { name: string; text: string };
   posts?: (BlogPost & { id?: number })[];
+  /** Where the save landed; the panel uses it to confirm a real DB write. */
+  dbWrite?: "mysql";
 }
 
 function categoriesWith(categories: string[], category: string): string[] {
@@ -166,16 +175,24 @@ export async function adminSavePost(input: { form: PostForm }): Promise<SaveResu
   const merged = orderByPublishedDesc([...posts.filter((p) => p.slug !== withId.slug && (p.id ?? null) !== withId.id), withId]);
   const categories = categoriesWith(await blogCategories(), withId.category);
   const previousSlug = form.id !== null ? posts.find((p) => (p.id ?? null) === form.id)?.slug : undefined;
+  const schema = await ensureSchema();
   try {
     await writePostRow(withId, withId.tags || []);
     revalidateBlog(withId.slug, previousSlug);
-    return { ok: true, posts: merged };
-  } catch {
+    return { ok: true, posts: merged, dbWrite: "mysql" };
+  } catch (err) {
+    // The real MySQL error travels to the panel instead of being swallowed, so
+    // a missing table/column/privilege is visible (and fixable) at a glance.
+    const detail = err instanceof Error ? err.message : String(err);
+    const because = schema.ready ? detail : `${schema.error ?? detail}`;
     return {
       ok: false,
       fileOnly: true,
       download: { name: "blog-posts.ts", text: serializePosts(merged as BlogPost[], categories) },
-      error: "MySQL não respondeu. Baixe o arquivo gerado e substitua data/blog-posts.ts, ou ajuste a conexão e salve de novo.",
+      error:
+        `O banco de dados recusou a gravação: ${because}. ` +
+        `Confira o .env (DB_*), as permissões do usuário MySQL e rode "npm run db:push" no servidor. ` +
+        `Nada foi salvo no banco — use o botão de download apenas como saída de emergência.`,
     };
   }
 }
@@ -186,22 +203,27 @@ export async function adminDeletePost(input: { slug: string }): Promise<SaveResu
   const posts = (await allPosts()) as (BlogPost & { id?: number })[];
   const target = posts.find((p) => p.slug === input.slug);
   if (!target) return { ok: false, error: "Post não encontrado." };
+  const schema = await ensureSchema();
   try {
     const pool = db();
     const [rows] = await pool.query("SELECT id FROM blog_posts WHERE slug = ?", [input.slug]);
     const id = (rows as { id: number }[])[0]?.id ?? target.id ?? null;
-    if (id === null) throw new Error("missing id");
+    if (id === null) throw new Error("post inexistente no banco (id não encontrado)");
     await pool.query("DELETE FROM blog_tags WHERE post_id = ?", [id]);
     await pool.query("DELETE FROM blog_posts WHERE id = ?", [id]);
     revalidateBlog(input.slug);
-    return { ok: true, posts: posts.filter((p) => p.slug !== input.slug) };
-  } catch {
+    return { ok: true, posts: posts.filter((p) => p.slug !== input.slug), dbWrite: "mysql" };
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err);
+    const because = schema.ready ? detail : `${schema.error ?? detail}`;
     const merged = posts.filter((p) => p.slug !== input.slug);
     return {
       ok: false,
       fileOnly: true,
       download: { name: "blog-posts.ts", text: serializePosts(merged as BlogPost[], await blogCategories()) },
-      error: "MySQL não respondeu. Baixe o arquivo sem esse post e substitua data/blog-posts.ts.",
+      error:
+        `O banco de dados recusou a exclusão: ${because}. ` +
+        `O post continua no banco — o download abaixo é só uma saída de emergência.`,
     };
   }
 }

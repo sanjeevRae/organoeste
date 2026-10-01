@@ -1,6 +1,13 @@
 import { type BlogPost } from "@/data/blog-posts";
 
-export const SITE_URL = "https://www.organoeste.com.br";
+/** Absolute site origin used by canonical URLs, JSON-LD and the sitemap.
+    Configure per environment with NEXT_PUBLIC_SITE_URL (or SITE_URL) instead of
+    relying on the fallback below (kept so the site works with no .env at all). */
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  process.env.SITE_URL ||
+  "https://www.organoeste.com.br"
+).replace(/\/+$/, "");
 
 
 export function sortPublished(posts: BlogPost[]): BlogPost[] {

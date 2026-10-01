@@ -77,19 +77,10 @@ function loadSchema() {
     throw new Error("scripts/db_setup.sql ausente — rode: node scripts/seed-mysql.cjs");
   }
   const tables = fs.readFileSync(file, "utf8").match(/CREATE TABLE IF NOT EXISTS[\s\S]*?;/g) || [];
-  if (tables.length < 3) throw new Error("scripts/db_setup.sql sem as 3 tabelas esperadas.");
-  // Migration served by this file (kept here so the app can create exactly
-  // what it needs). Same table is emitted by scripts/seed-mysql.cjs.
-  const MEDIA = `CREATE TABLE IF NOT EXISTS media_files (
-  name VARCHAR(128) NOT NULL PRIMARY KEY,
-  mime VARCHAR(64) NOT NULL,
-  bytes INT UNSIGNED NOT NULL,
-  data LONGBLOB NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  INDEX idx_media_created (created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;`;
+  if (tables.length < 4)
+    throw new Error("scripts/db_setup.sql sem as 4 tabelas esperadas (inclui media_files) — rode: node scripts/seed-mysql.cjs");
 
-  return [...tables.map((s) => s.trim()), MEDIA];
+  return tables.map((s) => s.trim());
 }
 
 const POST_COLS = [
@@ -121,7 +112,6 @@ function postInsertSql() {
   const upd = POST_UPDS.map((c) => `\`${c}\` = ?`).join(", ");
   return `INSERT INTO blog_posts (${cols}) VALUES (${holders}) ON DUPLICATE KEY UPDATE ${upd}`;
 }
-
 
 /** Turns the usual MySQL failures into the exact cPanel fix. */
 function hintFor(err) {

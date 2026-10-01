@@ -15,62 +15,17 @@ const bit = (v) => (v ? 1 : 0);
 /** Database name for the full setup file (override with DB_NAME=...). */
 const DBNAME = (process.env.DB_NAME || "organoeste").replace(/[^a-zA-Z0-9_]/g, "");
 
-/* media_files is the first pushed table below (MEDIA_TABLE_SQL); db-apply.cjs
-   embeds the same migration — compare the two with the media-sql check below. */
+/* The DDL is not repeated here: lib/schema.ts is the single source of truth
+   (the app also applies it at runtime through ensureSchema). */
+const SCHEMA_SRC = fs.readFileSync("lib/schema.ts", "utf8");
+const SCHEMA = [...SCHEMA_SRC.matchAll(/`(CREATE TABLE IF NOT EXISTS[\s\S]*?);`/g)].map((m) => m[1] + ";");
+if (SCHEMA.length !== 4) {
+  throw new Error(`lib/schema.ts: esperava 4 CREATE TABLE, encontrei ${SCHEMA.length}`);
+}
 
 const L = [];
 
-L.push(`CREATE TABLE IF NOT EXISTS media_files (
-  name VARCHAR(128) NOT NULL PRIMARY KEY,
-  mime VARCHAR(64) NOT NULL,
-  bytes INT UNSIGNED NOT NULL,
-  data LONGBLOB NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  INDEX idx_media_created (created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;`, "");
-
-L.push(`CREATE TABLE IF NOT EXISTS blog_categories (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL UNIQUE,
-  sort_order INT NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;`, "");
-
-L.push(`CREATE TABLE IF NOT EXISTS blog_posts (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  slug VARCHAR(160) NOT NULL UNIQUE,
-  title VARCHAR(255) NOT NULL,
-  excerpt TEXT NOT NULL,
-  category VARCHAR(100) NOT NULL,
-  author VARCHAR(160) NOT NULL DEFAULT 'Equipe Organoeste',
-  author_role VARCHAR(160) NOT NULL DEFAULT '',
-  published_at DATE NOT NULL,
-  updated_at DATE NOT NULL,
-  status ENUM('draft','published') NOT NULL DEFAULT 'draft',
-  featured TINYINT(1) NOT NULL DEFAULT 0,
-  image VARCHAR(255) NOT NULL,
-  image_alt VARCHAR(255) NOT NULL DEFAULT '',
-  content_html MEDIUMTEXT NOT NULL,
-  show_toc TINYINT(1) NOT NULL DEFAULT 1,
-  seo_title VARCHAR(255) NULL,
-  meta_description VARCHAR(320) NULL,
-  focus_keyword VARCHAR(160) NULL,
-  canonical_url VARCHAR(255) NULL,
-  og_image VARCHAR(255) NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_ts TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  INDEX idx_status_published (status, published_at),
-  INDEX idx_category (category),
-  FULLTEXT INDEX ft_content (title, excerpt, content_html)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;`, "");
-
-L.push(`CREATE TABLE IF NOT EXISTS blog_tags (
-  post_id INT NOT NULL,
-  tag VARCHAR(100) NOT NULL,
-  sort_order INT NOT NULL DEFAULT 0,
-  PRIMARY KEY (post_id, tag),
-  CONSTRAINT fk_blog_tags_post FOREIGN KEY (post_id) REFERENCES blog_posts(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;`, "");
-
+for (const statement of SCHEMA) L.push(statement, "");
 
 L.push("-- categories --");
 BLOG_CATEGORIES.forEach((c, i) => {

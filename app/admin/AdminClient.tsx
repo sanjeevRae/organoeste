@@ -132,12 +132,16 @@ interface EditorPanelProps {
   popoutHref?: string | null;
   /** Full-page instances hide the popout menu (nothing to pop out to). */
   showPopout?: boolean;
+  /** Present when the database refused the write: renders an explicit download
+      button instead of pushing a file to the reader on its own. */
+  fallback?: { name: string; text: string } | null;
+  onDownload?: () => void;
 }
 
 export function EditorPanel({
   form, setForm, categories, notice, saving, isNew,
   onClose, onSave, onCancel, onUpload,
-  popoutHref = null, showPopout = true,
+  popoutHref = null, showPopout = true, fallback = null, onDownload,
 }: EditorPanelProps) {
   const [coverBusy, setCoverBusy] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -216,7 +220,16 @@ export function EditorPanel({
       </div>
 
       <div className="dash-panel-body">
-        {notice ? <p className="dash-notice" role="status">{notice}</p> : null}
+        {notice ? (
+          <p className="dash-notice" role="status">
+            {notice}
+            {fallback && onDownload ? (
+              <button type="button" className="dash-notice-btn" onClick={onDownload}>
+                Baixar {fallback.name}
+              </button>
+            ) : null}
+          </p>
+        ) : null}
 
         <div className="dash-field">
           <span className="dash-label">Featured Image</span>
@@ -421,6 +434,17 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
   const [isNew, setIsNew] = useState(false);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
+  /** Set only when MySQL refused the write; the user decides whether to download. */
+  const [fallback, setFallback] = useState<{ name: string; text: string } | null>(null);
+
+  /** One compact line when the database is not usable (no banner, no noise when
+      everything works): the actual MySQL error, so it can be fixed. */
+  const dbIssue =
+    initial.configured === false
+      ? "sem credenciais no .env (defina DATABASE_URL ou DB_HOST/DB_USER/DB_PASSWORD/DB_NAME)."
+      : initial.schema?.ready === false
+        ? initial.schema?.error ?? initial.dbError ?? "não foi possível preparar as tabelas."
+        : initial.dbError ?? null;
   const [menuOpen, setMenuOpen] = useState(false);
   const [rowMenu, setRowMenu] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -544,9 +568,12 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
     if (!form || saving) return;
     setSaving(true);
     setNotice("");
+    setFallback(null);
     const res = await adminSavePost({ form });
     setSaving(false);
-    if (res.download) download(res.download.name, res.download.text);
+    // No automatic download: only if the DB refused the write, and only when the
+    // user clicks the button shown next to the notice.
+    if (res.download) setFallback(res.download);
     if (!res.ok) {
       setNotice(res.error ?? "Could not save.");
       return;
@@ -559,15 +586,16 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
     }
     setSelected(form.slug);
     if (isNew) setIsNew(false);
-    setNotice(isNew ? "Post published." : "Changes saved.");
+    setNotice(isNew ? "Post published and saved in the database." : "Changes saved in the database.");
   }
 
   async function remove(slug: string) {
     const target = posts.find((p) => p.slug === slug);
     if (!target) return;
     if (!window.confirm(`Delete "${target.title}"?`)) return;
+    setFallback(null);
     const res = await adminDeletePost({ slug });
-    if (res.download) download(res.download.name, res.download.text);
+    if (res.download) setFallback(res.download);
     if (!res.ok) {
       setNotice(res.error ?? "Could not delete.");
       return;
@@ -686,7 +714,26 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
               ))}
             </div>
 
-            {notice && !form ? <p className="dash-notice" role="status">{notice}</p> : null}
+            {notice && !form ? (
+              <p className="dash-notice" role="status">
+                {notice}
+                {fallback ? (
+                  <button
+                    type="button"
+                    className="dash-notice-btn"
+                    onClick={() => download(fallback.name, fallback.text)}
+                  >
+                    Baixar {fallback.name}
+                  </button>
+                ) : null}
+              </p>
+            ) : null}
+
+            {dbIssue && !form ? (
+              <p className="dash-error" role="alert">
+                Banco de dados: {dbIssue}
+              </p>
+            ) : null}
 
             <div className="dash-table-card">
               <div className="dash-table-head" aria-hidden="true">
@@ -791,6 +838,8 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
                 }
               }}
               onUpload={uploadFile}
+              fallback={fallback}
+              onDownload={fallback ? () => download(fallback.name, fallback.text) : undefined}
             />
           ) : null}
         </div>

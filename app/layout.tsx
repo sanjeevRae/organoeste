@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 
+import { SITE_URL } from "@/lib/blog";
 import "./site.css";
 
+/** Social preview image; override per deployment with NEXT_PUBLIC_OG_IMAGE. */
+const OG_IMAGE = process.env.NEXT_PUBLIC_OG_IMAGE || "/images/d-3599093_1_17814623476a2ef54b5b726.png";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.organoeste.com.br"),
+  metadataBase: new URL(SITE_URL),
   title: "Grupo Organoeste Ltda",
   description:
     "Coleta licenciada de resíduos orgânicos, compostagem própria e adubo orgânico de alta performance. Um único ecossistema, da indústria ao campo.",
@@ -20,7 +24,7 @@ export const metadata: Metadata = {
       "Coleta licenciada de resíduos orgânicos, compostagem própria e adubo orgânico de alta performance.",
     locale: "pt_BR",
     type: "website",
-    images: ["/images/d-3599093_1_17814623476a2ef54b5b726.png"],
+    images: [OG_IMAGE],
   },
 };
 

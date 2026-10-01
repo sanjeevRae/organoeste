@@ -30,6 +30,8 @@ export default function FullPageEditor({
   const [isNew, setIsNew] = useState(slug === null);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
+  /** Set only when MySQL refused the write; the user decides whether to download. */
+  const [fallback, setFallback] = useState<{ name: string; text: string } | null>(null);
   const [missing, setMissing] = useState(false);
 
   useEffect(() => {
@@ -100,9 +102,11 @@ export default function FullPageEditor({
     if (!form || saving) return;
     setSaving(true);
     setNotice("");
+    setFallback(null);
     const res = await adminSavePost({ form });
     setSaving(false);
-    if (res.download) download(res.download.name, res.download.text);
+    // No automatic download: the button appears only if the DB refused the write.
+    if (res.download) setFallback(res.download);
     if (!res.ok) {
       setNotice(res.error ?? "Could not save.");
       return;
@@ -114,7 +118,7 @@ export default function FullPageEditor({
       /* ignore */
     }
     if (isNew) setIsNew(false);
-    setNotice(isNew ? "Post published." : "Changes saved.");
+    setNotice(isNew ? "Post published and saved in the database." : "Changes saved in the database.");
     if (res.ok && form.slug && form.slug !== slug) {
       router.replace(`/admin/post/${form.slug}`);
     }
@@ -186,6 +190,8 @@ export default function FullPageEditor({
         }}
         onUpload={uploadFile}
         showPopout={false}
+        fallback={fallback}
+        onDownload={fallback ? () => download(fallback.name, fallback.text) : undefined}
       />
     </div>
   );

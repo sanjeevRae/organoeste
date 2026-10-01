@@ -6822,6 +6822,8 @@ body:has(.dash-editpage){padding-top:0;--dash-zoom:.95;zoom:var(--dash-zoom)}
 #site .dash-empty{padding:28px 20px;text-align:center;color:#7d8b99;font-size:13.5px;display:flex;flex-direction:column;gap:12px;align-items:center}
 #site .dash-src-note{margin:12px 2px 0;font-size:12px;color:#9aa7b2}
 #site .dash-notice{background:#eef7f1;border:1px solid #cfe6d8;color:#1c6a44;border-radius:10px;padding:10px 14px;font-size:13px;margin:0 0 14px}
+#site .dash-notice-btn{margin-left:8px;padding:3px 10px;border-radius:8px;border:1px solid #9ec7b1;background:#fff;color:#1c6a44;font-size:12px;font-family:inherit;cursor:pointer}
+#site .dash-notice-btn:hover{background:#e4f2ea}
 #site .dash-error{color:#b3261e;font-size:13px;margin:4px 0 0}
 
 #site .dash-panel{border-left:1px solid #eef0f2;background:#fff;min-height:calc(100vh / var(--dash-zoom) - 61px);position:sticky;top:61px;max-height:calc(100vh / var(--dash-zoom) - 61px);display:flex;flex-direction:column;overflow:hidden}
