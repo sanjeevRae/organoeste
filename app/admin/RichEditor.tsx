@@ -1386,7 +1386,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
       <input
         ref={fileRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,.jpg,.jpeg,.png,.webp,.gif,.svg"
         className="rte-file"
         aria-hidden="true"
         tabIndex={-1}

@@ -71,6 +71,31 @@ o `next.config.ts` faz `rewrite` de `/uploads/:name` para `/media/:name`. O
 rewrite só entra quando **não** existe arquivo estático com esse nome, então
 nada muda em servidor onde o `public/` já é servido corretamente.
 
+#### Duas cópias: disco **e** banco
+
+Em hospedagem compartilhada o arquivo pode ser salvo numa pasta que o processo
+que serve a requisição não enxerga (duas cópias do projeto, `cwd` diferente,
+`public_html` remapeado). Para não depender disso, cada upload é gravado nos
+**dois** lugares:
+
+1. o arquivo em `public/uploads/` (como sempre), e
+2. os bytes na tabela **`media_files`** do MySQL.
+
+A rota `/media` tenta o arquivo primeiro e, se ele não estiver lá, entrega a
+linha do banco — a imagem abre mesmo que a pasta tenha se perdido (deploy
+seletivo, mudança de servidor, pasta não copiada). Se o banco estiver sem a
+tabela, nada quebra: o site continua servindo pelo arquivo.
+
+Para ter essa proteção no servidor que já está no ar, crie a tabela:
+
+```bash
+npm run db:push     # cria/verifica as tabelas, inclui media_files
+```
+
+*(ou importe `scripts/db_setup.cpanel.sql` de novo no phpMyAdmin — é
+idempotente). Sem esse passo o upload continua funcionando 100% pelo arquivo;
+só a cópia de segurança no banco fica de fora.*
+
 ### Pastas que **não** devem ser enviadas
 
 | Caminho | Motivo |
@@ -537,6 +562,8 @@ npm run db:push      # aplica no banco configurado
 | Acentos viram `?` ou `Ã©` | banco/charset não é `utf8mb4` | recrie com o SQL do projeto; no import use `utf-8` (phpMyAdmin) ou `--default-character-set=utf8mb4` (CLI) |
 | Upload de imagem falha | permissão ou limite | `chmod 755 public/uploads`; máx. 5 MB (JPG/PNG/WebP/GIF/SVG) |
 | Upload "dá certo" (o arquivo aparece na pasta) mas a imagem **não aparece** no site | a URL antiga `/uploads/<arquivo>` era resolvida pelo Apache/document root e não pelo app Node; ou existem duas cópias do projeto e o arquivo foi para a pasta que não é servida | atualize o código (a capa passa a usar `/media/<arquivo>`, servido por `app/media/[name]/route.ts`), rode `npm run build` + **Restart** e confira que só existe **uma** cópia do app no Passenger |
+| Imagem 404 mesmo com o arquivo na pasta | o processo que serve a requisição não enxerga essa pasta (cópia duplicada, `cwd`, `UPLOAD_DIR`) | a rota `/media` cai na tabela `media_files` quando o arquivo falta: rode `npm run db:push` e envie a imagem de novo; para forçar uma pasta específica, defina `UPLOAD_DIR="/home/.../public/uploads"` no `.env` + Restart |
+| `/admin/doctor` mostra `mediaDb.rows: null` | tabela `media_files` não existe no banco | `npm run db:push` (ou reimporte `scripts/db_setup.cpanel.sql`); a cópia em disco continua atendendo |
 | Console mostra o 404 com **só o nome do arquivo** (ex.: `1790838315190-mncolv-logo.png:1 Failed to load resource`) | o valor gravado em `image`/`content_html` perdeu a barra inicial (linha editada no phpMyAdmin ou gravada por versão antiga), então o navegador procurou a imagem **dentro da página** (`/blog/<slug>/<arquivo>`) | atualize o código: a leitura do banco normaliza o caminho (`mediaSrc`/`absoluteAttrs` em `lib/blog.ts`) e o valor volta a ser raiz-relativo; se quiser corrigir também no banco, use `/media/<arquivo>` |
 | Site mostra conteúdo antigo | cache ISR (até 60 s) ou banco trocado sem restart | aguarde 1 min, confira o *Source:* no painel e reinicie se trocou o `.env` |
 | Não consigo entrar em `/admin` | `ADMIN_PASSWORD` diferente da digitada | ajuste no `.env` + Restart (sem definir, o padrão é `admin123`) |

@@ -239,7 +239,7 @@ export function EditorPanel({
               <input
                 ref={fileRef}
                 type="file"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,.jpg,.jpeg,.png,.webp,.gif,.svg"
                 hidden
                 onChange={(e) => {
                   void pickCover(e.target.files?.[0]);
@@ -522,16 +522,16 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
       setNotice(res.error ?? "Could not upload image.");
       return null;
     }
-    // Self-check: the image must also be reachable through the browser. Hosts
-    // that serve public/uploads from another folder would otherwise store a
-    // cover nobody can see.
+    // Self-check: the image must also be reachable in the browser. /media serves
+    // the disk file first and falls back to the media_files row, so a failure
+    // here means neither copy is reachable.
+    setNotice("");
     try {
       const probe = await fetch(res.url, { method: "HEAD", cache: "no-store" });
       if (!probe.ok && probe.status !== 405 && probe.status !== 501) {
         setNotice(
-          `Imagem salva em ${res.file ?? "public/uploads"}, mas o site respondeu ` +
-          `${probe.status} ao abrir ${res.url}. Confira se essa pasta é a mesma que o ` +
-          `processo Node usa (cwd) e as regras de proxy/rewrite do servidor.`,
+          `Imagem salva (${res.inDb ? "disco + banco" : "somente disco"}: ${res.file ?? "public/uploads"}), ` +
+          `mas o site respondeu ${probe.status} ao abrir ${res.url}. Abra /admin/doctor para ver onde ficou.`,
         );
       }
     } catch {

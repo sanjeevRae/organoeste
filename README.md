@@ -172,6 +172,7 @@ DB_NAME="conta_organoeste"
 - [ ] `npm install` e `npm run build` (Node 20+) com `NODE_ENV=production`.
 - [ ] App Node publicado (`npm start`) e **reiniciado** depois de alterar o `.env`.
 - [ ] `public/uploads` com permissão de escrita (é onde ficam as imagens enviadas pelo editor; o site as entrega por `/media/<arquivo>`).
+- [ ] `npm run db:check` confirmando que a tabela `media_files` existe (é a cópia de segurança das imagens; sem ela o site serve só pelo arquivo).
 - [ ] `npm run db:check` ou `/admin` confirmando que o aviso "MySQL offline" não aparece.
 
 ### 5. Diagnóstico rápido

@@ -2,6 +2,8 @@ import { constants, promises as fs } from "node:fs";
 import path from "node:path";
 import { cookies } from "next/headers";
 import { ADMIN_COOKIE, isAdminCookie } from "@/lib/admin";
+import { db } from "@/lib/db";
+import { mediaDbError, mediaNameOk } from "@/lib/media-store";
 import { uploadsDir } from "@/lib/upload-dir";
 
 export const runtime = "nodejs";
@@ -83,9 +85,17 @@ export async function GET(req: Request) {
   }
   const dir = uploadsDir();
   const info = await describeDir(dir);
+  let mediaRows: number | null = null;
+  try {
+    const [rows] = await db().query("SELECT COUNT(*) AS n FROM media_files");
+    mediaRows = Number((rows as { n: unknown }[])[0]?.n ?? 0);
+  } catch (err) {
+    mediaRows = null;
+  }
   const body: Record<string, unknown> = {
     build: readBuildId(),
     mediaRouteLive: true,
+    mediaDb: { rows: mediaRows, error: mediaDbError() },
     cwd: process.cwd(),
     uploadsDir: dir,
     uploadsDirFromEnv: !!process.env.UPLOAD_DIR?.trim(),
@@ -95,18 +105,31 @@ export async function GET(req: Request) {
   };
   const file = path.basename(new URL(req.url).searchParams.get("file") ?? "");
   if (file) {
+    let disk: { exists: boolean; bytes: number | null } = { exists: false, bytes: null };
     try {
       const stat = await fs.stat(path.join(dir, file));
-      body.checkedFile = {
-        name: file,
-        exists: stat.isFile(),
-        bytes: stat.size,
-        url: `/media/${file}`,
-        legacyUrl: `/uploads/${file}`,
-      };
+      disk = { exists: stat.isFile(), bytes: stat.size };
     } catch {
-      body.checkedFile = { name: file, exists: false, url: `/media/${file}`, legacyUrl: `/uploads/${file}` };
+      /* no disk file — the DB row is the fallback */
     }
+    let row: { exists: boolean; bytes: number | null } | null = null;
+    if (mediaNameOk(file)) {
+      try {
+        const [rows] = await db().query("SELECT bytes FROM media_files WHERE name = ? LIMIT 1", [file]);
+        const hit = (rows as { bytes: unknown }[])[0];
+        row = { exists: !!hit, bytes: hit ? Number(hit.bytes) : null };
+      } catch {
+        row = null;
+      }
+    }
+    body.checkedFile = {
+      name: file,
+      disk,
+      row,
+      exists: disk.exists || row?.exists === true,
+      url: `/media/${file}`,
+      legacyUrl: `/uploads/${file}`,
+    };
   }
   return Response.json(body, { headers: { "cache-control": "no-store" } });
 }

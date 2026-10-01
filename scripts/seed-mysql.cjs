@@ -15,7 +15,19 @@ const bit = (v) => (v ? 1 : 0);
 /** Database name for the full setup file (override with DB_NAME=...). */
 const DBNAME = (process.env.DB_NAME || "organoeste").replace(/[^a-zA-Z0-9_]/g, "");
 
+/* media_files is the first pushed table below (MEDIA_TABLE_SQL); db-apply.cjs
+   embeds the same migration — compare the two with the media-sql check below. */
+
 const L = [];
+
+L.push(`CREATE TABLE IF NOT EXISTS media_files (
+  name VARCHAR(128) NOT NULL PRIMARY KEY,
+  mime VARCHAR(64) NOT NULL,
+  bytes INT UNSIGNED NOT NULL,
+  data LONGBLOB NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_media_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;`, "");
 
 L.push(`CREATE TABLE IF NOT EXISTS blog_categories (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -58,6 +70,7 @@ L.push(`CREATE TABLE IF NOT EXISTS blog_tags (
   PRIMARY KEY (post_id, tag),
   CONSTRAINT fk_blog_tags_post FOREIGN KEY (post_id) REFERENCES blog_posts(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;`, "");
+
 
 L.push("-- categories --");
 BLOG_CATEGORIES.forEach((c, i) => {

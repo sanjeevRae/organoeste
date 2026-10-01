@@ -1,7 +1,5 @@
 
-import { mkdir, writeFile } from "node:fs/promises";
-import path from "node:path";
-import { uploadsDir } from "./upload-dir";
+import { storeUpload } from "./media-store";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 
@@ -24,6 +22,8 @@ export function uploadErrorFor(file: File): string | null {
 export interface SavedUpload {
   /** Public URL the post must store, e.g. /media/1700000000000-ab12cd-capa.png */
   url: string;
+  /** True when the bytes also reached the media_files table. */
+  inDb: boolean;
   /** Where the file was written on the server (shown in the dashboard when the
       image is saved but the site cannot open it). */
   file: string;
@@ -43,15 +43,12 @@ export async function saveUpload(file: File): Promise<SavedUpload> {
       .replace(/^-+|-+$/g, "")
       .slice(0, 40) || "imagem";
   const name = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${base}${ext}`;
-  const dir = uploadsDir();
-  await mkdir(dir, { recursive: true });
   const bytes = Buffer.from(await file.arrayBuffer());
-  const target = path.join(dir, name);
-  await writeFile(target, bytes);
-  // Served by the /media route (app/media/[name]/route.ts) instead of plain
-  // /uploads: on hosts where the static file server does not expose freshly
-  // uploaded files, /uploads/xxx 404s even though the write succeeded.
-  return { url: `/media/${name}`, file: target };
+  // Disk + DB together: /media serves from disk when the file is there and
+  // from the media_files table when the host keeps dropping uploaded files
+  // (the dashboard notice names the winner via stored.inDb).
+  const stored = await storeUpload(name, file.type, bytes);
+  return { url: `/media/${name}`, file: stored.diskFile ?? `(banco de dados${stored.inDb ? "" : " — gravação pendente"})`, inDb: stored.inDb };
 }
 
 // ---------- sanitizer allowlists ----------
