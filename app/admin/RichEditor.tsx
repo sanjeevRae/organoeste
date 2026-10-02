@@ -19,35 +19,35 @@ interface Choice {
 }
 
 const BLOCKS: Choice[] = [
-  { label: "Parágrafo", value: "p" },
-  { label: "Título (H2)", value: "h2" },
-  { label: "Subtítulo (H3)", value: "h3" },
-  { label: "Seção (H4)", value: "h4" },
-  { label: "Citação", value: "blockquote" },
-  { label: "Bloco de código", value: "pre" },
+  { label: "Paragraph", value: "p" },
+  { label: "Heading (H2)", value: "h2" },
+  { label: "Subheading (H3)", value: "h3" },
+  { label: "Section (H4)", value: "h4" },
+  { label: "Quote", value: "blockquote" },
+  { label: "Code block", value: "pre" },
 ];
 
 const FONTS: Choice[] = [
-  { label: "Fonte padrão", value: "" },
+  { label: "Default font", value: "" },
   { label: "Montserrat", value: "Montserrat, sans-serif" },
-  { label: "Sem serifa", value: "Arial, Helvetica, sans-serif" },
-  { label: "Serifada", value: "Georgia, 'Times New Roman', serif" },
-  { label: "Monoespaçada", value: "'Courier New', Courier, monospace" },
+  { label: "Sans serif", value: "Arial, Helvetica, sans-serif" },
+  { label: "Serif", value: "Georgia, 'Times New Roman', serif" },
+  { label: "Monospace", value: "'Courier New', Courier, monospace" },
 ];
 
 const SIZES: Choice[] = [
-  { label: "Pequeno", value: "14px" },
+  { label: "Small", value: "14px" },
   { label: "Normal", value: "16px" },
-  { label: "Médio", value: "18px" },
-  { label: "Grande", value: "22px" },
-  { label: "Título", value: "28px" },
+  { label: "Medium", value: "18px" },
+  { label: "Large", value: "22px" },
+  { label: "Heading", value: "28px" },
 ];
 
 const LINE_HEIGHTS: Choice[] = [
-  { label: "Entrelinha 1,4", value: "1.4" },
-  { label: "Entrelinha 1,6", value: "1.6" },
-  { label: "Entrelinha 1,8", value: "1.8" },
-  { label: "Entrelinha 2,0", value: "2" },
+  { label: "Line height 1.4", value: "1.4" },
+  { label: "Line height 1.6", value: "1.6" },
+  { label: "Line height 1.8", value: "1.8" },
+  { label: "Line height 2.0", value: "2" },
 ];
 
 const TEXT_COLORS = [
@@ -305,7 +305,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
     if (range.collapsed) {
       const block = currentBlock();
       if (!block) {
-        notice("Selecione um trecho de texto primeiro.");
+        notice("Select some text first.");
         return;
       }
       block.style.setProperty(property, styleValue);
@@ -335,7 +335,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
     if (!el || !sel || sel.rangeCount === 0) return;
     const range = sel.getRangeAt(0);
     if (range.collapsed) {
-      notice("Selecione o texto antes de aplicar essa formatação.");
+      notice("Select some text before applying this formatting.");
       return;
     }
     const wrapper = document.createElement(tagName);
@@ -360,7 +360,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
   function setBlockStyle(property: string, propertyValue: string) {
     const block = currentBlock();
     if (!block) {
-      notice("Clique no parágrafo que deve ser ajustado.");
+      notice("Click the paragraph you want to adjust.");
       return;
     }
     block.style.setProperty(property, propertyValue);
@@ -385,7 +385,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
     if (!el || !sel || sel.rangeCount === 0) return;
     const existing = elementFromSelection("a") as HTMLAnchorElement | null;
     const answer = window.prompt(
-      "Endereço do link (https://…, /blog/pagina ou #ancora). Deixe vazio para remover.",
+      "Link address (https://…, /blog/page or #anchor). Leave empty to remove.",
       existing?.getAttribute("href") ?? "https://",
     );
     if (answer === null) return;
@@ -420,12 +420,12 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
         target.setAttribute("src", url);
         replaceTarget.current = null;
         emit();
-        notice("Imagem substituída.");
+        notice("Image replaced.");
         return;
       }
       focusDoc();
       insertHtml('<img src="' + escapeHtml(url) + '" alt="" style="width:100%" />');
-      notice("Imagem inserida no texto.");
+      notice("Image inserted into the article.");
     } finally {
       setBusy(false);
       if (fileRef.current) fileRef.current.value = "";
@@ -433,23 +433,23 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
   }
 
   function insertImageUrl() {
-    const url = window.prompt("URL da imagem", "https://");
+    const url = window.prompt("Image URL", "https://");
     if (!url || !url.trim()) return;
     insertHtml('<img src="' + escapeHtml(url.trim()) + '" alt="" style="width:100%" />');
     setMenu(null);
   }
 
   function insertVideo() {
-    const url = window.prompt("Cole o link do YouTube (watch, youtu.be ou shorts)", "https://www.youtube.com/watch?v=");
+    const url = window.prompt("Paste the YouTube link (watch, youtu.be or shorts)", "https://www.youtube.com/watch?v=");
     if (!url) return;
     const embed = youtubeEmbed(url);
     if (!embed) {
-      notice("Não reconheci esse link do YouTube.");
+      notice("That YouTube link was not recognised.");
       return;
     }
     insertHtml(
       '<figure class="blg-video"><iframe src="' + escapeHtml(embed) +
-        '" title="Vídeo incorporado" loading="lazy" allowfullscreen></iframe></figure><p><br></p>',
+        '" title="Embedded video" loading="lazy" allowfullscreen></iframe></figure><p><br></p>',
     );
     setMenu(null);
   }
@@ -462,7 +462,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
 
   function requireImage(): HTMLImageElement | null {
     const img = selectedImage();
-    if (!img) notice("Clique na imagem do texto para usar esses controles.");
+    if (!img) notice("Click an image in the article to use these controls.");
     return img;
   }
 
@@ -493,7 +493,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
   function imageAlt() {
     const img = requireImage();
     if (!img) return;
-    const answer = window.prompt("Texto alternativo (descreva a imagem para SEO e acessibilidade)", img.getAttribute("alt") ?? "");
+    const answer = window.prompt("Alt text (describe the image for SEO and accessibility)", img.getAttribute("alt") ?? "");
     if (answer === null) return;
     img.setAttribute("alt", answer.trim());
     emit();
@@ -527,7 +527,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
     html += "</tbody></table><p><br></p>";
     insertHtml(html);
     setMenu(null);
-    notice("Tabela " + rows + "×" + cols + " inserida.");
+    notice("Table " + rows + "×" + cols + " inserted.");
   }
 
   function currentCell(): HTMLTableCellElement | null {
@@ -537,7 +537,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
 
   function requireCell(): HTMLTableCellElement | null {
     const cell = currentCell();
-    if (!cell) notice("Clique dentro de uma célula da tabela.");
+    if (!cell) notice("Click inside a table cell.");
     return cell;
   }
 
@@ -557,7 +557,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
     if (op === "remove") {
       table.remove();
       emit();
-      notice("Tabela removida.");
+      notice("Table removed.");
       return;
     }
 
@@ -651,12 +651,12 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
   function findNext() {
     const term = findTerm.trim();
     if (!term) {
-      setFindMsg("Digite um termo para procurar.");
+      setFindMsg("Type a term to search for.");
       return;
     }
     const hits = findMatches();
     if (hits.length === 0) {
-      setFindMsg("Nenhuma ocorrência encontrada.");
+      setFindMsg("No matches found.");
       return;
     }
     const range = selectionRange();
@@ -665,7 +665,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
     const nextIndex = cursorNode ? hits.findIndex((hit) => hit.node === cursorNode && hit.index >= cursorOffset) : 0;
     const target = hits[nextIndex >= 0 ? nextIndex : 0];
     selectHit(target, term.length);
-    setFindMsg("Ocorrência " + (hits.indexOf(target) + 1) + " de " + hits.length + ".");
+    setFindMsg("Match " + (hits.indexOf(target) + 1) + " of " + hits.length + ".");
   }
 
   function replaceCurrent() {
@@ -688,7 +688,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
     if (!term) return;
     const hits = findMatches();
     if (hits.length === 0) {
-      setFindMsg("Nenhuma ocorrência encontrada.");
+      setFindMsg("No matches found.");
       return;
     }
     const sel = window.getSelection();
@@ -705,7 +705,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
       document.execCommand("insertText", false, replaceTerm);
     }
     emit();
-    setFindMsg(hits.length + " ocorrência(s) substituída(s).");
+    setFindMsg(hits.length + " match(es) replaced.");
   }
   // ---------- Markdown shortcuts ----------
 
@@ -849,7 +849,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
     if (key === "s") {
       event.preventDefault();
       onSave?.();
-      notice("Salvando o artigo…");
+      notice("Saving the article…");
       return;
     }
     if (key === "k") {
@@ -905,7 +905,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
       event.preventDefault();
       document.execCommand("insertHTML", false, cleanPastedHtml(html));
       emit();
-      notice("Conteúdo colado e limpo automaticamente.");
+      notice("Pasted content cleaned automatically.");
       return;
     }
     const text = data.getData("text/plain");
@@ -969,7 +969,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
     if (el) el.innerHTML = draft.html;
     onChange(draft.html);
     setDraft(null);
-    notice("Rascunho restaurado.");
+    notice("Draft restored.");
   }
 
   function discardDraft() {
@@ -984,7 +984,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
   }
   // ---------- render ----------
 
-  const savedClock = savedAt ? new Date(savedAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "";
+  const savedClock = savedAt ? new Date(savedAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }) : "";
   const keep = (event: React.MouseEvent) => event.preventDefault();
 
   const Tb = ({ title, on, disabled, action, children }: {
@@ -1034,7 +1034,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
   /** Wraps an image action so it explains itself when no image is selected. */
   const withImage = (action: () => void) => () => {
     if (!hasImage) {
-      notice("Clique na imagem do texto para usar esses controles.");
+      notice("Click an image in the article to use these controls.");
       return;
     }
     action();
@@ -1130,15 +1130,15 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
       ) : null}
 
       {popOver("color", (
-        <div className="rte-swatches" aria-label="Cores do texto">
+        <div className="rte-swatches" aria-label="Text colours">
           {TEXT_COLORS.map((color) => (
             <button
               key={color}
               type="button"
               className="rte-sw"
               style={{ background: color }}
-              title={"Cor " + color}
-              aria-label={"Cor " + color}
+              title={"Colour " + color}
+              aria-label={"Colour " + color}
               onClick={() => {
                 run("foreColor", color);
                 setMenu(null);
@@ -1146,22 +1146,22 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
             />
           ))}
           <label className="rte-custom">
-            Personalizada
+            Custom
             <input type="color" defaultValue="#2e8b4d" onChange={(event) => run("foreColor", event.target.value)} />
           </label>
         </div>
       ))}
 
       {popOver("hilite", (
-        <div className="rte-swatches" aria-label="Marca-texto">
+        <div className="rte-swatches" aria-label="Highlight">
           {HILITE_COLORS.map((color) => (
             <button
               key={color}
               type="button"
               className="rte-sw"
               style={{ background: color === "transparent" ? "#fff" : color }}
-              title={color === "transparent" ? "Remover marcação" : "Marca " + color}
-              aria-label={color === "transparent" ? "Remover marcação" : "Marca " + color}
+              title={color === "transparent" ? "Remove highlight" : "Highlight " + color}
+              aria-label={color === "transparent" ? "Remove highlight" : "Highlight " + color}
               onClick={() => {
                 setHighlight(color);
                 run("hiliteColor", color);
@@ -1170,7 +1170,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
             />
           ))}
           <label className="rte-custom">
-            Personalizada
+            Custom
             <input
               type="color"
               defaultValue="#fff2a8"
@@ -1186,25 +1186,25 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
       {popOver("link", (
         <div className="rte-menu">
           <button type="button" onMouseDown={keep} onClick={() => { insertLink(); setMenu(null); }}>
-            Inserir ou editar link
+            Insert or edit link
           </button>
           <button type="button" onMouseDown={keep} onClick={() => { run("unlink"); setMenu(null); }}>
-            Remover link
+            Remove link
           </button>
-          <p className="rte-pop-hint">Ctrl+K também insere links. Use /blog/pagina para links internos.</p>
+          <p className="rte-pop-hint">Ctrl+K also inserts links. Use /blog/page for internal links.</p>
         </div>
       ))}
       {popOver("image", (
         <div className="rte-menu rte-menu-wide">
           <div className="rte-row">
             <button type="button" className="rte-btn rte-btn-primary" onMouseDown={keep} onClick={() => fileRef.current?.click()}>
-              Enviar do dispositivo
+              Upload from device
             </button>
             <button type="button" className="rte-btn" onMouseDown={keep} onClick={insertImageUrl}>
-              Usar URL
+              Use URL
             </button>
           </div>
-          <p className="rte-pop-title">Tamanho</p>
+          <p className="rte-pop-title">Size</p>
           <div className="rte-row">
             {["25%", "50%", "75%", "100%"].map((width) => (
               <button key={width} type="button" className="rte-btn" onMouseDown={keep} onClick={withImage(() => imageWidth(width))}>
@@ -1212,20 +1212,20 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
               </button>
             ))}
           </div>
-          <p className="rte-pop-title">Posição</p>
+          <p className="rte-pop-title">Position</p>
           <div className="rte-row">
-            <button type="button" className="rte-btn" onMouseDown={keep} onClick={withImage(() => imageAlign("left"))}>Esquerda</button>
-            <button type="button" className="rte-btn" onMouseDown={keep} onClick={withImage(() => imageAlign("center"))}>Centralizar</button>
-            <button type="button" className="rte-btn" onMouseDown={keep} onClick={withImage(() => imageAlign("right"))}>Direita</button>
+            <button type="button" className="rte-btn" onMouseDown={keep} onClick={withImage(() => imageAlign("left"))}>Left</button>
+            <button type="button" className="rte-btn" onMouseDown={keep} onClick={withImage(() => imageAlign("center"))}>Center</button>
+            <button type="button" className="rte-btn" onMouseDown={keep} onClick={withImage(() => imageAlign("right"))}>Right</button>
           </div>
-          <p className="rte-pop-title">Outras ações</p>
+          <p className="rte-pop-title">Other actions</p>
           <div className="rte-row">
-            <button type="button" className="rte-btn" onMouseDown={keep} onClick={withImage(imageAlt)}>Texto alternativo</button>
-            <button type="button" className="rte-btn" onMouseDown={keep} onClick={withImage(imageReplace)}>Substituir</button>
-            <button type="button" className="rte-btn rte-btn-danger" onMouseDown={keep} onClick={withImage(imageDelete)}>Remover</button>
+            <button type="button" className="rte-btn" onMouseDown={keep} onClick={withImage(imageAlt)}>Alt text</button>
+            <button type="button" className="rte-btn" onMouseDown={keep} onClick={withImage(imageReplace)}>Replace</button>
+            <button type="button" className="rte-btn rte-btn-danger" onMouseDown={keep} onClick={withImage(imageDelete)}>Remove</button>
           </div>
           <p className="rte-pop-hint">
-            Você também pode colar (Ctrl+V) ou arrastar imagens direto para o texto.
+            You can also paste (Ctrl+V) or drag images straight into the article.
           </p>
         </div>
       ))}
@@ -1233,19 +1233,19 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
       {popOver("video", (
         <div className="rte-menu rte-menu-wide">
           <button type="button" className="rte-btn rte-btn-primary" onMouseDown={keep} onClick={insertVideo}>
-            Inserir vídeo do YouTube
+            Insert YouTube video
           </button>
           <p className="rte-pop-hint">
-            Aceita links youtube.com/watch, youtu.be ou shorts. O vídeo sai como embed responsivo com carregamento otimizado.
+            Accepts youtube.com/watch, youtu.be or shorts links. The video is embedded responsively with lazy loading.
           </p>
         </div>
       ))}
       {popOver("table", (
         <div className="rte-menu rte-menu-wide">
-          <p className="rte-pop-title">Nova tabela</p>
+          <p className="rte-pop-title">New table</p>
           <div className="rte-row">
             <label className="rte-field">
-              Linhas
+              Rows
               <input
                 type="number"
                 min={2}
@@ -1255,7 +1255,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
               />
             </label>
             <label className="rte-field">
-              Colunas
+              Columns
               <input
                 type="number"
                 min={2}
@@ -1265,31 +1265,31 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
               />
             </label>
             <button type="button" className="rte-btn rte-btn-primary" onMouseDown={keep} onClick={() => insertTable(tableRows, tableCols)}>
-              Inserir
+              Insert
             </button>
           </div>
-          <p className="rte-pop-title">{inTable ? "Editar tabela" : "Editar tabela (clique em uma célula)"}</p>
+          <p className="rte-pop-title">{inTable ? "Edit table" : "Edit table (click a cell)"}</p>
           <div className="rte-row">
-            <button type="button" className="rte-btn" disabled={!inTable} onMouseDown={keep} onClick={() => tableOp("row-above")}>+ Linha acima</button>
-            <button type="button" className="rte-btn" disabled={!inTable} onMouseDown={keep} onClick={() => tableOp("row-below")}>+ Linha abaixo</button>
-            <button type="button" className="rte-btn" disabled={!inTable} onMouseDown={keep} onClick={() => tableOp("row-del")}>− Linha</button>
+            <button type="button" className="rte-btn" disabled={!inTable} onMouseDown={keep} onClick={() => tableOp("row-above")}>+ Row above</button>
+            <button type="button" className="rte-btn" disabled={!inTable} onMouseDown={keep} onClick={() => tableOp("row-below")}>+ Row below</button>
+            <button type="button" className="rte-btn" disabled={!inTable} onMouseDown={keep} onClick={() => tableOp("row-del")}>− Row</button>
           </div>
           <div className="rte-row">
-            <button type="button" className="rte-btn" disabled={!inTable} onMouseDown={keep} onClick={() => tableOp("col-before")}>+ Coluna à esquerda</button>
-            <button type="button" className="rte-btn" disabled={!inTable} onMouseDown={keep} onClick={() => tableOp("col-after")}>+ Coluna à direita</button>
-            <button type="button" className="rte-btn" disabled={!inTable} onMouseDown={keep} onClick={() => tableOp("col-del")}>− Coluna</button>
+            <button type="button" className="rte-btn" disabled={!inTable} onMouseDown={keep} onClick={() => tableOp("col-before")}>+ Column left</button>
+            <button type="button" className="rte-btn" disabled={!inTable} onMouseDown={keep} onClick={() => tableOp("col-after")}>+ Column right</button>
+            <button type="button" className="rte-btn" disabled={!inTable} onMouseDown={keep} onClick={() => tableOp("col-del")}>− Column</button>
           </div>
           <div className="rte-row">
-            <button type="button" className="rte-btn" disabled={!inTable} onMouseDown={keep} onClick={toggleHeaderRow}>Alternar cabeçalho</button>
-            <button type="button" className="rte-btn rte-btn-danger" disabled={!inTable} onMouseDown={keep} onClick={() => tableOp("remove")}>Excluir tabela</button>
+            <button type="button" className="rte-btn" disabled={!inTable} onMouseDown={keep} onClick={toggleHeaderRow}>Toggle header row</button>
+            <button type="button" className="rte-btn rte-btn-danger" disabled={!inTable} onMouseDown={keep} onClick={() => tableOp("remove")}>Delete table</button>
           </div>
-          <p className="rte-pop-hint">Use Tab para navegar entre as células e Shift+Tab para voltar.</p>
+          <p className="rte-pop-hint">Use Tab to move between cells and Shift+Tab to go back.</p>
         </div>
       ))}
 
       {popOver("special", (
         <div className="rte-menu rte-menu-wide">
-          <p className="rte-pop-title">Emojis</p>
+          <p className="rte-pop-title">Emoji</p>
           <div className="rte-chars">
             {EMOJIS.map((emoji) => (
               <button key={emoji} type="button" className="rte-char" onMouseDown={keep} onClick={() => insertText(emoji)}>
@@ -1297,7 +1297,7 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
               </button>
             ))}
           </div>
-          <p className="rte-pop-title">Símbolos</p>
+          <p className="rte-pop-title">Symbols</p>
           <div className="rte-chars">
             {SPECIALS.map((symbol) => (
               <button key={symbol} type="button" className="rte-char" onMouseDown={keep} onClick={() => insertText(symbol)}>
@@ -1312,11 +1312,11 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
         <div className="rte-menu rte-menu-wide">
           <div className="rte-row">
             <label className="rte-field rte-field-grow">
-              Localizar
+              Find
               <input
                 type="text"
                 value={findTerm}
-                placeholder="termo"
+                placeholder="term"
                 onChange={(event) => setFindTerm(event.target.value)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter") {
@@ -1327,16 +1327,16 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
               />
             </label>
             <label className="rte-field rte-field-grow">
-              Substituir por
+              Replace with
               <input type="text" value={replaceTerm} onChange={(event) => setReplaceTerm(event.target.value)} />
             </label>
           </div>
           <div className="rte-row">
-            <button type="button" className="rte-btn" onMouseDown={keep} onClick={findNext}>Localizar próximo</button>
-            <button type="button" className="rte-btn" onMouseDown={keep} onClick={replaceCurrent}>Substituir</button>
-            <button type="button" className="rte-btn rte-btn-primary" onMouseDown={keep} onClick={replaceAll}>Substituir tudo</button>
+            <button type="button" className="rte-btn" onMouseDown={keep} onClick={findNext}>Find next</button>
+            <button type="button" className="rte-btn" onMouseDown={keep} onClick={replaceCurrent}>Replace</button>
+            <button type="button" className="rte-btn rte-btn-primary" onMouseDown={keep} onClick={replaceAll}>Replace all</button>
           </div>
-          <p className="rte-pop-hint">{findMsg || "Ctrl+F abre esta caixa. A busca ignora maiúsculas e minúsculas."}</p>
+          <p className="rte-pop-hint">{findMsg || "Ctrl+F opens this panel. The search is case-insensitive."}</p>
         </div>
       ))}
       <div className="rte-body">
@@ -1347,9 +1347,9 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
           suppressContentEditableWarning
           role="textbox"
           aria-multiline="true"
-          aria-label="Conteúdo do artigo"
+          aria-label="Article content"
           spellCheck
-          data-placeholder="Escreva aqui. Atalhos: # título, - lista, > citação, **negrito**, `código`. Cole ou arraste imagens."
+          data-placeholder="Write here. Shortcuts: # heading, - list, > quote, **bold**, `code`. Paste or drag images."
           onInput={emit}
           onKeyDown={onKeyDown}
           onPaste={onPaste}
@@ -1357,29 +1357,29 @@ export default function RichEditor({ value, onChange, onUpload, onSave, draftKey
           onDragOver={(event) => event.preventDefault()}
           onBlur={() => setMenu(null)}
         />
-        {busy ? <p className="rte-busy" role="status">Enviando imagem…</p> : null}
+        {busy ? <p className="rte-busy" role="status">Uploading image…</p> : null}
       </div>
 
       <div className="rte-foot">
         <span className="rte-stat">
-          {stats.words} palavras · {stats.chars} caracteres · {stats.mins} min de leitura
-          {hasImage ? " · imagem selecionada" : ""}
-          {inTable ? " · tabela ativa" : ""}
+          {stats.words} words · {stats.chars} characters · {stats.mins} min read
+          {hasImage ? " · image selected" : ""}
+          {inTable ? " · table active" : ""}
         </span>
         <span className="rte-foot-actions">
           {draft ? (
             <>
-              <span className="rte-draft-note">Rascunho local de {new Date(draft.at).toLocaleString("pt-BR")}</span>
+              <span className="rte-draft-note">Local draft from {new Date(draft.at).toLocaleString("en-US")}</span>
               <button className="rte-btn rte-btn-sm" type="button" onMouseDown={keep} onClick={restoreDraft}>
-                Restaurar
+                Restore
               </button>
               <button className="rte-btn rte-btn-sm" type="button" onMouseDown={keep} onClick={discardDraft}>
-                Descartar
+                Discard
               </button>
             </>
           ) : null}
-          {savedClock ? <span className="rte-saved">rascunho local salvo às {savedClock}</span> : null}
-          <span className="rte-hint-inline">Ctrl+S salva · Ctrl+K link · Ctrl+F localizar · Ctrl+Shift+D modo foco</span>
+          {savedClock ? <span className="rte-saved">local draft saved at {savedClock}</span> : null}
+          <span className="rte-hint-inline">Ctrl+S save · Ctrl+K link · Ctrl+F find · Ctrl+Shift+D focus mode</span>
         </span>
       </div>
 

@@ -448,6 +448,9 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
   const [menuOpen, setMenuOpen] = useState(false);
   const [rowMenu, setRowMenu] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  /** Left rail: expanded tree (Dashboard parent → Blog child) or icons-only. */
+  const [sideOpen, setSideOpen] = useState(true);
+  const [blogOpen, setBlogOpen] = useState(true);
 
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
@@ -457,6 +460,56 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
     document.addEventListener("mousedown", onDocClick);
     return () => document.removeEventListener("mousedown", onDocClick);
   }, [rowMenu]);
+
+  /** Remember the rail state (icons-only vs expanded) across visits. */
+  useEffect(() => {
+    try {
+      if (localStorage.getItem("dash-side-open") === "0") setSideOpen(false);
+      if (localStorage.getItem("dash-blog-open") === "0") setBlogOpen(false);
+    } catch {
+      /* storage blocked — keep the defaults */
+    }
+  }, []);
+
+  function toggleSide() {
+    setSideOpen((v) => {
+      const next = !v;
+      try {
+        localStorage.setItem("dash-side-open", next ? "1" : "0");
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  }
+
+  /** Collapsed rail: clicking the sidebar itself (not an inner link) expands it
+      again — no dedicated "Expand" button needed. */
+  function expandSide() {
+    setSideOpen(true);
+    try {
+      localStorage.setItem("dash-side-open", "1");
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function toggleBlog() {
+    // While the rail is collapsed the parent row only re-opens the sidebar.
+    if (!sideOpen) {
+      expandSide();
+      return;
+    }
+    setBlogOpen((v) => {
+      const next = !v;
+      try {
+        localStorage.setItem("dash-blog-open", next ? "1" : "0");
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  }
 
   async function refresh() {
     let state: AdminState;
@@ -674,17 +727,51 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
   }
 
   return (
-    <div className="dash">
-      <aside className="dash-side" aria-label="Primary">
+    <div className={"dash" + (sideOpen ? "" : " dash-rail")}>
+      <aside
+        className="dash-side"
+        aria-label="Primary"
+        title={sideOpen ? undefined : "Expandir menu"}
+        onClick={sideOpen ? undefined : expandSide}
+      >
         <div className="dash-side-top">
           <div className="dash-side-brand">
             <span className="dash-home" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h5v-6h4v6h5V9.5" /></svg></span>
             <span className="dash-side-title">Dashboard</span>
+            {/* Only exists while the sidebar is open (to collapse it); the
+                collapsed rail re-opens by clicking the sidebar itself. */}
+            {sideOpen ? (
+              <button
+                type="button"
+                className="dash-fold"
+                aria-label="Recolher menu"
+                aria-expanded="true"
+                title="Recolher"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleSide();
+                }}
+              ><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m14 6-6 6 6 6" /></svg></button>
+            ) : null}
           </div>
-          <a className="dash-side-blog" href="#blog-posts" aria-label="Blog posts">
-            <span className="dash-blog-ico" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="3" /><path d="M3 8.5h18M7.5 4v4.5" /><circle cx="15" cy="12.6" r="2.3" /><path d="M13.2 16.6 10 19.5M17.6 10.5 20 7" /></svg></span>
-            <span>Blog</span>
-          </a>
+          <button
+            type="button"
+            className="dash-tree-parent"
+            aria-expanded={sideOpen ? blogOpen : false}
+            title="Blog"
+            onClick={toggleBlog}
+          >
+            <span className="dash-caret" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m9 6 6 6-6 6" /></svg></span>
+            <span className="dash-tree-ico" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 6h16M4 12h16M4 18h10" /></svg></span>
+            <span className="dash-side-label">Blog</span>
+            <span className="dash-count">{counts.all}</span>
+          </button>
+          {blogOpen ? (
+            <a className="dash-side-blog" href="#blog-posts" aria-label="Blog posts" title="Blog posts">
+              <span className="dash-blog-ico" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="3" /><path d="M3 8.5h18M7.5 4v4.5" /><circle cx="15" cy="12.6" r="2.3" /><path d="M13.2 16.6 10 19.5M17.6 10.5 20 7" /></svg></span>
+              <span className="dash-side-label">Posts</span>
+            </a>
+          ) : null}
         </div>
           
         <div className="dash-help">
@@ -733,7 +820,7 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
         </header>
 
         <div className={form ? "dash-body" : "dash-body dash-body-noPanel"}>
-          <section className="dash-list-col" aria-label="Blog posts">
+          <section className="dash-list-col" aria-label="Blog posts" id="blog-posts">
             <div className="dash-list-head">
               <div>
                 <h1 className="dash-h1">Blog</h1>

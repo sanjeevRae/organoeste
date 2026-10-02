@@ -19,7 +19,6 @@ function LatestCard({ post }: { post: BlogPost }) {
             <p className="blg-meta-block">
               <span className="blg-meta-label">Escrito por</span>
               <span className="blg-meta-value">
-                <img className="blg-avatar" src="/images/avatar.webp" alt="" />
                 {post.author}
               </span>
             </p>

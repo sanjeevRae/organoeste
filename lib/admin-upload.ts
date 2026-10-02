@@ -12,10 +12,10 @@ const ALLOWED_EXT: Record<string, string> = {
 };
 
 export function uploadErrorFor(file: File): string | null {
-  if (!file || file.size <= 0) return "Arquivo vazio.";
-  if (file.size > MAX_BYTES) return "Imagem muito grande (máximo 5 MB).";
+  if (!file || file.size <= 0) return "Empty file.";
+  if (file.size > MAX_BYTES) return "Image too large (5 MB maximum).";
   const ext = ALLOWED_EXT[file.type];
-  if (!ext) return "Formato não suportado. Use JPG, PNG, WebP, GIF ou SVG.";
+  if (!ext) return "Unsupported format. Use JPG, PNG, WebP, GIF or SVG.";
   return null;
 }
 
@@ -35,20 +35,20 @@ export async function saveUpload(file: File): Promise<SavedUpload> {
   if (bad) throw new Error(bad);
   const ext = ALLOWED_EXT[file.type];
   const base =
-    (file.name || "imagem")
+    (file.name || "image")
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "")
-      .slice(0, 40) || "imagem";
+      .slice(0, 40) || "image";
   const name = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${base}${ext}`;
   const bytes = Buffer.from(await file.arrayBuffer());
   // Disk + DB together: /media serves from disk when the file is there and
   // from the media_files table when the host keeps dropping uploaded files
   // (the dashboard notice names the winner via stored.inDb).
   const stored = await storeUpload(name, file.type, bytes);
-  return { url: `/media/${name}`, file: stored.diskFile ?? `(banco de dados${stored.inDb ? "" : " — gravação pendente"})`, inDb: stored.inDb };
+  return { url: `/media/${name}`, file: stored.diskFile ?? `(database${stored.inDb ? "" : " — write pending"})`, inDb: stored.inDb };
 }
 
 // ---------- sanitizer allowlists ----------
@@ -247,7 +247,7 @@ export function sanitizeContentHtml(html: string): string {
       if (!embed) return "";
       videoOpen = true;
       return (
-        '<figure class="blg-video"><iframe src="' + esc(embed) + '" title="Vídeo incorporado"' +
+        '<figure class="blg-video"><iframe src="' + esc(embed) + '" title="Embedded video"' +
         ' loading="lazy" allowfullscreen></iframe>'
       );
     }
