@@ -175,7 +175,19 @@ function categoriesWith(categories: string[], category: string): string[] {
 export async function adminUploadImage(input: FormData): Promise<{ ok: boolean; url?: string; error?: string; file?: string; inDb?: boolean }> {
   const denied = await requireAdmin();
   if (denied) return { ok: false, error: denied };
+  // A file bigger than the server-action body cap never reaches this code —
+  // Next rejects it with React error #441 ("An error occurred in the Server
+  // Components render"). next.config.ts raises the cap to 6mb for the 5 MB
+  // editor limit, but when the cap still bites (proxy, old build), say so.
   const file = input.get("file");
+  if (file === null) {
+    return {
+      ok: false,
+      error:
+        "A imagem não chegou ao servidor (limite de tamanho da requisição). " +
+        "Use um arquivo de até 5 MB ou comprima a imagem e tente de novo.",
+    };
+  }
   if (!(file instanceof File)) return { ok: false, error: "Nenhum arquivo recebido." };
   try {
     const saved = await saveUpload(file);

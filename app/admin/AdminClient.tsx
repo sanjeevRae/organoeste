@@ -545,6 +545,13 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
   });
 
   async function uploadFile(file: File): Promise<string | null> {
+    // Client-side pre-check: the editor accepts 5 MB and the server-action cap
+    // is 6 MB, so anything bigger would die with React error #441 ("An error
+    // occurred in the Server Components render"). Reject early with words.
+    if (file.size > 5 * 1024 * 1024) {
+      setNotice(`"${file.name}" tem ${(file.size / 1024 / 1024).toFixed(1)} MB — o limite é 5 MB. Comprima a imagem e tente de novo.`);
+      return null;
+    }
     const data = new FormData();
     data.append("file", file);
     let res: Awaited<ReturnType<typeof adminUploadImage>>;
