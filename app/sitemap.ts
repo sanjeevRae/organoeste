@@ -9,9 +9,15 @@ export default async function sitemap() {
     { url: `${SITE_URL}/solucoes`, lastModified: new Date() },
     { url: `${SITE_URL}/blog`, lastModified: new Date() },
   ];
-  const posts = (await publishedPosts()).map((p) => ({
-    url: `${SITE_URL}/blog/${p.slug}`,
-    lastModified: new Date(p.updatedAt),
-  }));
+  // A DB failure must not fail the sitemap build: list the base pages only.
+  let posts: { url: string; lastModified: Date }[] = [];
+  try {
+    posts = (await publishedPosts()).map((p) => ({
+      url: `${SITE_URL}/blog/${p.slug}`,
+      lastModified: new Date(p.updatedAt),
+    }));
+  } catch {
+    posts = [];
+  }
   return [...base, ...posts];
 }

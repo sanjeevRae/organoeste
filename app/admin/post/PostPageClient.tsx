@@ -66,16 +66,28 @@ export default function FullPageEditor({
   }, [ok]);
 
   async function refresh() {
-    const state = await adminBootstrap();
+    let state: AdminState;
+    try {
+      state = await adminBootstrap();
+    } catch (err) {
+      setNotice(err instanceof Error ? err.message : String(err));
+      return;
+    }
     setPosts(state.posts as Post[]);
     setCategories(state.categories);
-    setNotice("");
+    setNotice(state.dbError ?? "");
   }
 
   async function uploadFile(file: File): Promise<string | null> {
     const data = new FormData();
     data.append("file", file);
-    const res = await adminUploadImage(data);
+    let res: Awaited<ReturnType<typeof adminUploadImage>>;
+    try {
+      res = await adminUploadImage(data);
+    } catch (err) {
+      setNotice(err instanceof Error ? err.message : String(err));
+      return null;
+    }
     if (!res.ok || !res.url) {
       setNotice(res.error ?? "Could not upload image.");
       return null;
@@ -103,7 +115,16 @@ export default function FullPageEditor({
     setSaving(true);
     setNotice("");
     setFallback(null);
-    const res = await adminSavePost({ form });
+    // A server-action rejection must never become an unhandled promise error in
+    // the console: surface it as panel text instead.
+    let res: Awaited<ReturnType<typeof adminSavePost>>;
+    try {
+      res = await adminSavePost({ form });
+    } catch (err) {
+      setSaving(false);
+      setNotice(err instanceof Error ? err.message : String(err));
+      return;
+    }
     setSaving(false);
     // No automatic download: the button appears only if the DB refused the write.
     if (res.download) setFallback(res.download);
@@ -117,10 +138,15 @@ export default function FullPageEditor({
     } catch {
       /* ignore */
     }
+    // Adopt the real id/slug so repeat saves stay UPDATEs on the same row.
+    if (res.saved) {
+      const saved = res.saved;
+      setForm((prev) => (prev ? { ...prev, id: saved.id, slug: saved.slug } : prev));
+    }
     if (isNew) setIsNew(false);
     setNotice(isNew ? "Post published and saved in the database." : "Changes saved in the database.");
-    if (res.ok && form.slug && form.slug !== slug) {
-      router.replace(`/admin/post/${form.slug}`);
+    if (res.saved && form.slug && res.saved.slug !== slug && slug !== null) {
+      router.replace(`/admin/post/${res.saved.slug}`);
     }
   }
 

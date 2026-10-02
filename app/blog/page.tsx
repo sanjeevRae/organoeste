@@ -12,9 +12,17 @@ export const metadata = {
 
 export const revalidate = 60;
 
+/* Reads live from MySQL (the only source of truth). A DB failure renders an
+   explicit error and 0 rows render an empty list — never the bundled file. */
 export default async function BlogPage() {
-  const posts = await publishedPosts();
-  const categories = await blogCategories();
+  let posts: Awaited<ReturnType<typeof publishedPosts>> = [];
+  let categories: string[] = [];
+  let error: string | null = null;
+  try {
+    [posts, categories] = await Promise.all([publishedPosts(), blogCategories()]);
+  } catch (err) {
+    error = err instanceof Error ? err.message : String(err);
+  }
   return (
     <>
       <Navbar />
@@ -30,7 +38,13 @@ export default async function BlogPage() {
           </div>
         </section>
         <div className="blg-wrap">
-          <BlogListingClient posts={posts} categories={categories} />
+          {error ? (
+            <p className="blg-empty" role="alert">
+              O blog está temporariamente indisponível ({error}). Tente de novo em instantes.
+            </p>
+          ) : (
+            <BlogListingClient posts={posts} categories={categories} />
+          )}
         </div>
       </main>
       <Footer />

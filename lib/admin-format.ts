@@ -111,7 +111,11 @@ export function validateForm(p: PostForm, taken: Set<string>, selfId: number | n
   if (!p.slug.trim()) return "Slug é obrigatório.";
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p.slug.trim()))
     return "Slug só aceita letras minúsculas, números e hífens.";
-  if (taken.has(p.slug.trim()) && !takenIsSelf(p, selfId)) return "Esse slug já existe em outro post.";
+  // `taken` already excludes the row being edited (see takenSlugs), so any hit
+  // here is another post's slug — no self-check needed. The old takenIsSelf
+  // compared form.id to itself (always true on edit) and let duplicates pass.
+  void selfId;
+  if (taken.has(p.slug.trim())) return "Esse slug já existe em outro post.";
   if (!p.title.trim()) return "Título é obrigatório.";
   if (!p.excerpt.trim()) return "Resumo é obrigatório.";
   if (!p.category.trim()) return "Categoria é obrigatória.";
@@ -122,10 +126,6 @@ export function validateForm(p: PostForm, taken: Set<string>, selfId: number | n
   if (!p.contentHtml.trim() || p.contentHtml.trim() === "<p></p>")
     return "O conteúdo do artigo está vazio.";
   return null;
-}
-
-function takenIsSelf(p: PostForm, selfId: number | null): boolean {
-  return selfId !== null && p.id === selfId;
 }
 
 /** Form -> storage shape (today stamped as updatedAt, tags split on commas). */

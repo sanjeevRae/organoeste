@@ -11,13 +11,24 @@ import { formatDateBR, readingTime, speakingTime, tocFromHtml, SITE_URL } from "
 export const revalidate = 60;
 export const dynamicParams = true;
 
+/* generateStaticParams must never fail the build when MySQL is unreachable
+   (build environments often have no DB); pages still read MySQL at runtime. */
 export async function generateStaticParams() {
-  return (await publishedPosts()).map((p) => ({ slug: p.slug }));
+  try {
+    return (await publishedPosts()).map((p) => ({ slug: p.slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPost(slug);
+  let post: Awaited<ReturnType<typeof getPost>>;
+  try {
+    post = await getPost(slug);
+  } catch {
+    return {};
+  }
   if (!post) return {};
   const url = `/blog/${post.slug}`;
   const title = post.seoTitle || post.title;
@@ -33,11 +44,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = await getPost(slug);
+  // MySQL-only: a DB failure is an explicit error, never the bundled file.
+  let post: Awaited<ReturnType<typeof getPost>>;
+  let rel: Awaited<ReturnType<typeof publishedPosts>> = [];
+  let error: string | null = null;
+  try {
+    post = await getPost(slug);
+    const current = post;
+    if (current) rel = (await publishedPosts()).filter((p) => p.slug !== current.slug).slice(0, 3);
+  } catch (err) {
+    post = undefined;
+    error = err instanceof Error ? err.message : String(err);
+  }
+  if (error) throw new Error(error);
   if (!post) notFound();
   const listenTime = speakingTime(post.contentHtml);
   const toc = post.showToc === false ? [] : tocFromHtml(post.contentHtml);
-  const rel = (await publishedPosts()).filter((p) => p.slug !== post.slug).slice(0, 3);
   const url = `${SITE_URL}/blog/${post.slug}`;
   const jsonLd = {
     "@context": "https://schema.org",

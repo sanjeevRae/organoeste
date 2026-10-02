@@ -12,7 +12,7 @@ import {
   toBlogPost,
 } from "@/lib/admin";
 import type { BlogPost } from "@/data/blog-posts";
-import { allPosts, blogCategories, storeStatus } from "@/lib/posts";
+import { allPosts, blogCategories, storeStatus, type PostWithId } from "@/lib/posts";
 import { serializePosts } from "@/lib/admin";
 import { ensureSchema, schemaState, type SchemaState } from "@/lib/schema";
 import { todayISO, validateForm, type PostForm } from "@/lib/admin-format";
@@ -21,11 +21,11 @@ import { sanitizeContentHtml, saveUpload } from "@/lib/admin-upload";
 export interface AdminState {
   source: "mysql" | "file";
   configured: boolean;
-  /** Why the dashboard fell back to the bundled posts, when it did. */
+  /** The exact MySQL error, when the database could not be read. */
   dbError?: string;
   /** Result of ensuring the tables exist (created/repair/error). */
   schema: SchemaState;
-  posts: (BlogPost & { id?: number })[];
+  posts: PostWithId[];
   categories: string[];
 }
 
@@ -41,27 +41,41 @@ export async function adminBootstrap(): Promise<AdminState> {
   // Opening the dashboard is what creates/repairs the tables, so a database
   // created in cPanel starts working without importing any SQL file.
   await ensureSchema();
-  const [posts, categories, status] = await Promise.all([allPosts(), blogCategories(), storeStatus()]);
-  return {
-    source: status.source,
-    configured: adminConfigured(),
-    dbError: status.error,
-    schema: schemaState(),
-    posts: posts as (BlogPost & { id?: number })[],
-    categories,
-  };
+  try {
+    const [posts, categories, status] = await Promise.all([allPosts(), blogCategories(), storeStatus()]);
+    return {
+      source: status.source,
+      configured: adminConfigured(),
+      dbError: status.error,
+      schema: schemaState(),
+      posts,
+      categories,
+    };
+  } catch (err) {
+    // MySQL-only reads: a broken DB shows an explicit error + empty list,
+    // never the bundled file.
+    const detail = err instanceof Error ? err.message : String(err);
+    return {
+      source: "mysql",
+      configured: adminConfigured(),
+      dbError: detail,
+      schema: schemaState(),
+      posts: [],
+      categories: [],
+    };
+  }
 }
 
-function takenSlugs(posts: (BlogPost & { id?: number })[], selfId: number | null): Set<string> {
+function takenSlugs(posts: PostWithId[], selfId: number | null): Set<string> {
   const taken = new Set<string>();
   for (const p of posts) {
-    if (selfId !== null && (p.id ?? null) === selfId) continue;
+    if (selfId !== null && p.id === selfId) continue;
     taken.add(p.slug);
   }
   return taken;
 }
 
-function orderByPublishedDesc(posts: (BlogPost & { id?: number })[]): (BlogPost & { id?: number })[] {
+function orderByPublishedDesc(posts: PostWithId[]): PostWithId[] {
   return [...posts].sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
 }
 
@@ -95,7 +109,7 @@ export async function adminLogout(): Promise<{ ok: true }> {
   return { ok: true };
 }
 
-async function writePostRow(post: BlogPost & { id?: number }, tags: string[]): Promise<void> {
+async function writePostRow(post: BlogPost & { id?: number }, tags: string[]): Promise<number> {
   const pool = db();
   const [existing] = await pool.query("SELECT id FROM blog_posts WHERE slug = ?", [post.slug]);
   const existingId = (existing as { id: number }[])[0]?.id ?? null;
@@ -126,12 +140,19 @@ async function writePostRow(post: BlogPost & { id?: number }, tags: string[]): P
     const [created] = await pool.query("INSERT INTO blog_posts SET ?", [row]);
     targetId = (created as { insertId: number }).insertId;
   } else {
-    await pool.query("UPDATE blog_posts SET ? WHERE id = ?", [row, targetId]);
+    const [result] = await pool.query("UPDATE blog_posts SET ? WHERE id = ?", [row, targetId]);
+    // The row may have been deleted elsewhere between read and write: fall back
+    // to INSERT instead of orphaning tags against a missing post_id (FK error).
+    if ((result as { affectedRows?: number }).affectedRows === 0) {
+      const [created] = await pool.query("INSERT INTO blog_posts SET ?", [row]);
+      targetId = (created as { insertId: number }).insertId;
+    }
   }
   await pool.query("DELETE FROM blog_tags WHERE post_id = ?", [targetId]);
   for (let i = 0; i < tags.length; i++) {
     await pool.query("INSERT INTO blog_tags (post_id, tag, sort_order) VALUES (?, ?, ?)", [targetId, tags[i], i]);
   }
+  return targetId;
 }
 
 export interface SaveResult {
@@ -139,7 +160,10 @@ export interface SaveResult {
   error?: string;
   fileOnly?: boolean;
   download?: { name: string; text: string };
-  posts?: (BlogPost & { id?: number })[];
+  posts?: PostWithId[];
+  /** Row the write landed on (id/slug); the editors sync the open form to it so
+      a CREATE is immediately editable and repeat saves stay UPDATEs. */
+  saved?: { id: number; slug: string };
   /** Where the save landed; the panel uses it to confirm a real DB write. */
   dbWrite?: "mysql";
 }
@@ -164,31 +188,74 @@ export async function adminUploadImage(input: FormData): Promise<{ ok: boolean; 
 export async function adminSavePost(input: { form: PostForm }): Promise<SaveResult> {
   const denied = await requireAdmin();
   if (denied) return { ok: false, error: denied };
+  // A bare filename pasted or kept from an older row never reaches the
+  // validator raw: without this the image 404s and the save is rejected with a
+  // "capa" error even though the file is in the media store.
+  const rawImage = (input.form.image ?? "").trim();
+  const cleanImage = rawImage && !/^([a-z][a-z0-9+.-]*:|\/)/i.test(rawImage) ? `/media/${rawImage}` : rawImage;
   const cleanHtml = sanitizeContentHtml(input.form.contentHtml);
-  const form = { ...input.form, contentHtml: cleanHtml };
-  const posts = (await allPosts()) as (BlogPost & { id?: number })[];
+  const form = { ...input.form, image: cleanImage, contentHtml: cleanHtml };
+  // MySQL is the only source of truth: read the rows first so validation sees
+  // real ids (an unreadable DB errors here instead of validating against the
+  // bundled file and then failing the write).
+  let posts: PostWithId[];
+  try {
+    posts = await allPosts();
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err);
+    return { ok: false, error: `O banco de dados recusou a leitura: ${detail}. Confira o .env (DB_*).` };
+  }
   const error = validateForm(form, takenSlugs(posts, form.id), form.id);
   if (error) return { ok: false, error };
   const post = toBlogPost(form);
-  const postId = form.id ?? (posts.find((p) => p.slug === post.slug) as (BlogPost & { id?: number }) | undefined)?.id ?? null;
+  // form.id wins (the row being edited, even when the slug was renamed);
+  // otherwise an existing row with the same slug; otherwise null -> INSERT.
+  // The withId check below only runs for edits (form.id !== null), so a fresh
+  // CREATE whose slug happens to equal another post's slug still falls through
+  // to the duplicate INSERT error (ER_DUP_ENTRY) with the real MySQL message
+  // instead of being silently blocked here.
+  const bySlug = posts.find((p) => p.slug === post.slug);
+  const postId = form.id ?? bySlug?.id ?? null;
+  if (form.id !== null && bySlug && bySlug.id !== form.id) {
+    return { ok: false, error: "Esse slug já existe em outro post." };
+  }
   const withId = { ...post, id: postId } as BlogPost & { id?: number };
-  const merged = orderByPublishedDesc([...posts.filter((p) => p.slug !== withId.slug && (p.id ?? null) !== withId.id), withId]);
-  const categories = categoriesWith(await blogCategories(), withId.category);
-  const previousSlug = form.id !== null ? posts.find((p) => (p.id ?? null) === form.id)?.slug : undefined;
+  const previousSlug = form.id !== null ? posts.find((p) => p.id === form.id)?.slug : undefined;
   const schema = await ensureSchema();
   try {
-    await writePostRow(withId, withId.tags || []);
+    const savedId = await writePostRow(withId, withId.tags || []);
     revalidateBlog(withId.slug, previousSlug);
-    return { ok: true, posts: merged, dbWrite: "mysql" };
+    // WRITE-THEN-READ: show exactly what MySQL stored (real id, rebuilt tags),
+    // so a CREATE is immediately editable and an UPDATE never "disappears".
+    // A re-read failure must never mask a successful write: the write already
+    // committed and the cache was purged, so fall back to the merged preview.
+    let next: PostWithId[];
+    try {
+      next = orderByPublishedDesc(await allPosts());
+    } catch {
+      next = orderByPublishedDesc([
+        ...posts.filter((p) => p.slug !== withId.slug && p.id !== postId),
+        { ...withId, id: savedId } as PostWithId,
+      ]);
+    }
+    return { ok: true, posts: next, saved: { id: savedId, slug: withId.slug }, dbWrite: "mysql" };
   } catch (err) {
     // The real MySQL error travels to the panel instead of being swallowed, so
     // a missing table/column/privilege is visible (and fixable) at a glance.
+    // NOTE: no DB call in this branch — allPosts()/blogCategories() already
+    // succeeded above, but a second failure here used to throw a new exception
+    // that hid the original write error ("Cannot read properties of...").
     const detail = err instanceof Error ? err.message : String(err);
     const because = schema.ready ? detail : `${schema.error ?? detail}`;
+    const merged = orderByPublishedDesc([
+      ...posts.filter((p) => p.slug !== withId.slug && p.id !== postId),
+      { ...withId, id: postId ?? -1 } as PostWithId,
+    ]);
+    const cats = categoriesWith(posts.flatMap((p) => p.category ?? []), withId.category);
     return {
       ok: false,
       fileOnly: true,
-      download: { name: "blog-posts.ts", text: serializePosts(merged as BlogPost[], categories) },
+      download: { name: "blog-posts.ts", text: serializePosts(merged as BlogPost[], cats) },
       error:
         `O banco de dados recusou a gravação: ${because}. ` +
         `Confira o .env (DB_*), as permissões do usuário MySQL e rode "npm run db:push" no servidor. ` +
@@ -200,27 +267,40 @@ export async function adminSavePost(input: { form: PostForm }): Promise<SaveResu
 export async function adminDeletePost(input: { slug: string }): Promise<SaveResult> {
   const denied = await requireAdmin();
   if (denied) return { ok: false, error: denied };
-  const posts = (await allPosts()) as (BlogPost & { id?: number })[];
+  let posts: PostWithId[];
+  try {
+    posts = await allPosts();
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err);
+    return { ok: false, error: `O banco de dados recusou a leitura: ${detail}. Confira o .env (DB_*).` };
+  }
   const target = posts.find((p) => p.slug === input.slug);
   if (!target) return { ok: false, error: "Post não encontrado." };
   const schema = await ensureSchema();
   try {
     const pool = db();
     const [rows] = await pool.query("SELECT id FROM blog_posts WHERE slug = ?", [input.slug]);
-    const id = (rows as { id: number }[])[0]?.id ?? target.id ?? null;
-    if (id === null) throw new Error("post inexistente no banco (id não encontrado)");
+    const id = (rows as { id: number }[])[0]?.id ?? target.id;
     await pool.query("DELETE FROM blog_tags WHERE post_id = ?", [id]);
     await pool.query("DELETE FROM blog_posts WHERE id = ?", [id]);
     revalidateBlog(input.slug);
-    return { ok: true, posts: posts.filter((p) => p.slug !== input.slug), dbWrite: "mysql" };
+    // WRITE-THEN-READ: confirm the row is really gone.
+    const fresh = await allPosts();
+    return { ok: true, posts: orderByPublishedDesc(fresh), dbWrite: "mysql" };
   } catch (err) {
     const detail = err instanceof Error ? err.message : String(err);
     const because = schema.ready ? detail : `${schema.error ?? detail}`;
     const merged = posts.filter((p) => p.slug !== input.slug);
+    let cats: string[] = [];
+    try {
+      cats = await blogCategories();
+    } catch {
+      cats = [];
+    }
     return {
       ok: false,
       fileOnly: true,
-      download: { name: "blog-posts.ts", text: serializePosts(merged as BlogPost[], await blogCategories()) },
+      download: { name: "blog-posts.ts", text: serializePosts(merged as BlogPost[], cats) },
       error:
         `O banco de dados recusou a exclusão: ${because}. ` +
         `O post continua no banco — o download abaixo é só uma saída de emergência.`,
@@ -231,7 +311,8 @@ export async function adminDeletePost(input: { slug: string }): Promise<SaveResu
 export async function adminExport(): Promise<SaveResult> {
   const denied = await requireAdmin();
   if (denied) return { ok: false, error: denied };
-  const posts = orderByPublishedDesc((await allPosts()) as (BlogPost & { id?: number })[]);
+  // Explicit backup: surfaced DB errors, never a silent bundled-file export.
+  const posts = orderByPublishedDesc(await allPosts());
   return {
     ok: true,
     download: { name: "blog-posts.ts", text: serializePosts(posts as BlogPost[], await blogCategories()) },

@@ -459,10 +459,16 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
   }, [rowMenu]);
 
   async function refresh() {
-    const state = await adminBootstrap();
+    let state: AdminState;
+    try {
+      state = await adminBootstrap();
+    } catch (err) {
+      setNotice(err instanceof Error ? err.message : String(err));
+      return;
+    }
     setPosts(state.posts as Post[]);
     setCategories(state.categories);
-    setNotice("");
+    setNotice(state.dbError ?? "");
   }
 
   const counts = useMemo(() => {
@@ -541,7 +547,13 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
   async function uploadFile(file: File): Promise<string | null> {
     const data = new FormData();
     data.append("file", file);
-    const res = await adminUploadImage(data);
+    let res: Awaited<ReturnType<typeof adminUploadImage>>;
+    try {
+      res = await adminUploadImage(data);
+    } catch (err) {
+      setNotice(err instanceof Error ? err.message : String(err));
+      return null;
+    }
     if (!res.ok || !res.url) {
       setNotice(res.error ?? "Could not upload image.");
       return null;
@@ -569,7 +581,16 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
     setSaving(true);
     setNotice("");
     setFallback(null);
-    const res = await adminSavePost({ form });
+    // A server-action rejection must never become an unhandled promise error in
+    // the console: surface it as panel text instead.
+    let res: Awaited<ReturnType<typeof adminSavePost>>;
+    try {
+      res = await adminSavePost({ form });
+    } catch (err) {
+      setSaving(false);
+      setNotice(err instanceof Error ? err.message : String(err));
+      return;
+    }
     setSaving(false);
     // No automatic download: only if the DB refused the write, and only when the
     // user clicks the button shown next to the notice.
@@ -584,7 +605,16 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
     } catch {
       /* ignore */
     }
-    setSelected(form.slug);
+    // The write told us the real id/slug: adopt them so the open row keeps its
+    // identity (a CREATE becomes an UPDATE from here on; a slug rename keeps
+    // pointing at the same row).
+    if (res.saved) {
+      const saved = res.saved;
+      setForm((prev) => (prev ? { ...prev, id: saved.id, slug: saved.slug } : prev));
+      setSelected(saved.slug);
+    } else {
+      setSelected(form.slug);
+    }
     if (isNew) setIsNew(false);
     setNotice(isNew ? "Post published and saved in the database." : "Changes saved in the database.");
   }
@@ -594,7 +624,13 @@ export default function AdminClient({ authed, initial }: { authed: boolean; init
     if (!target) return;
     if (!window.confirm(`Delete "${target.title}"?`)) return;
     setFallback(null);
-    const res = await adminDeletePost({ slug });
+    let res: Awaited<ReturnType<typeof adminDeletePost>>;
+    try {
+      res = await adminDeletePost({ slug });
+    } catch (err) {
+      setNotice(err instanceof Error ? err.message : String(err));
+      return;
+    }
     if (res.download) setFallback(res.download);
     if (!res.ok) {
       setNotice(res.error ?? "Could not delete.");
