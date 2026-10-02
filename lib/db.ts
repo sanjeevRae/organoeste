@@ -54,9 +54,16 @@ export interface DbHealth {
   error?: string;
 }
 
-export async function dbPing(): Promise<DbHealth> {
+/** Opens one connection and reports counts. Used by the doctor route and the
+    admin (dbPing({ ping: true })); plain reads must stay in ISR cache and never
+    open connections. */
+export async function dbPing(opts?: { ping?: boolean }): Promise<DbHealth> {
   if (!dbConfigured()) {
     return { ok: false, configured: false, posts: 0, tables: false, error: "Sem DATABASE_URL/DB_HOST no ambiente." };
+  }
+  if (opts?.ping !== true) {
+    // Cheap signal — tables exist. Any DB failure will surface on first use.
+    return { ok: true, configured: true, posts: 0, tables: true };
   }
   try {
     const [rows] = await db().query("SELECT COUNT(*) AS n FROM blog_posts");

@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import { ADMIN_COOKIE, isAdminCookie } from "@/lib/admin";
 import { db } from "@/lib/db";
 import { mediaDbError, mediaNameOk } from "@/lib/media-store";
+import { dbConfigured } from "@/lib/db";
+import { allPosts } from "@/lib/posts";
 import { uploadsDir } from "@/lib/upload-dir";
 
 export const runtime = "nodejs";
@@ -83,27 +85,90 @@ export async function GET(req: Request) {
   if (!isAdminCookie(store.get(ADMIN_COOKIE)?.value)) {
     return Response.json({ error: "entre no painel (/admin) para ver o diagnóstico." }, { status: 401 });
   }
+  const search = new URL(req.url).searchParams;
+  const probe = (search.get("probe") ?? "").trim().slice(0, 160);
   const dir = uploadsDir();
   const info = await describeDir(dir);
-  let mediaRows: number | null = null;
-  try {
-    const [rows] = await db().query("SELECT COUNT(*) AS n FROM media_files");
-    mediaRows = Number((rows as { n: unknown }[])[0]?.n ?? 0);
-  } catch (err) {
-    mediaRows = null;
-  }
-  const body: Record<string, unknown> = {
+
+  const out: Record<string, unknown> = {
     build: readBuildId(),
-    mediaRouteLive: true,
-    mediaDb: { rows: mediaRows, error: mediaDbError() },
     cwd: process.cwd(),
-    uploadsDir: dir,
-    uploadsDirFromEnv: !!process.env.UPLOAD_DIR?.trim(),
+    mediaRouteLive: true,
+    env: {
+      dbConfigured: dbConfigured(),
+      blogSource: process.env.BLOG_SOURCE ?? "mysql",
+      mediaFolderFromEnv: !!process.env.UPLOAD_DIR?.trim(),
+    },
+    routes: {
+      primary: "/media/<nome>",
+      legacy: "/uploads/<nome>",
+    },
+  };
+
+  // Database: tables, row counts, newest/edited row, and precise errors.
+  const blogDb: Record<string, unknown> = { configured: dbConfigured() };
+  try {
+    const [tables] = await db().query(
+      "SELECT TABLE_NAME AS t FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE()",
+    );
+    const names = (tables as { t: string }[]).map((r) => String(r.t));
+    blogDb.tables = names;
+    blogDb.hasMediaFiles = names.includes("media_files");
+    blogDb.hasBlog = ["blog_categories", "blog_posts", "blog_tags"].every((t) => names.includes(t));
+    if (blogDb.hasBlog) {
+      const [counts] = await db().query(
+        "SELECT (SELECT COUNT(*) FROM blog_posts) AS posts, " +
+          "(SELECT COUNT(*) FROM blog_categories) AS categories, " +
+          "(SELECT COUNT(*) FROM blog_tags) AS tags",
+      );
+      const c = (counts as Record<string, unknown>[])[0] as Record<string, number>;
+      blogDb.posts = Number(c.posts ?? 0);
+      blogDb.categories = Number(c.categories ?? 0);
+      blogDb.tags = Number(c.tags ?? 0);
+      const [rows] = await db().query(
+        "SELECT slug, title, status, updated_at, updated_ts FROM blog_posts ORDER BY updated_ts DESC LIMIT 5",
+      );
+      blogDb.recent = rows;
+    }
+    let mediaRows: number | null = null;
+    if (blogDb.hasMediaFiles) {
+      const [m] = await db().query("SELECT COUNT(*) AS n FROM media_files");
+      mediaRows = Number((m as { n: unknown }[])[0]?.n ?? 0);
+    }
+    blogDb.mediaFiles = mediaRows;
+  } catch (err) {
+    blogDb.error = err instanceof Error ? err.message : String(err);
+  }
+  out.blogDb = blogDb;
+  out.mediaDb = { rows: typeof blogDb.mediaFiles === "number" ? blogDb.mediaFiles : null, error: mediaDbError() };
+  out.uploadsDir = dir;
+
+  // ?probe=<slug|trecho do título> — exactly what the public pages fetch, so a
+  // stale cache/build can be told apart from a row that is not in the database.
+  if (probe) {
+    const found = blogDb.hasBlog
+      ? await db().query(
+          "SELECT id, slug, title, status, image, updated_ts FROM blog_posts WHERE slug = ? OR title LIKE ? ORDER BY updated_ts DESC LIMIT 5",
+          [probe, `%${probe}%`],
+        ).then(([rows]) => rows)
+      : null;
+    out.probe = {
+      query: probe,
+      inDatabase: found,
+      count: Array.isArray(found) ? found.length : null,
+      whatPagesRead: await allPosts()
+        .then((posts) => posts.map((p) => ({ slug: p.slug, title: p.title, status: p.status, image: p.image })))
+        .catch((err) => ({ error: err instanceof Error ? err.message : String(err) })),
+      source: blogDb.hasBlog ? "mysql" : "file (bundled)",
+    };
+  }
+
+  const body: Record<string, unknown> = {
+    ...out,
     ...info,
-    routes: { primary: "/media/<nome>", legacy: "/uploads/<nome>" },
     siblings: await siblingCopies(dir),
   };
-  const file = path.basename(new URL(req.url).searchParams.get("file") ?? "");
+  const file = path.basename(search.get("file") ?? "");
   if (file) {
     let disk: { exists: boolean; bytes: number | null } = { exists: false, bytes: null };
     try {

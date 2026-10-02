@@ -1,6 +1,7 @@
 import { blogPosts, BLOG_CATEGORIES, type BlogPost } from "@/data/blog-posts";
 import { db, dbConfigured, dbPing } from "./db";
 import { absoluteAttrs, mediaSrc, sortPublished } from "./blog";
+import { ensureSchema } from "./schema";
 
 export const BLOG_SOURCE: "mysql" | "file" = process.env.BLOG_SOURCE === "file" ? "file" : "mysql";
 
@@ -8,6 +9,9 @@ let dbDownLogged = false;
 
 async function rowsFromDb(): Promise<BlogPost[] | null> {
   if (BLOG_SOURCE === "file") return null;
+  // A missing table/column is what silently pushed the site back to the bundled
+  // posts; repairing the schema first (idempotent) keeps reads on the database.
+  await ensureSchema();
   try {
     const [posts] = await db().query(
       "SELECT id, slug, title, excerpt, category, author, author_role AS authorRole, " +
@@ -67,6 +71,7 @@ export async function getPost(slug: string): Promise<BlogPost | undefined> {
 export async function blogCategories(): Promise<string[]> {
   const fallback = BLOG_CATEGORIES;
   if (BLOG_SOURCE === "file") return fallback;
+  await ensureSchema();
   try {
     const [rows] = await db().query("SELECT name FROM blog_categories ORDER BY sort_order, name");
     const names = (rows as { name: string }[]).map((r) => r.name);
@@ -87,14 +92,14 @@ export interface StoreStatus {
   error?: string;
 }
 
-/** Admin-facing diagnostics: is the dashboard really talking to MySQL? Used by
-    adminBootstrap() so the dashboard can warn when it silently fell back to the
-    bundled posts (wrong credentials, missing schema, server down). */
+/** Admin-facing diagnostics: is the dashboard really talking to MySQL? It runs
+    a single live connection check before falling back, so a working DB never
+    shows stale counters after edits or creates. */
 export async function storeStatus(): Promise<StoreStatus> {
   if (BLOG_SOURCE === "file") {
     return { source: "file", posts: blogPosts.length, configured: dbConfigured() };
   }
-  const health = await dbPing();
+  const health = await dbPing({ ping: true });
   if (!health.ok) {
     return { source: "file", posts: blogPosts.length, configured: health.configured, error: health.error };
   }
