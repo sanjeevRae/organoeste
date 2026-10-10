@@ -229,12 +229,27 @@ export default function Heading() {
                 <div className="heading-segment-body">
                   <p className="heading-segment-title">
                     {segment.label}
-                    <Glyph name="arrow" size={15} />
                   </p>
                   <p className="heading-segment-text">{segment.description}</p>
                 </div>
               </li>
             ))}
+            {/* Mobile-only WhatsApp row at the end of the card (hidden on desktop via CSS). */}
+            <li className="heading-segment heading-segment-cta">
+              <a
+                className="heading-segment-link"
+                href={WA_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span className="heading-segment-icon">
+                  <WhatsappGlyph size={20} />
+                </span>
+                <div className="heading-segment-body">
+                  <p className="heading-segment-title">Fale pelo WhatsApp</p>
+                </div>
+              </a>
+            </li>
           </ul>
         </div>
       </div>

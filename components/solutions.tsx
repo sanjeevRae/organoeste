@@ -521,9 +521,7 @@ function ProcessSection() {
           <span>início ao fim</span>
         </h2>
         <p className="sol-process-sub" data-aos="fade-up" data-aos-delay="140">
-          Da coleta ao adubo, cuidamos de todo o processo com tecnologia,
-          <br />
-          segurança e sustentabilidade.
+          Da coleta ao adubo, cuidamos de todo o processo com tecnologia, segurança e sustentabilidade.
         </p>
         <ol className="sol-steps">
           {PROCESS_STEPS.map((step, index) => (

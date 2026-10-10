@@ -58,6 +58,7 @@ export default function Navbar({ overlay = false }: NavbarProps) {
   const pathname = usePathname();
   const [hidden, setHidden] = useState(false);
   const [floating, setFloating] = useState(overlay);
+  const [menuOpen, setMenuOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const lastY = useRef(0);
 
@@ -67,11 +68,19 @@ export default function Navbar({ overlay = false }: NavbarProps) {
 
     const sync = (y: number, prev: number) => {
       setFloating(overlay && y <= TOP_EPS);
-      if (y > 140 && y > prev + 4) {
-        setHidden(true);
-      } else if (y < prev - 4 || y <= 140) {
-        setHidden(false);
-      }
+      setMenuOpen((open) => {
+        // Keep the bar on screen while the mobile menu is open.
+        if (open) {
+          setHidden(false);
+          return open;
+        }
+        if (y > 140 && y > prev + 4) {
+          setHidden(true);
+        } else if (y < prev - 4 || y <= 140) {
+          setHidden(false);
+        }
+        return open;
+      });
     };
 
     const onScroll = () => {
@@ -96,14 +105,15 @@ export default function Navbar({ overlay = false }: NavbarProps) {
 
   const classes = ["navbar"];
   if (floating) classes.push("navbar-overlay");
-  if (hidden) classes.push("navbar-hidden");
+  if (hidden && !menuOpen) classes.push("navbar-hidden");
+  if (menuOpen) classes.push("navbar-menu-open");
 
   return (
     <header ref={headerRef} className={classes.join(" ")}>
       <div className="navbar-inner">
         <a className="navbar-brand" href="/" aria-label="Organoeste, página inicial">
           <img
-            src={floating ? LOGO_OVERLAY : LOGO_BAR}
+            src={floating && !menuOpen ? LOGO_OVERLAY : LOGO_BAR}
             alt="Organoeste"
             width={640}
             height={320}
@@ -133,7 +143,47 @@ export default function Navbar({ overlay = false }: NavbarProps) {
           Fale Conosco
           <ArrowMark />
         </a>
+        {/* Mobile hamburger — hidden on desktop via CSS. */}
+        <button
+          type="button"
+          className="navbar-burger"
+          aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+          aria-expanded={menuOpen}
+          aria-controls="navbar-mobile-menu"
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+        </button>
       </div>
+      {/* Mobile dropdown panel. */}
+      <nav
+        id="navbar-mobile-menu"
+        className="navbar-mobile"
+        aria-label="Navegação móvel"
+        aria-hidden={!menuOpen}
+      >
+        {NAV_LINKS.map((link) => {
+          const [path, hash] = link.href.split("#");
+          const active = !link.external && !hash && path === pathname;
+          return (
+            <a
+              key={link.label}
+              href={link.href}
+              className={active ? "is-active" : undefined}
+              aria-current={active ? "page" : undefined}
+              target={link.external ? "_blank" : undefined}
+              rel={link.external ? "noopener noreferrer" : undefined}
+              tabIndex={menuOpen ? 0 : -1}
+              onClick={() => setMenuOpen(false)}
+            >
+              {link.label}
+            </a>
+          );
+        })}
+        
+      </nav>
     </header>
   );
 }

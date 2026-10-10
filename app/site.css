@@ -957,6 +957,50 @@ option:disabled{
   caret-color:rgb(0,0,0);
 }
 
+#site .about-section-top .about-top-description .text-content .about-top-cta-line{
+  margin-top:18px;
+}
+
+#site .about-section-top .about-top-description .text-content .about-top-cta-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px 24px;
+  background:linear-gradient(135deg,#8fd06a 0%,#6db34e 100%);
+  color:#fff !important;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:.02em;
+  text-decoration:none;
+  white-space:nowrap;
+  border:0;
+  border-radius:999px;
+  box-shadow:0 6px 16px rgba(109,179,78,.35);
+  cursor:pointer;
+  transition:transform .2s ease,box-shadow .2s ease,background-color .2s ease;
+}
+
+#site .about-section-top .about-top-description .text-content .about-top-cta-btn:hover,
+#site .about-section-top .about-top-description .text-content .about-top-cta-btn:active{
+  background-color:#547f3c;
+  color:#fff !important;
+  transform:translateY(-1px);
+  box-shadow:0 10px 22px rgba(84,127,60,.4);
+}
+
+@media (max-width: 800px){
+#site .about-section-top .about-top-description .text-content .about-top-cta-line{
+  margin-top:12px;
+}
+
+#site .about-section-top .about-top-description .text-content .about-top-cta-btn{
+  padding:6px 12px;
+  font-size:9px !important;
+  border-radius:0;
+  box-shadow:0 4px 10px rgba(109,179,78,.35);
+}
+}
+
 #site .about-section-top .about-top-caption{
   width:343px;
   left:-84.5px;
@@ -4371,7 +4415,44 @@ button.button-primary{font:inherit;cursor:pointer;-webkit-appearance:none;appear
 @media (prefers-reduced-motion: reduce){.reveal{transition:none}
 .reveal-pending{opacity:1;transform:none}}
 
-.about-play-button{font:inherit;cursor:pointer;-webkit-appearance:none;appearance:none;border:0;padding:0;background:transparent;display:block;width:100%;height:100%}
+.about-play-button{font:inherit;cursor:pointer;-webkit-appearance:none;appearance:none;border:0;padding:0;background:transparent;display:block;width:100%;height:100%;position:relative}
+
+/* Play-button ripple: three soft translucent rings expanding outward from the
+   circle, staggered so they pulse one after another, looping forever. Pure CSS. */
+.play-ripple{
+  position:absolute;
+  inset:0;
+  margin:auto;
+  border-radius:50%;
+  border:8px solid rgba(255,255,255,.55);
+  background:transparent;
+  pointer-events:none;
+  -webkit-animation:play-ripple 2.55s cubic-bezier(.22,.61,.36,1) infinite;
+  animation:play-ripple 2.55s cubic-bezier(.22,.61,.36,1) infinite;
+}
+.play-ripple:nth-child(2){-webkit-animation-delay:.85s;animation-delay:.85s}
+.play-ripple:nth-child(3){-webkit-animation-delay:1.7s;animation-delay:1.7s}
+
+@-webkit-keyframes play-ripple{
+  0%{-webkit-transform:scale(1);transform:scale(1);opacity:.65}
+  70%{opacity:.15}
+  100%{-webkit-transform:scale(2);transform:scale(2);opacity:0}
+}
+
+@keyframes play-ripple{
+  0%{transform:scale(1);opacity:.65}
+  70%{opacity:.15}
+  100%{transform:scale(2);opacity:0}
+}
+
+/* Click-to-play: the whole overlay (circle + ripples) fades out while the
+   video starts, and fades back in whenever the video is closed/paused. */
+#site .about-bottom-play.play-hidden{opacity:0 !important;pointer-events:none}
+#site .about-bottom-play.play-hidden .play-ripple{animation-play-state:paused}
+
+@media (prefers-reduced-motion: reduce){
+  .play-ripple{-webkit-animation:none;animation:none;opacity:.35}
+}
 
 .about-lightbox{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(10,15,10,.82);backdrop-filter:blur(4px)}
 
@@ -4443,7 +4524,60 @@ to{opacity:1;transform:none}}
 #site .about-section-bottom.about-section-bottom{height:942px}
 #site .about-section-bottom .canvas{transform:scale(1.08);transform-origin:center top}}
 
-#site .hero-section.hero-section{background-image:url(/images/test.png);height:calc(75vh - 112px);min-height:480px;background-size:contain;background-position:center;background-color:#0e1a0e}
+/* Mobile: square cards side by side with tiny type — green + grey squares
+   up top with the photo below; media + info squares with the CTA below. */
+@media (max-width: 800px){
+#site .about-section-top.about-section-top{height:auto;min-height:0;padding:28px 0 8px}
+#site .about-section-top .canvas{width:calc(100% - 16px);height:calc((100vw - 28px)/2);margin:0 auto}
+#site .about-section-top .about-top-wa{display:none !important}
+#site .about-section-top .about-top-card-green{width:calc((100% - 12px)/2);aspect-ratio:1/1;height:auto;left:0;top:0}
+#site .about-section-top .about-top-card-grey{width:calc((100% - 12px)/2);aspect-ratio:1/1;height:auto;left:calc((100% - 12px)/2 + 12px);top:0}
+#site .about-section-top .about-top-whatsapp-icon{width:22px;height:22px;left:10px;top:12px}
+#site .about-section-top .about-top-whatsapp-icon .icon-content{line-height:22px;font-size:22px}
+#site .about-section-top .about-top-eyebrow{width:calc((100% - 12px)/2 - 20px);left:10px;top:34px}
+#site .about-section-top .about-top-eyebrow .text-content{font-size:11px !important;line-height:1.7 !important}
+#site .about-section-top.about-section-top .about-top-eyebrow .text-content p,
+#site .about-section-top.about-section-top .about-top-eyebrow .text-content p span,
+#site .about-section-top.about-section-top .about-top-eyebrow .text-content p span b{font-size:11px !important;line-height:1.7 !important}
+#site .about-section-top .about-top-title{width:calc((100% - 12px)/2 - 20px);left:10px;top:75px}
+#site .about-section-top .about-top-title .title-content{font-size:14.5px !important;line-height:1.25 !important}
+#site .about-section-top .about-top-caption{width:calc((100% - 12px)/2 - 20px);left:10px;top:115px}
+#site .about-section-top .about-top-caption .text-content{font-size:11px !important;line-height:1.55 !important}
+#site .about-section-top.about-section-top .about-top-caption .text-content p,
+#site .about-section-top.about-section-top .about-top-caption .text-content p span,
+#site .about-section-top.about-section-top .about-top-caption .text-content p span b{font-size:11px !important;line-height:1.55 !important}
+#site .about-section-top .about-top-heading{width:calc((100% - 12px)/2 - 20px);left:calc((100% - 12px)/2 + 22px);top:32px}
+#site .about-section-top .about-top-heading .title-content{font-size:14.5px !important;line-height:1.25 !important}
+#site .about-section-top .about-top-description{width:calc((100% - 12px)/2 - 20px);left:calc((100% - 12px)/2 + 22px);top:78px}
+#site .about-section-top .about-top-description .text-content{font-size:11px !important;line-height:1.55 !important}
+#site .about-section-top.about-section-top .about-top-description .text-content p,
+#site .about-section-top.about-section-top .about-top-description .text-content p span,
+#site .about-section-top.about-section-top .about-top-description .text-content p span b{font-size:11px !important;line-height:1.55 !important}
+#site .about-section-top .about-top-image{display:none !important}
+#site .about-section-top .about-top-wa{display:none}
+#site .about-section-top .about-top-wa .icon-content{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#25d366;color:#fff;text-decoration:none}
+#site .about-section-top .about-top-wa .icon-content svg{width:17px;height:17px;fill:#fff}
+#site .about-section-bottom.about-section-bottom{height:auto;min-height:0;padding:8px 0 28px;background-color:#efefef}
+#site .about-section-bottom .canvas{width:calc(100% - 16px);height:calc((100vw - 16px) * .30667 + 178px);margin:0 auto}
+#site .about-section-bottom .about-bottom-media-card{width:100%;aspect-ratio:1500/460;height:auto;left:0;top:0}
+#site .about-section-bottom .about-bottom-play{width:48px;height:48px;left:50%;top:calc((100vw - 16px) * .15333 - 24px);margin-left:-24px;transform:none}
+#site .about-section-bottom .about-bottom-play .about-play-button{background-image:none !important;filter:none !important;border-radius:50%;box-shadow:0 4px 12px rgba(0,0,0,.28)}
+#site .about-section-bottom .about-bottom-play .about-play-button picture img{width:48px;height:48px}
+.play-ripple{border-width:4px}
+#site .about-section-bottom .about-bottom-info-card{display:none}
+#site .about-section-bottom .about-bottom-divider{display:none}
+#site .about-section-bottom .about-bottom-title{width:calc(100% - 32px);left:16px;top:calc((100vw - 16px) * .30667 + 18px)}
+#site .about-section-bottom .about-bottom-title .title-content{font-size:15px !important;line-height:1.3 !important}
+#site .about-section-bottom .about-bottom-description{width:calc(100% - 32px);left:16px;top:calc((100vw - 16px) * .30667 + 44px)}
+#site .about-section-bottom .about-bottom-description .text-content{font-size:10.5px !important;line-height:1.55 !important}
+#site .about-section-bottom.about-section-bottom .about-bottom-description .text-content p,
+#site .about-section-bottom.about-section-bottom .about-bottom-description .text-content p span,
+#site .about-section-bottom.about-section-bottom .about-bottom-description .text-content p span b{font-size:10.5px !important;line-height:1.55 !important}
+#site .about-section-bottom .about-bottom-cta{width:34%;height:30px;left:auto;right:0;top:0}
+#site .about-section-bottom .about-bottom-cta .button-content{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#7dc257 !important;background-image:none !important;color:#fff !important;font-size:11px !important;font-weight:700;border:0;border-radius:0 0 0 14px !important;text-decoration:none;box-shadow:none}
+}
+
+#site .hero-section.hero-section{background-image:url(/images/test.png);height:calc(75vh - 112px);min-height:480px;background-size:cover;background-position:center;background-color:#0e1a0e}
 
 @media (max-width: 800px){#site .hero-section.hero-section{height:calc(75vh - 76px);min-height:480px}}
 
@@ -4497,7 +4631,10 @@ to{opacity:1;transform:none}}
 
 #site .site-footer .footer-logo :is(.about-play-button,.button-content,.card-content,.divider-h-content,.divider-v-content,.form-content,.icon-content,.image-content,.social-content,.text-content,.title-content){background-size:contain;background-position:center}
 
-@media (min-width: 801px){#site .products-section.products-section{margin-bottom:54px;margin-top:-144px}
+/* Desktop spacing between sections. No negative top margin on .products-section —
+   a negative margin pulled the dark products band up over the About bottom band's
+   grey content, overlapping the title/description. */
+@media (min-width: 801px){#site .products-section.products-section{margin-bottom:54px;margin-top:0}
 #site .clients-section.clients-section{margin-top:54px}}
 
 .navbar{position:fixed;top:0;left:0;right:0;z-index:9999;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.08);-webkit-transform:translateZ(0);transform:translateZ(0);will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden;transition:transform .3s ease}
@@ -4517,6 +4654,53 @@ body{padding-top:101px}
 
 @media (max-width: 800px){body{padding-top:68px}}
 
+/* ===== About bottom band — exact match to the reference (desktop) =====
+   Full-bleed media card at the reference 1500:460 ratio, the green
+   "Fale conosco" tab flush into the media's top-right corner with a rounded
+   bottom-left, a centred white play button, and a flat light-grey band below
+   laid out as title | vertical divider | description. Sizes are derived from
+   the 1500px-wide reference and expressed in vw so the band keeps the
+   reference's proportions at any desktop width. This block replaces the
+   fixed 960px / scale(1.08) canvas for this section only, so it must stay
+   after all the rules it overrides. */
+@media (min-width: 801px){
+#site .about-section-bottom.about-section-bottom{height:auto;min-height:0;padding:0;background-color:#efefef}
+#site .about-section-bottom.about-section-bottom .block-overlay{opacity:0;background-color:#efefef}
+#site .about-section-bottom .canvas{width:100%;height:max(51.27vw,30.667vw + 215px);margin:0;transform:none}
+
+#site .about-section-bottom .about-bottom-media-card{left:0;top:0;width:100%;height:30.667vw;transform:none}
+#site .about-section-bottom .about-bottom-media-card .card-content{background-image:url("/images/d-3599093_1_17814623476a2ef54b5beb1366919951.png");background-size:cover;background-position:50% 50%;background-color:#16210f;border:0;border-radius:0;filter:none;box-shadow:none}
+
+/* green tab — flush with the media's top-right corner, rounded bottom-left */
+#site .about-section-bottom .about-bottom-cta{left:auto;right:0;top:0;width:32.33vw;height:6.33vw;min-height:46px;transform:none}
+#site .about-section-bottom.about-section-bottom .about-bottom-cta .button-content{float:none;display:flex;align-items:center;justify-content:center;width:100%;height:100%;background-color:#7dc257 !important;background-image:none !important;color:#fff !important;font-size:clamp(13px,1.27vw,20px) !important;font-weight:700;border:0;border-radius:0 0 0 24px !important;text-decoration:none;text-align:center;box-shadow:none}
+#site .about-section-bottom.about-section-bottom .about-bottom-cta .button-content:hover,
+#site .about-section-bottom.about-section-bottom .about-bottom-cta .button-content:active{background-color:#63994a !important;color:#fff !important}
+
+/* play button — centred on the media card. Margin-centring (not transform)
+   so the AOS reveal's transform:none cannot knock it off centre. The white
+   circle + black triangle come from the inline SVG in About.tsx; the old
+   background-image (missing asset) and the invert filter are disabled here. */
+#site .about-section-bottom .about-bottom-play{left:50%;top:13.733vw;width:5.2vw;height:5.2vw;min-width:60px;min-height:60px;margin-left:calc(-1 * max(2.6vw,30px));margin-top:calc(-1 * max(2.6vw,30px));transform:none}
+#site .about-section-bottom .about-bottom-play .about-play-button{background-image:none !important;background-color:transparent;border-radius:50%;box-shadow:0 6px 18px rgba(0,0,0,.25);filter:none !important}
+#site .about-section-bottom .about-bottom-play .about-play-button .play-glyph{position:absolute;inset:0;display:block;width:100%;height:100%}
+
+/* flat grey band — no card chrome */
+#site .about-section-bottom .about-bottom-info-card{display:none}
+
+#site .about-section-bottom .about-bottom-title{left:10%;top:calc(30.667vw + 4.33vw);width:34%;transform:none}
+#site .about-section-bottom.about-section-bottom .about-bottom-title .title-content{font-size:clamp(24px,2.8vw,44px) !important;line-height:1.45 !important;text-align:left;letter-spacing:0}
+#site .about-section-bottom .about-bottom-title .title-content h2{font-size:inherit !important;line-height:inherit;margin:0}
+
+#site .about-section-bottom .about-bottom-divider{left:44.3%;top:calc(30.667vw + 3.67vw);height:11.67vw;transform:none}
+
+#site .about-section-bottom .about-bottom-description{left:48.5%;top:calc(30.667vw + 3.9vw);width:45.5%;transform:none}
+#site .about-section-bottom.about-section-bottom .about-bottom-description .text-content{font-size:clamp(13px,1.3vw,20px) !important;line-height:1.75 !important;text-align:left}
+#site .about-section-bottom.about-section-bottom .about-bottom-description .text-content p,
+#site .about-section-bottom.about-section-bottom .about-bottom-description .text-content p span,
+#site .about-section-bottom.about-section-bottom .about-bottom-description .text-content p span b{font-size:clamp(13px,1.3vw,20px) !important;line-height:1.75 !important;color:#000}
+}
+
 body:has(.heading-section){padding-top:0}
 
 .navbar-inner{width:min(1260px,100% - 29px);margin:0 auto;display:flex;align-items:center;gap:29px;padding:13px 0}
@@ -4527,18 +4711,18 @@ body:has(.heading-section){padding-top:0}
 
 .navbar-links{display:flex;align-items:center;gap:40px;margin-left:auto;margin-right:auto}
 
-.navbar-links a{color:#0b2621;text-decoration:none;font-family:Montserrat,sans-serif;font-size:12.5px;font-weight:700;line-height:1.2;position:relative}
+.navbar-links a{color:#0b2621;text-decoration:none;font-family:Montserrat,sans-serif;font-size:13.5px;font-weight:500;line-height:1.2;position:relative}
 
 .navbar-links a:hover, .navbar-links a:focus-visible{color:#006f23}
 
 /* Current page: deep green text and the 2px underline of the reference bar. */
-.navbar-links a.is-active{color:#006f23}
+.navbar-links a.is-active{color:#006f23;font-weight:700}
 
 .navbar-links a.is-active:after{content:"";background:#006f23;border-radius:1px;height:2px;position:absolute;left:0;right:0;bottom:-12px}
 
 /* Pill: WhatsApp outline mark, label, arrow — 44px tall, flush with the right
    edge of the canvas, #169346 fill taken from the reference bar. */
-.navbar-cta{display:inline-flex;align-items:center;justify-content:center;gap:9px;height:40px;padding:0 14px 0 20px;border-radius:100px;background:#169346;color:#fff;font-family:Montserrat,sans-serif;font-size:12.5px;font-weight:700;text-decoration:none;flex:0 0 auto}
+.navbar-cta{display:inline-flex;align-items:center;justify-content:center;gap:9px;height:40px;padding:0 14px 0 20px;border-radius:100px;background:#169346;color:#fff;font-family:Montserrat,sans-serif;font-size:13.5px;font-weight:500;text-decoration:none;flex:0 0 auto}
 
 .navbar-cta svg{flex:none}
 
@@ -4550,11 +4734,36 @@ body:has(.heading-section){padding-top:0}
 
 @media (prefers-reduced-motion: no-preference){html{scroll-behavior:smooth}}
 
-@media (max-width: 800px){.navbar-inner{width:calc(100% - 29px);gap:14px;padding:9px 0}
-.navbar-brand img{height:50px}
-.navbar-links{display:none}
-.navbar-cta{gap:7px;height:34px;padding:0 14px;font-size:12px;margin-left:auto}
-.navbar-cta-arrow{display:none}}
+@media (max-width: 800px){
+  .navbar{background:rgba(255,255,255,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  .navbar-inner{width:calc(100% - 32px);gap:10px;padding:10px 0}
+  .navbar-brand img{height:42px;width:auto}
+  .navbar-links{display:none}
+  /* Compact pill CTA so brand + CTA + burger fit a 360px row. */
+  .navbar-cta{gap:6px;height:34px;padding:0 12px;font-size:11.5px;margin-left:auto;border-radius:100px}
+  .navbar-cta-arrow{display:none}
+  /* Hamburger — hidden on desktop (default), visible on mobile. */
+  .navbar-burger{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:40px;height:40px;margin-left:2px;padding:0;background:transparent;border:0;border-radius:10px;cursor:pointer;flex:0 0 auto;-webkit-tap-highlight-color:transparent}
+  .navbar-burger span{display:block;width:20px;height:2px;border-radius:2px;background:#0b2621;transition:transform .25s ease,opacity .2s ease}
+  .navbar-burger:active span{background:#006f23}
+  /* Morph to an X when the menu is open. */
+  .navbar-menu-open .navbar-burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .navbar-menu-open .navbar-burger span:nth-child(2){opacity:0}
+  .navbar-menu-open .navbar-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  /* Solid bar while the menu is open (incl. home overlay state). */
+  .navbar.navbar-menu-open{background:#fff;box-shadow:0 8px 24px rgba(11,38,33,.10)}
+  /* Dropdown panel — collapsed by default, slides open. */
+  .navbar-mobile{display:flex;flex-direction:column;gap:2px;max-height:0;overflow:hidden;padding:0 16px;background:#fff;transition:max-height .32s ease,padding .25s ease}
+  .navbar-menu-open .navbar-mobile{max-height:calc(100vh - 62px);max-height:calc(100dvh - 62px);overflow-y:auto;padding:6px 16px 16px;border-top:1px solid #eef1ea}
+  .navbar-mobile a{display:flex;align-items:center;min-height:48px;padding:10px 12px;border-radius:12px;color:#0b2621;text-decoration:none;font-family:Montserrat,sans-serif;font-size:15px;font-weight:700;line-height:1.3}
+  .navbar-mobile a:active{background:#f1f5ef}
+  .navbar-mobile a.is-active{color:#006f23;background:#eef6ea}
+  .navbar-mobile-cta{justify-content:center;min-height:50px;margin-top:8px;background:#169346 !important;color:#fff !important;font-size:14px}
+  .navbar-mobile-cta:active{background:#0f7a3a !important}
+}
+@media (max-width: 800px){body{padding-top:62px}}
+/* Burger + dropdown live on mobile only — never on desktop. */
+@media (min-width: 801px){.navbar-burger,.navbar-mobile{display:none !important}}
 
 #site .site-footer .footer-email{width:240px}
 
@@ -4577,7 +4786,7 @@ body:has(.heading-section){padding-top:0}
 #site .site-footer .footer-social-whatsapp{left:305.987px}}
 
 @media (max-width: 800px){#site .clients-section.clients-section{height:599.146px}
-#site .city-cta-section.city-cta-section{height:calc(442.6px + 435px + 116px)}
+#site .city-cta-section.city-cta-section{height:340px}
 #site .clients-section .clients-title{width:270.5px;left:44.184px;top:34px}
 #site .clients-section .clients-title .title-content{font-size:20px;line-height:28px;text-align:center}
 #site .clients-section .clients-card{width:360px;height:401.594px;left:-0.2px;top:190.944px}
@@ -4592,21 +4801,117 @@ body:has(.heading-section){padding-top:0}
 #site .clients-section .clients-logo-6{width:144px;height:83px;left:190.996872px;top:303.206238px}
 #site .clients-section .clients-logo-7{width:151px;height:69px;left:15.49375px;top:402.195313px}
 #site .clients-section .clients-logo-8{width:155px;height:78px;left:15.503125px;top:481.671875px}
-#site .city-cta-section .city-cta-image{width:250.28125px;height:329px;left:45.171875px;top:113.643753px}
-#site .city-cta-section .city-cta-card-back{width:360px;height:407px;left:0px;top:0px;overflow:hidden}
-#site .city-cta-section .city-cta-card-back .city-cta-image{width:88%;height:88%;left:6%;top:12%;transform:none}
-#site .city-cta-section .city-cta-card-front{width:360px;height:435px;left:-3.74e-05px;top:442.6px}
-#site .city-cta-section .city-cta-contact-name{width:302px;left:22.978701px;top:460px}
-#site .city-cta-section .city-cta-title{width:315px;left:22.978701px;top:505px}
-#site .city-cta-section .city-cta-title .title-content{font-size:30px;line-height:1.15}
-#site .city-cta-section .city-cta-description{width:314.698px;left:22.9807px;top:640px}
-#site .city-cta-section .city-cta-description .text-content p{font-size:13px;line-height:1.55}
-#site .city-cta-section .city-cta-button{left:22.9807px;top:770px}
-#site .city-cta-section .city-cta-button .button-content{box-shadow:0 1px 6px rgba(0,0,0,.18)}}
+#site .city-cta-section .city-cta-card-back{width:180px;height:300px;left:0px;top:0px;overflow:hidden}
+#site .city-cta-section .city-cta-card-back .city-cta-image{width:100%;height:100%;left:0;top:0;transform:none}
+#site .city-cta-section .city-cta-card-front{width:180px;height:300px;left:180px;top:0px}
+#site .city-cta-section .city-cta-contact-name{width:152px;left:194px;top:24px}
+#site .city-cta-section .city-cta-contact-name .text-content p{font-size:7.5px;line-height:1.22}
+#site .city-cta-section .city-cta-title{width:152px;left:194px;top:52px}
+#site .city-cta-section .city-cta-title .title-content{font-size:14px;line-height:1.18}
+#site .city-cta-section .city-cta-description{width:152px;left:194px;top:114px}
+#site .city-cta-section .city-cta-description .text-content p{font-size:9px;line-height:1.45}
+#site .city-cta-section .city-cta-button{width:130px;height:32px;left:194px;top:246px}
+#site .city-cta-section .city-cta-button .button-content{float:none;display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:10px;white-space:nowrap;box-shadow:0 1px 6px rgba(0,0,0,.18)}}
 
-@media (max-width: 800px){#site .products-section.products-section{min-height:120svh;display:flex;flex-direction:column;justify-content:center;align-items:center}
-#site .products-section.products-section{margin-bottom:40px}
-#site .clients-section.clients-section{margin-top:40px}}
+/* ----- Products section — mobile: stacked column ----- */
+/* Inline styles on the component (section height, eyebrow/description widths,
+   image-content scale) are overridden here with !important, matching the
+   mobile-override convention used for the other sections in this file. */
+@media (max-width: 800px){
+  #site .products-section.products-section{
+    height:auto !important;
+    min-height:0 !important;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    align-items:stretch;
+    padding:74px 0 70px;
+    margin-bottom:40px;
+  }
+  #site .products-section .canvas{
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    width:calc(100% - 32px);
+    height:auto;
+    margin:0 auto;
+    gap:18px;
+  }
+  #site .products-section .products-image{
+    position:relative;
+    left:auto;
+    top:auto;
+    width:100%;
+    aspect-ratio:16/10;
+    height:auto;
+    transform:none;
+    order:4;
+  }
+  #site .products-section .products-image .image-content{
+    transform:none !important;
+    border-radius:12px;
+  }
+  #site .products-section .products-eyebrow{
+    position:relative;
+    left:auto;
+    top:auto;
+    width:100% !important;
+    margin:0;
+    transform:none;
+    order:1;
+  }
+  #site .products-section .products-eyebrow .text-content{
+    font-size:14px !important;
+    line-height:1.5 !important;
+    text-align:left;
+    color:rgb(125,194,87);
+  }
+  #site .products-section .products-title{
+    position:relative;
+    left:auto;
+    top:auto;
+    width:100%;
+    margin:0;
+    transform:none;
+    order:2;
+  }
+  #site .products-section .products-title .title-content{
+    font-size:26px !important;
+    line-height:1.25 !important;
+    text-align:left;
+  }
+  #site .products-section .products-description{
+    position:relative;
+    left:auto;
+    top:auto;
+    width:100% !important;
+    margin:0;
+    transform:none;
+    order:3;
+  }
+  #site .products-section .products-description .text-content{
+    font-size:15px !important;
+    line-height:1.55 !important;
+    text-align:left;
+  }
+  #site .products-section .products-cta{
+    position:relative;
+    left:auto;
+    top:auto;
+    height:auto;
+    margin:4px 0 0;
+    transform:none;
+    text-align:center;
+    order:5;
+  }
+  #site .products-section .products-cta .button-content{
+    padding:15px 28px !important;
+    font-size:15px !important;
+    white-space:normal !important;
+    border-radius:8px;
+  }
+}
+@media (max-width: 800px){#site .clients-section.clients-section{margin-top:40px}}
 
 /* Project addition: keep the next section's artwork inside its own band on
    mobile. The city image is positioned 21px above its own section, so without
@@ -4656,7 +4961,22 @@ body:has(.heading-section){padding-top:0}
 #site .contact-section .contact-form .button-primary:focus-visible{outline:2px solid #6ead4a;outline-offset:2px}
 #site .contact-section .contact-success{position:static;width:100%;height:auto;min-height:198px;display:flex;align-items:center;justify-content:center;text-align:center;padding:29px 22px;background:#f4f8f1;border:1px solid #dfe8d8;border-radius:14px;color:#33402f;font-size:13.5px;font-weight:600;line-height:1.6;box-shadow:none}
 @media (max-width: 1080px){#site .contact-section.contact-section{padding:65px 0}#site .contact-section .canvas{gap:43px;width:min(864px,calc(100% - 43px))}#site .contact-section .contact-intro{width:44%}#site .contact-section .contact-form{width:52%}} 
-@media (max-width: 800px){#site .contact-section.contact-section{padding:50px 0;min-height:0}#site .contact-section .canvas{width:min(387px,calc(100% - 36px));flex-direction:column;align-items:stretch;gap:25px}#site .contact-section .contact-intro{width:100%;padding-top:0}#site .contact-section .contact-title{font-size:26px}#site .contact-section .contact-form{width:100%;padding:20px}#site .contact-section .contact-success{min-height:180px}}
+@media (max-width: 800px){#site .contact-section.contact-section{padding:50px 0;min-height:0}#site .contact-section .canvas{width:min(387px,calc(100% - 36px));flex-direction:column;align-items:stretch;gap:25px}#site .contact-section .contact-intro{width:100%;padding-top:0;transform:none}#site .contact-section .contact-title{font-size:26px}#site .contact-section .contact-form{width:100%;padding:20px}#site .contact-section .contact-success{min-height:180px}}
+
+/* ----- Contact info card — 2x2 tiles + black CTA (reference design) ----- */
+#site .contact-section .contact-card{position:relative;left:auto;top:auto;transform:none;width:min(540px,49%);height:auto;background:#fff;border:1px solid #e9ebe9;border-radius:28px;padding:24px;box-shadow:0 18px 44px rgba(22,22,22,.10)}
+#site .contact-section .contact-tiles{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+#site .contact-section .contact-tile{display:flex;align-items:center;gap:13px;min-width:0;margin:0;background:#f3f4f5;border-radius:16px;padding:16px 15px;color:#111;text-decoration:none;font-family:Montserrat,sans-serif;font-size:15px;font-weight:700;line-height:1.35}
+#site .contact-section a.contact-tile:hover{background:#e9ebed}
+#site .contact-section a.contact-tile:focus-visible{outline:2px solid #6ead4a;outline-offset:2px}
+#site .contact-section .contact-tile-icon{display:inline-flex;align-items:center;justify-content:center;flex:none;width:48px;height:48px;border-radius:13px;background:#fff;color:#161616;box-shadow:0 3px 10px rgba(22,22,22,.08)}
+#site .contact-section .contact-tile-icon svg{display:block}
+#site .contact-section .contact-tile-text{min-width:0;overflow-wrap:anywhere}
+#site .contact-section .contact-card-cta{display:flex;align-items:center;justify-content:center;width:100%;min-height:62px;margin-top:14px;padding:16px 20px;border:0;border-radius:16px;background:#101010;color:#fff;font-family:Montserrat,sans-serif;font-size:17px;font-weight:700;text-decoration:none;text-align:center;transition:background-color .15s ease}
+#site .contact-section .contact-card-cta:hover{background:#2b2b2b;color:#fff}
+#site .contact-section .contact-card-cta:focus-visible{outline:2px solid #6ead4a;outline-offset:2px}
+@media (max-width: 1080px){#site .contact-section .contact-card{width:52%}}
+@media (max-width: 800px){#site .contact-section .contact-card{width:100%;padding:20px;border-radius:24px}#site .contact-section .contact-tiles{gap:10px}#site .contact-section .contact-tile{font-size:13px;padding:14px 12px;gap:11px;border-radius:14px}#site .contact-section .contact-tile-icon{width:40px;height:40px;border-radius:12px}#site .contact-section .contact-card-cta{min-height:56px;font-size:16px}}
 
 /* ----- Solucoes page (/solucoes) ----- */
 #site .sol-page {
@@ -5043,17 +5363,19 @@ body:has(.heading-section){padding-top:0}
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 22px;
+  gap: 14px;
   margin: 0;
+  width: 100%;
+  text-align: center;
   color: #4f9a68;
-  font-size: 16px;
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: .3em;
+  letter-spacing: .22em;
 }
 
 #site .sol-process-eyebrow-line {
   display: inline-block;
-  width: 65px;
+  width: 48px;
   height: 1px;
   background: #b9d6c0;
 }
@@ -5066,7 +5388,7 @@ body:has(.heading-section){padding-top:0}
 
 #site .sol-process-eyebrow-arrow {
   display: inline-block;
-  width: 65px;
+  width: 48px;
   height: 1px;
   background: #b9d6c0;
   position: relative;
@@ -5088,7 +5410,7 @@ body:has(.heading-section){padding-top:0}
 #site .sol-process-title {
   margin: 23px 0 0;
   color: #0f2b32;
-  font-size: clamp(34px, 4.1vw, 56px);
+  font-size: clamp(18px, 3vw, 44px);
   font-weight: 800;
   line-height: 1.12;
   letter-spacing: -.01em;
@@ -5101,7 +5423,7 @@ body:has(.heading-section){padding-top:0}
 #site .sol-process-sub {
   margin: 18px 0 0;
   color: #2e4753;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.6;
 }
 
@@ -5797,7 +6119,7 @@ body:has(.heading-section){padding-top:0}
   }
 
   #site .sol-segments-section .sol-title {
-    font-size: 36px;
+    font-size: 22px;
   }
 
   #site .sol-divider {
@@ -5810,6 +6132,77 @@ body:has(.heading-section){padding-top:0}
 
   #site .sol-cards, #site .sol-steps, #site .sol-benefits, #site .sol-audiences {
     grid-template-columns: 1fr;
+  }
+
+  #site .sol-steps {
+    gap: 16px;
+    margin: 32px 0 0;
+  }
+
+  #site .sol-step {
+    border-radius: 18px;
+  }
+
+  #site .sol-step-body {
+    padding: 22px 20px 84px;
+  }
+
+  #site .sol-step-top {
+    margin-bottom: 12px;
+  }
+
+  #site .sol-step-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 15px;
+  }
+
+  #site .sol-step-num {
+    font-size: 17px;
+    padding-top: 4px;
+  }
+
+  #site .sol-step-arrow {
+    width: 30px;
+  }
+
+  #site .sol-step h3 {
+    font-size: 19px;
+    margin: 0 0 8px;
+  }
+
+  #site .sol-step-desc {
+    font-size: 14px;
+  }
+
+  #site .sol-step-points {
+    flex-wrap: wrap;
+    row-gap: 8px;
+    padding: 16px 0 0;
+  }
+
+  #site .sol-step-points li {
+    flex: 1 1 100%;
+    padding: 0;
+    border-left: 0;
+    font-size: 12px;
+  }
+
+  #site .sol-step-points span {
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+  }
+
+  #site .sol-step-badge {
+    margin-top: 16px;
+    padding: 8px 14px;
+    font-size: 12.5px;
+  }
+
+  #site .sol-step-photo {
+    width: 150px;
+    height: 150px;
   }
 
   #site .sol-audiences {
@@ -5834,15 +6227,52 @@ body:has(.heading-section){padding-top:0}
 
   #site .sol-diagnosis {
     min-height: 0;
+    margin-top: 42px;
+    border-radius: 22px;
   }
 
   #site .sol-diagnosis-copy {
     max-width: none;
-    padding: 58px 26px;
+    padding: 42px 24px;
+  }
+
+  #site .sol-diagnosis-copy h2 {
+    font-size: 24px;
+    line-height: 1.25;
+    margin: 0 0 12px;
+    max-width: 100%;
+  }
+
+  #site .sol-diagnosis-copy p {
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 100%;
   }
 
   #site .sol-diagnosis-ctas {
-    flex-wrap: wrap;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 22px;
+  }
+
+  #site .sol-diagnosis-ctas .sol-btn-outline {
+    display: none;
+  }
+
+  #site .sol-diagnosis-ctas .sol-btn {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 0;
+    min-height: 0;
+    padding: 8px 16px;
+    font-size: 10px;
+    line-height: 1.25;
+    border-radius: 0;
+    white-space: nowrap;
+    justify-content: center;
+    text-align: center;
   }
 
   #site .sol-faq-head {
@@ -5850,8 +6280,8 @@ body:has(.heading-section){padding-top:0}
   }
 
   #site .sol-faq-title {
-    font-size: 34px;
-    line-height: 1.15;
+    font-size: 22px;
+    line-height: 1.2;
   }
 
   #site .sol-faq-sub {
@@ -5864,13 +6294,13 @@ body:has(.heading-section){padding-top:0}
 
   #site .sol-faq-toggle {
     padding: 20px 10px;
-    font-size: 17px;
+    font-size: 12px;
     line-height: 1.5;
   }
 
   #site .sol-faq-panel p {
     padding: 0 10px 24px;
-    font-size: 16px;
+    font-size: 12px;
     line-height: 1.75;
   }
 }
@@ -6284,6 +6714,11 @@ body:has(.heading-section){padding-top:0}
   line-height: 1.55;
 }
 
+/* Extra "Fale pelo WhatsApp" row inside the segments card — mobile only. */
+#site .heading-segment-cta {
+  display: none;
+}
+
 /* Page-load entrance of the band copy: the three headline lines, the subtitle,
    the two CTAs, the two trust points — and, a beat later and a touch slower,
    the whole segments card grid at once — fly up into place, staggered. The
@@ -6327,17 +6762,6 @@ body:has(.heading-section){padding-top:0}
     transition: opacity .9s ease, transform 1.05s cubic-bezier(.22, .61, .36, 1);
     transition-delay: .78s;
   }
-
-  /* Mouse hover: the segments cards scale by a little bit. */
-  #site .heading-segment {
-    transition: transform .3s ease, box-shadow .3s ease;
-  }
-
-  #site .heading-segment:hover {
-    transform: scale(1.04);
-    position: relative;
-    z-index: 1;
-  }
 }
 
 @media (max-width: 1080px) {
@@ -6366,8 +6790,16 @@ body:has(.heading-section){padding-top:0}
     width: min(100% - 40px, 560px);
   }
 
+  /* Bigger photo reveal on phones — taller band + zoomed art so the image
+     reads larger behind the copy. */
+  #site .heading-photo {
+    padding: 210px 0 70px;
+    background-position: 50% 28%;
+    background-size: auto 150%;
+  }
+
   #site .heading-photo .heading-canvas {
-    padding: 36px 0 43px;
+    padding: 0;
   }
 
   #site .heading-eyebrow {
@@ -6376,69 +6808,61 @@ body:has(.heading-section){padding-top:0}
   }
 
   #site .heading-title {
-    font-size: clamp(23px, 6.8vw, 32px);
+    font-size: clamp(25px, 7.4vw, 33px);
+    line-height: 1.1;
+    text-wrap: balance;
   }
+
+  /* Nudge the first headline line ("Transformamos") upward on mobile. */
+  #site .heading-title > :first-child {
+    display: block;
+    padding-top: 0;
+  }
+
+ 
 
   #site .heading-subtitle {
     margin-top: 18px;
-    font-size: 15px;
+    padding-top: 4px;
+    padding-bottom: 40px;
+    font-size: 15.5px;
+    max-width: none;
   }
 
+  /* WhatsApp CTA sits just below the subtitle on mobile; the ghost button
+     stays hidden. Auto-width pill, left-aligned. */
   #site .heading-ctas {
-    margin-top: 24px;
+    display: block;
+    margin-top: 0;
+    padding-bottom: 200px;
+    text-align: left;
   }
 
   #site .heading-btn {
     width: 100%;
+    min-height: 50px;
     padding: 0 18px;
-    font-size: 14px;
+    font-size: 14.5px;
   }
 
+  #site .heading-btn-wa {
+    display: inline-flex;
+    width: auto;
+    margin-top: 0;
+  }
+
+  #site .heading-btn-ghost {
+    display: none;
+  }
+
+  /* Trust points hidden on mobile. */
   #site .heading-points {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    margin-top: 26px;
+    display: none;
   }
 
-  #site .heading-points li {
-    padding-right: 0;
-    font-size: 12px;
-  }
-
-  #site .heading-points li + li {
-    border-left: 0;
-    padding-left: 0;
-  }
-
+  /* Service-card grid hidden entirely on mobile. */
   #site .heading-segments {
-    grid-template-columns: 1fr;
-    margin-top: 24px;
-    padding: 22px 14px;
-  }
-
-  #site .heading-segment {
-    padding: 4px 8px;
-  }
-
-  #site .heading-segment:nth-child(even) {
-    border-left: 0;
-  }
-
-  #site .heading-segment + .heading-segment,
-  #site .heading-segment:nth-child(n + 3) {
-    border-top: 1px solid #e8ece7;
-    margin-top: 16px;
-    padding-top: 20px;
-  }
-
-  #site .heading-segment-icon {
-    width: 48px;
-    height: 48px;
-  }
-
-  #site .heading-segment-title {
-    font-size: 16px;
+    display: none;
   }
 }
 
@@ -6943,3 +7367,422 @@ body:has(.dash-editpage){padding-top:0;--dash-zoom:.95;zoom:var(--dash-zoom)}
 #site .dash-two,#site .dash-more-grid{grid-template-columns:1fr}
 }
 
+/* ===== Mobile footer — flow layout so nothing is clipped =====
+   The footer ships as a Webflow export: an absolutely-positioned 960px
+   "canvas" whose children carry desktop left/top pixel coordinates. On a
+   phone those coordinates push the logo/tagline off the left edge and the
+   link columns / socials off the right edge, where body/#site clipping cuts
+   them away. Below ≤800px we drop the absolute canvas and lay the footer out
+   in normal flow (brand → link columns → socials → divider → copyright), so
+   every block stays inside the viewport at any width. */
+@media (max-width: 800px){
+  /* Footer grows with its content instead of a fixed 344px height. */
+  #site .site-footer.site-footer{
+    height:auto;
+    min-height:0;
+    padding:0 0 24px;
+    margin-top:26px;
+  }
+
+  /* Canvas becomes a padded, centred flow container. */
+  #site .site-footer .canvas{
+    position:relative;
+    width:calc(100% - 40px);
+    max-width:460px;
+    margin:26px auto 0;
+    transform:none;
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+  }
+
+  /* Neutralise the desktop absolute canvas for every footer block. */
+  #site .site-footer .footer-logo,
+  #site .site-footer .footer-info-heading,
+  #site .site-footer .footer-company-heading,
+  #site .site-footer .footer-contact-heading,
+  #site .site-footer .footer-links-info,
+  #site .site-footer .footer-links-company,
+  #site .site-footer .footer-phone,
+  #site .site-footer .footer-tagline,
+  #site .site-footer .footer-email,
+  #site .site-footer .footer-social-youtube,
+  #site .site-footer .footer-social-instagram,
+  #site .site-footer .footer-social-whatsapp,
+  #site .site-footer .footer-divider,
+  #site .site-footer .footer-copyright{
+    position:static;
+    left:auto;
+    top:auto;
+    width:auto;
+    height:auto;
+    transform:none;
+    z-index:auto;
+  }
+
+  /* Inner typed boxes: stop floating, let height follow the text. */
+  #site .site-footer .canvas :is(.text-content,.divider-h-content){
+    float:none;
+    height:auto;
+    white-space:normal;
+  }
+
+  /* Brand: logo + tagline. */
+  #site .site-footer .footer-brand{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  #site .site-footer .footer-logo{
+    width:150px;
+    height:89px;
+  }
+  #site .site-footer .footer-tagline{
+    display:none;
+  }
+
+  /* Link columns: two-up, contact spans the full row. */
+  #site .site-footer .footer-nav{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px 18px;
+  }
+  #site .site-footer .footer-col{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    min-width:0;
+  }
+  #site .site-footer .footer-col-contact{
+    grid-column:1 / -1;
+  }
+  #site .site-footer .footer-info-heading :is(.text-content),
+  #site .site-footer .footer-company-heading :is(.text-content),
+  #site .site-footer .footer-contact-heading :is(.text-content){
+    font-size:15px;
+    line-height:1.4;
+    color:#1e1e1e;
+  }
+  #site .site-footer .footer-links-info :is(.text-content),
+  #site .site-footer .footer-links-company :is(.text-content),
+  #site .site-footer .footer-phone :is(.text-content),
+  #site .site-footer .footer-email :is(.text-content){
+    font-size:13.5px;
+    line-height:2;
+  }
+  #site .site-footer .footer-links-info :is(.text-content) p,
+  #site .site-footer .footer-links-company :is(.text-content) p,
+  #site .site-footer .footer-phone :is(.text-content) p,
+  #site .site-footer .footer-email :is(.text-content) p{
+    margin:0;
+  }
+  #site .site-footer .footer-email :is(.text-content) p{
+    white-space:normal;
+    overflow-wrap:anywhere;
+  }
+
+  /* Socials: horizontal icon row. */
+  #site .site-footer .footer-socials{
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  #site .site-footer .footer-social-youtube,
+  #site .site-footer .footer-social-instagram,
+  #site .site-footer .footer-social-whatsapp{
+    width:30px;
+    height:30px;
+  }
+
+  /* Divider + copyright. */
+  #site .site-footer .footer-divider{
+    width:100%;
+    height:1px;
+  }
+  #site .site-footer .footer-divider :is(.divider-h-content){
+    border-bottom:1px solid #d8dcd8;
+    height:1px;
+  }
+  #site .site-footer .footer-copyright{
+    width:100%;
+  }
+  #site .site-footer .footer-copyright :is(.text-content){
+    font-size:11.5px;
+    line-height:1.6;
+    text-align:center;
+    color:#6b6b6b;
+  }
+}
+
+/* ===== Mobile Process section — 2-up swipeable row =====
+   Like the footer, this section is a Webflow export: three columns laid out
+   on an absolute 960px canvas. On a phone the 2nd and 3rd columns keep their
+   desktop left coordinates (286px / 693px) and fall outside the 360px canvas,
+   where #site clipping cuts them away. Below ≤800px the three steps become a
+   horizontal swipeable row showing 2 cards at a time (image across the top,
+   coloured panel and title below) — swipe sideways to reveal the 3rd card. */
+@media (max-width: 800px){
+  /* Section grows with its content instead of a fixed ~421px height. */
+  #site .process-section.process-section{
+    height:auto;
+    min-height:0;
+    padding:34px 0 32px;
+  }
+
+  /* Canvas becomes a horizontal swipe row: 2 cards visible, 3rd via side-scroll. */
+  #site .process-section .canvas{
+    position:relative;
+    width:100%;
+    margin:0;
+    transform:none;
+    display:flex;
+    flex-direction:row;
+    flex-wrap:nowrap;
+    align-items:stretch;
+    gap:10px;
+    padding:4px 14px 10px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    scroll-snap-type:x mandatory;
+    scroll-padding:4px 14px 10px;
+    scrollbar-width:thin;
+  }
+
+  /* Each step is a fixed snap card — sized so 2 fit, 3rd needs a swipe. */
+  #site .process-section .process-step{
+    position:relative;
+    flex:0 0 calc(50% - 19px);
+    width:calc(50% - 19px);
+    min-width:0;
+    height:185px;
+    border-radius:0;
+    overflow:hidden;
+    scroll-snap-align:start;
+  }
+
+  /* Coloured background panel fills the whole card. */
+  #site .process-section .process-step :is(.process-card-1,.process-card-3,.process-card-5){
+    position:absolute;
+    left:0;
+    top:0;
+    right:0;
+    bottom:0;
+    width:100%;
+    height:100%;
+    transform:none;
+  }
+  #site .process-section .process-step :is(.process-card-1,.process-card-3,.process-card-5) :is(.card-content){
+    border:0;
+    border-radius:0;
+  }
+
+  /* Image sits across the top of the card. */
+  #site .process-section .process-step :is(.process-card-2,.process-card-4,.process-card-6){
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:100px;
+    transform:none;
+  }
+  #site .process-section .process-step :is(.process-card-2,.process-card-4,.process-card-6) :is(.card-content){
+    border:0;
+  }
+
+  /* Caption anchored to the bottom, over the coloured panel.
+     NOTE: reset top:auto — the desktop rules pin top:267px, which would otherwise
+     push the caption 267px down inside the 185px card and clip it away. */
+  #site .process-section .process-step :is(.process-text-1,.process-text-2,.process-text-3){
+    position:absolute;
+    top:auto;
+    left:0;
+    right:0;
+    bottom:0;
+    width:100%;
+    padding:12px 12px 16px;
+    transform:none;
+  }
+  #site .process-section .process-step :is(.process-text-1,.process-text-2,.process-text-3) :is(.text-content){
+    float:none;
+    height:auto;
+    white-space:normal;
+    font-size:13px;
+    line-height:1.45;
+  }
+  /* Show only the title (first paragraph); hide the description text. */
+  #site .process-section .process-step :is(.process-text-1,.process-text-2,.process-text-3) :is(.text-content) p:not(:first-child){
+    display:none;
+  }
+  #site .process-section .process-step :is(.process-text-1,.process-text-2,.process-text-3) :is(.text-content) p:first-child{
+    margin:0;
+  }
+}
+
+/* ===== Mobile Hero section — flow layout instead of the absolute canvas =====
+   The desktop export pins .hero-title/.hero-subtitle to left:-120px with
+   918px/548px widths on the 960px canvas; on a 360px phone canvas both hang
+   off the edges and #site clipping cuts them away. Below ≤800px the copy
+   becomes a centred vertical flow (title over subtitle) with phone-sized
+   type, over the same dark hero art. */
+@media (max-width: 800px){
+  #site .hero-section .canvas{
+    position:relative;
+    width:100%;
+    height:100%;
+    margin:0;
+    transform:none;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    justify-content:center;
+    box-sizing:border-box;
+    padding:0 22px;
+  }
+
+  #site .hero-section .hero-title{
+    position:relative;
+    left:auto;
+    top:auto;
+    width:100%;
+    max-width:100%;
+    transform:none;
+  }
+  #site .hero-section .hero-title :is(.about-play-button,.button-content,.card-content,.divider-h-content,.divider-v-content,.form-content,.icon-content,.image-content,.social-content,.text-content,.title-content){
+    float:none;
+    height:auto;
+    font-size:clamp(19px,5.6vw,24px);
+    line-height:1.35;
+    white-space:normal;
+  }
+
+  #site .hero-section .hero-subtitle{
+    position:relative;
+    left:auto;
+    top:auto;
+    width:100%;
+    max-width:100%;
+    margin-top:14px;
+    transform:none;
+  }
+  #site .hero-section .hero-subtitle :is(.about-play-button,.button-content,.card-content,.divider-h-content,.divider-v-content,.form-content,.icon-content,.image-content,.social-content,.text-content,.title-content){
+    float:none;
+    height:auto;
+    font-size:15px;
+    line-height:1.6;
+    white-space:normal;
+  }
+}
+
+
+
+
+/* Soluções — process subtitle: left-aligned on mobile, centered on desktop */
+@media (max-width: 800px){
+  #site .sol-process-sub{
+    text-align: left;
+  }
+}
+
+/* Blog hero — smaller type on mobile */
+@media (max-width: 800px){
+  #site .blg-hero{
+    padding:40px 0 18px;
+  }
+  #site .blg-eyebrow{
+    font-size:11px;
+    margin:0 0 10px;
+  }
+  #site .blg-title{
+    font-size:26px;
+    line-height:1.1;
+    letter-spacing:-.02em;
+  }
+  #site .blg-sub{
+    font-size:13.5px;
+    line-height:1.55;
+    margin:12px 0 0;
+  }
+  /* Latest-post card — clean, minimal meta on mobile */
+  #site .blg-latest-kicker{
+    font-size:10.5px;
+    font-weight:600;
+    letter-spacing:.16em;
+    margin:0 0 8px;
+  }
+  #site .blg-latest-title{
+    font-size:20px;
+    line-height:1.18;
+    font-weight:700;
+    max-width:100%;
+  }
+  /* Collapse the three labelled columns into one calm inline row (Author • Date) */
+  #site .blg-latest-meta{
+    flex-direction:row;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:6px 14px;
+    margin-top:14px;
+  }
+  #site .blg-meta-block{
+    flex-direction:row;
+    align-items:center;
+    gap:0;
+  }
+  /* Hide the field labels + the whole category/chip group — too cramped on a phone */
+  #site .blg-meta-label{
+    display:none;
+  }
+  #site .blg-meta-right{
+    display:none;
+  }
+  #site .blg-meta-value{
+    font-size:12.5px;
+    font-weight:500;
+    color:#ffffffcf;
+  }
+  /* small dot separator between the remaining meta items */
+  #site .blg-latest-meta .blg-meta-block + .blg-meta-block::before{
+    content:"";
+    width:4px;
+    height:4px;
+    border-radius:50%;
+    background:#ffffff8c;
+    margin-right:8px;
+  }
+
+  /* Grid cards — lighter title, calmer chips */
+  #site .blg-card-title{
+    font-size:16px;
+    font-weight:700;
+    line-height:1.3;
+    margin:0 0 8px;
+  }
+  #site .blg-card-meta{
+    gap:6px;
+  }
+  #site .blg-chip{
+    padding:3px 9px;
+    font-size:10.5px;
+    font-weight:500;
+  }
+
+  /* Filter bar + categories — tighter and calmer */
+  #site .blg-bar{
+    gap:10px;
+    margin:26px 0 12px;
+  }
+  #site .blg-bar-title{
+    font-size:17px;
+    font-weight:700;
+  }
+  #site .blg-cats{
+    gap:7px;
+    margin:0 0 22px;
+  }
+  #site .blg-cat{
+    padding:7px 13px;
+    font-size:12.5px;
+    font-weight:500;
+  }
+}
