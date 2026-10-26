@@ -204,7 +204,7 @@ export default function Heading() {
               href="/solucoes#como-funciona"
             >
               <Glyph name="play" size={16} />
-              Cómo funciona
+              Como funciona
             </a>
           </div>
 

@@ -17,12 +17,6 @@ function LatestCard({ post }: { post: BlogPost }) {
           <h2 className="blg-latest-title">{post.title}</h2>
           <div className="blg-latest-meta">
             <p className="blg-meta-block">
-              <span className="blg-meta-label">Escrito por</span>
-              <span className="blg-meta-value">
-                {post.author}
-              </span>
-            </p>
-            <p className="blg-meta-block">
               <span className="blg-meta-label">Publicado em</span>
               <span className="blg-meta-value">{formatDateBR(post.publishedAt)}</span>
             </p>

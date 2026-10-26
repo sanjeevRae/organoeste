@@ -6,7 +6,7 @@ import { blogCategories, publishedPosts } from "@/lib/posts";
 export const metadata = {
   title: "Blog | Grupo Organoeste Ltda",
   description:
-    "Artigos sobre coleta de residuos, compostagem, adubo organico e sustentabilidade.",
+    "Artigos sobre coleta de resíduos, compostagem, adubo orgânico e sustentabilidade.",
   alternates: { canonical: "/blog" },
 };
 

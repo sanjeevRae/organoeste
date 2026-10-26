@@ -72,7 +72,7 @@ export default function About() {
           </div>
           </div>
         <div className="about-top-heading" data-aos="fade-up" data-aos-delay="420">
-          <div className="title-content"><h1><span><span><b>Do recibo à destinação final</b>
+          <div className="title-content"><h1><span><span><b>Da coleta à destinação final</b>
           </span></span>
           </h1>
           </div>

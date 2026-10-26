@@ -24,7 +24,7 @@ export default function Footer() {
           <div className="footer-col footer-col-contact">
             <div className="footer-contact-heading"><div className="text-content"><p><span><b>Contato</b></span></p></div></div>
             <div className="footer-phone"><div className="text-content"><p><span>+55 (67) 99240-1937</span></p></div></div>
-            <div className="footer-email"><div className="text-content"><p><span>comerical@organoeste.com.br</span></p></div></div>
+            <div className="footer-email"><div className="text-content"><p><span><a className="external-link" href="mailto:comercial@organoeste.com.br">comercial@organoeste.com.br</a></span></p></div></div>
           </div>
         </div>
 
