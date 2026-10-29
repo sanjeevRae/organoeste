@@ -6462,7 +6462,7 @@ body:has(.heading-section){padding-top:0}
 #site .heading-photo {
   /* Full-bleed background: the art fills the band (cover) with the copy
      overlaid on top — no split, no separated image. */
-  background: #cfe0e6 url("/images/solution.png") 50% 35% / cover no-repeat;
+  background: #cfe0e6 url("/images/solution2.png") 50% 35% / cover no-repeat;
   padding: 193px 0 58px;
   position: relative;
   overflow: hidden;

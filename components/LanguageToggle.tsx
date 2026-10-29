@@ -67,19 +67,17 @@ export default function LanguageToggle() {
   useEffect(() => {
     if (!initialized.current) {
       initialized.current = true;
-      const persisted = readPersistedLang();
-      setActiveLang(persisted);
-      // If Spanish was previously selected, re-apply on first load.
-      if (persisted === "es") {
-        switchLang("es");
-      }
+      // Only sync UI state from the persisted cookie. Do NOT call
+      // doGTranslate() here — GTranslate already applies the saved language
+      // on page load via the googtrans cookie. Re-calling it causes a
+      // redundant full-page reload which surfaces as "No se pudo cargar
+      // esta página" before a manual refresh fixes it.
+      setActiveLang(readPersistedLang());
       return;
     }
-    // On subsequent navigations, re-apply the active language.
-    if (activeLang === "es") {
-      switchLang("es");
-    }
-  }, [pathname, activeLang, readPersistedLang, switchLang]);
+    // On client-side navigation, just re-sync UI state — never reload.
+    setActiveLang(readPersistedLang());
+  }, [pathname, readPersistedLang]);
 
   return (
     <div
