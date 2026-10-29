@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import LanguageToggle from "./LanguageToggle";
 
 const WA_LINK = "https://wa.me/5567992401937";
 const NAV_LINKS = [
@@ -143,6 +144,8 @@ export default function Navbar({ overlay = false }: NavbarProps) {
           Fale Conosco
           <ArrowMark />
         </a>
+        {/* Language toggle — desktop: beside the Fale Conosco CTA. */}
+        <LanguageToggle />
         {/* Mobile hamburger — hidden on desktop via CSS. */}
         <button
           type="button"
@@ -182,7 +185,10 @@ export default function Navbar({ overlay = false }: NavbarProps) {
             </a>
           );
         })}
-        
+        {/* Language toggle — mobile: inside the mobile navigation menu. */}
+        <div className="navbar-mobile-lang">
+          <LanguageToggle />
+        </div>
       </nav>
     </header>
   );

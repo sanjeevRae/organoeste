@@ -72,7 +72,7 @@ export default function About() {
           </div>
           </div>
         <div className="about-top-heading" data-aos="fade-up" data-aos-delay="420">
-          <div className="title-content"><h1><span><span><b>Da coleta à destinação final</b>
+          <div className="title-content" style={{ fontSize: "25px", lineHeight: "1.25" }}><h1 style={{ fontSize: "25px", lineHeight: "1.25" }}><span><span><b style={{ fontSize: "25px", lineHeight: "1.25" }}>Da coleta à destinação final</b>
           </span></span>
           </h1>
           </div>
@@ -82,7 +82,7 @@ export default function About() {
           </span>
           </span>
           </p>
-          <p className="about-top-cta-line"><a className="about-top-cta-btn" href="https://wa.me/5567992401937" target="_blank" rel="noopener noreferrer">Fale com a OLAM.</a></p></div>
+          <p className="about-top-cta-line"><a className="about-top-cta-btn" href="https://wa.me/5567992401937" target="_blank" rel="noopener noreferrer">Fale com a <span translate="no">OLAM</span>.</a></p></div>
             </div>
         <div className="about-top-caption" data-aos="fade-up" data-aos-delay="560">
           <div className="text-content">

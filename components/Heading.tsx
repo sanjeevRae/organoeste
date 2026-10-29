@@ -255,7 +255,7 @@ export default function Heading() {
       </div>
 
       <div className="trusted-strip" data-aos="fade-up" aria-label="Empresas que confiam na Organoeste">
-        <p className="trusted-strip-label">Empresas que confiam na Organoeste</p>
+        <p className="trusted-strip-label">Empresas que confiam na <span translate="no">Organoeste</span></p>
         <div className="trusted-marquee">
           <div className="trusted-track">
             {TRUSTED_LOGOS.map((logo) => (

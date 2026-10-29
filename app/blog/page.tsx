@@ -30,7 +30,7 @@ export default async function BlogPage() {
         <section className="blg-hero" aria-labelledby="blg-titulo">
           <div className="blg-wrap">
             <p className="blg-eyebrow">Blog</p>
-            <h1 className="blg-title" id="blg-titulo">Blog Organoeste</h1>
+            <h1 className="blg-title" id="blg-titulo">Blog <span translate="no">Organoeste</span></h1>
             <p className="blg-sub">
               Conteúdo sobre coleta licenciada, compostagem industrial, adubo orgânico e
               sustentabilidade, escrito por quem opera o processo todos os dias.

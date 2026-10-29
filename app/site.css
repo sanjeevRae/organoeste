@@ -4547,7 +4547,7 @@ to{opacity:1;transform:none}}
 #site .about-section-top.about-section-top .about-top-caption .text-content p span,
 #site .about-section-top.about-section-top .about-top-caption .text-content p span b{font-size:11px !important;line-height:1.55 !important}
 #site .about-section-top .about-top-heading{width:calc((100% - 12px)/2 - 20px);left:calc((100% - 12px)/2 + 22px);top:32px}
-#site .about-section-top .about-top-heading .title-content{font-size:14.5px !important;line-height:1.25 !important}
+#site .about-section-top .about-top-heading .title-content{font-size:11px !important;line-height:1.25 !important}
 #site .about-section-top .about-top-description{width:calc((100% - 12px)/2 - 20px);left:calc((100% - 12px)/2 + 22px);top:78px}
 #site .about-section-top .about-top-description .text-content{font-size:11px !important;line-height:1.55 !important}
 #site .about-section-top.about-section-top .about-top-description .text-content p,
@@ -7804,5 +7804,155 @@ body:has(.dash-editpage){padding-top:0;--dash-zoom:.95;zoom:var(--dash-zoom)}
 
   /* Submit: full-width, tall tap target */
   #site .contact-section .contact-form .button-primary{height:54px;font-size:15px;border-radius:11px}
+}
+
+/* ========================================================================
+   Language toggle — custom PT | ES pill (desktop + mobile)
+   ======================================================================== */
+
+/* Hide the GTranslate default widget/toolbar entirely. Only our custom
+   LanguageToggle is visible. */
+#site .gtranslate_wrapper{display:none !important}
+#gt_float_wrapper{display:none !important}
+#gt_float_wrapper *,.gt_float_switcher,.gt_float_switcher *{display:none !important}
+
+/* Pill container */
+#site .language-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:0;
+  background:#1a1a1a;
+  border-radius:999px;
+  padding:2px;
+  border:1px solid #333;
+}
+
+/* Segment buttons */
+#site .language-toggle .lang-segment{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:36px;
+  height:28px;
+  font-size:12px;
+  font-weight:700;
+  color:#aaa;
+  background:transparent;
+  border:none;
+  border-radius:999px;
+  cursor:pointer;
+  transition:color .15s ease, background .15s ease;
+  line-height:1;
+}
+
+/* Hover state */
+#site .language-toggle .lang-segment:hover:not(.is-active){
+  color:#fff;
+}
+
+/* Active state — brand green background, white text */
+#site .language-toggle .lang-segment.is-active{
+  color:#fff;
+  background:#2f8f36;
+  box-shadow:0 1px 2px rgba(0,0,0,.25);
+}
+
+/* Focus ring for keyboard accessibility */
+#site .language-toggle .lang-segment:focus-visible{
+  outline:2px solid #2f8f36;
+  outline-offset:2px;
+}
+
+/* Desktop: show toggle beside the Fale Conosco CTA in the navbar */
+@media (min-width: 801px){
+  #site .navbar-inner{display:flex;align-items:center;gap:16px}
+  #site .language-toggle{margin-left:auto}
+}
+
+/* Mobile: place toggle inside the mobile navigation menu */
+@media (max-width: 800px){
+  #site .navbar-mobile-lang{
+    padding:16px 20px;
+    border-top:1px solid #333;
+    display:flex;
+    justify-content:center;
+  }
+  #site .navbar-mobile-lang .language-toggle{
+    width:auto;
+    max-width:200px;
+  }
+}
+
+/* Ensure brand names inside translated buttons stay white (GTranslate wraps them in spans) */
+#site .about-section-top .about-top-description .text-content .about-top-cta-btn span[translate="no"],
+#site .about-section-top .about-top-description .text-content .about-top-cta-btn .notranslate{
+  color:#fff !important;
+}
+
+/* ========================================================================
+   Translation overlap prevention â€” Spanish text runs ~30% longer than PT
+   ======================================================================== */
+
+/* Allow long translated text to wrap instead of overflowing into neighbors */
+#site .about-section-top .about-top-description .text-content p,
+#site .about-section-top .about-top-description .text-content span,
+#site .about-section-top .about-top-description .text-content b{
+  overflow-wrap:break-word;
+  word-wrap:break-word;
+}
+
+/* Give absolutely positioned about-section cards room for longer translated text */
+#site .about-section-top .about-top-description{
+  min-height:auto;
+  height:auto;
+}
+
+/* Ensure mobile menu links don't collide when translated */
+#site .navbar-mobile a{
+  overflow-wrap:break-word;
+  word-wrap:break-word;
+  white-space:normal;
+}
+
+/* Footer text can also expand â€” allow wrapping */
+#site .footer-tagline p span,
+#site .footer-copyright p span,
+#site .footer-phone p span,
+#site .footer-email p span{
+  overflow-wrap:break-word;
+  word-wrap:break-word;
+}
+
+/* ========================================================================
+   About section mobile: prevent Spanish translation overlap
+   The heading and description use position:absolute with fixed top values,
+   so longer Spanish text wraps into the element below. Remove absolute
+   positioning on mobile so they flow in document order — they can never
+   overlap regardless of translation length.
+   ======================================================================== */
+@media (max-width: 800px){
+  #site .about-section-top .about-top-heading,
+  #site .about-section-top .about-top-description{
+    position:static !important;
+    top:auto !important;
+    left:auto !important;
+    width:auto !important;
+    margin:0 0 12px 0;
+  }
+  #site .about-section-top .about-top-heading .title-content{
+    font-size:10px !important;
+    line-height:1.3 !important;
+  }
+  #site .about-section-top .about-top-description .text-content{
+    font-size:11px !important;
+    line-height:1.5 !important;
+  }
+  #site .about-section-top .about-top-description .text-content p,
+  #site .about-section-top .about-top-description .text-content span,
+  #site .about-section-top .about-top-description .text-content b{
+    overflow-wrap:break-word;
+    word-wrap:break-word;
+  }
 }
 

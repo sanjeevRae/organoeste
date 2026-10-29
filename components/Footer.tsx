@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="canvas">
         <div className="footer-brand">
           <div className="footer-logo"><div className="image-content" /></div>
-          <div className="footer-tagline"><div className="text-content"><p><span>Organoeste regenera o presente com soluções concretas e constrói um futuro sustentável para as próximas gerações.</span></p></div></div>
+          <div className="footer-tagline"><div className="text-content"><p><span translate="no">Organoeste</span> regenera o presente com soluções concretas e constrói um futuro sustentável para as próximas gerações.</p></div></div>
         </div>
 
         <div className="footer-nav">
@@ -22,7 +22,7 @@ export default function Footer() {
           </div>
 
           <div className="footer-col footer-col-contact">
-            <div className="footer-contact-heading"><div className="text-content"><p><span><b>Contato</b></span></p></div></div>
+            <div className="footer-contact-heading"><div className="text-content"><p><span><b>Contato / Sales / Export</b></span></p></div></div>
             <div className="footer-phone"><div className="text-content"><p><span>+55 (67) 99240-1937</span></p></div></div>
             <div className="footer-email"><div className="text-content"><p><span><a className="external-link" href="mailto:comercial@organoeste.com.br">comercial@organoeste.com.br</a></span></p></div></div>
           </div>
@@ -35,7 +35,7 @@ export default function Footer() {
         </div>
 
         <div className="footer-divider"><div className="divider-h-content" /></div>
-        <div className="footer-copyright"><div className="text-content"><p><span>Copyright © Organoeste. Todos os direitos reservados. </span></p></div></div>
+        <div className="footer-copyright"><div className="text-content"><p><span>Copyright © <span translate="no">Organoeste</span>. Todos os direitos reservados. </span></p></div></div>
       </div>
     </footer>
   );

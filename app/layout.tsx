@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 
 import { SITE_URL } from "@/lib/blog";
 import "./site.css";
@@ -34,7 +35,27 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
+        {/* GTranslate widget wrapper — hidden via CSS; only our custom toggle is visible. */}
+        <div className="gtranslate_wrapper" aria-hidden="true" />
         <div id="site">{children}</div>
+        <Script
+          id="gtranslate-config"
+          strategy="afterInteractive"
+        >
+          {`
+            window.gtranslateSettings = {
+              default_language: "pt",
+              native_language_names: false,
+              detect_browser_language: false,
+              wrapper_selector: ".gtranslate_wrapper",
+            };
+          `}
+        </Script>
+        <Script
+          id="gtranslate-widget"
+          src="https://cdn.gtranslate.net/widgets/latest/float.js"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

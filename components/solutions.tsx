@@ -8,7 +8,7 @@ import { useAosReveal } from "./useAosReveal";
 const WA_MAIN = "https://wa.me/5567992401937";
 const WA_SUPPORT = "https://wa.me/5567999915740";
 
-type ServiceCard = { icon: string; title: string; description: string };
+type ServiceCard = { icon: string; title: React.ReactNode; description: string };
 
 const SERVICES: ServiceCard[] = [
   {
@@ -19,7 +19,7 @@ const SERVICES: ServiceCard[] = [
   },
   {
     icon: "truck",
-    title: "Transporte OLAM",
+    title: <span translate="no">Transporte OLAM</span>,
     description:
       "Nossa divisão de logística ambiental realiza o transporte licenciado dos resíduos com frota própria, rastreabilidade e total segurança durante todo o percurso.",
   },
@@ -469,7 +469,7 @@ function ServicesSection() {
         <ul className="sol-cards">
           {SERVICES.map((service, index) => (
             <li
-              key={service.title}
+              key={index}
               className="sol-card"
               data-aos="fade-up"
               data-aos-delay={index * 90}
