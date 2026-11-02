@@ -1789,7 +1789,7 @@ option:disabled{
 
 #site .city-cta-section .city-cta-contact-name :is(.about-play-button,.button-content,.card-content,.divider-h-content,.divider-v-content,.form-content,.icon-content,.image-content,.social-content,.text-content,.title-content) P:nth-of-type(1) SPAN:nth-of-type(1){
   caret-color:rgb(255,255,255);
-  color:rgb(36,36,36);
+  color:rgb(255,255,255);
 }
 
 #site .city-cta-section .city-cta-title{
@@ -7217,6 +7217,9 @@ body:has(.dash-editpage){padding-top:0;--dash-zoom:.95;zoom:var(--dash-zoom)}
     padding-right: 8px !important;
     line-height: 1.4 !important;
     box-sizing: border-box !important;
+  }
+  #site .city-cta-section .city-cta-contact-name :is(.about-play-button,.button-content,.card-content,.divider-h-content,.divider-v-content,.form-content,.icon-content,.image-content,.social-content,.text-content,.title-content) P:nth-of-type(1) SPAN:nth-of-type(1){
+    color: #fff !important;
   }
 }
 
