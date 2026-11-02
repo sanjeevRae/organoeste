@@ -185,10 +185,6 @@ export default function Navbar({ overlay = false }: NavbarProps) {
             </a>
           );
         })}
-        {/* Language toggle — mobile: inside the mobile navigation menu. */}
-        <div className="navbar-mobile-lang">
-          <LanguageToggle />
-        </div>
       </nav>
     </header>
   );

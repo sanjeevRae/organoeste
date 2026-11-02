@@ -1,7 +1,15 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const YT_ID = "i2hexNUtN9Y";
+declare global {
+  interface Window {
+    YT?: any;
+    onYouTubeIframeAPIReady?: () => void;
+  }
+}
+
+const VIDEO_1 = "--6H65KgVeg";
+const VIDEO_2 = "5EzSC-bpC5c";
 
 export default function About() {
   const [videoOpen, setVideoOpen] = useState(false);
@@ -15,6 +23,10 @@ export default function About() {
     setVideoOpen(true);
   }, []);
   const rootRef = useRef<HTMLElement | null>(null);
+  const playerContainerRef = useRef<HTMLDivElement | null>(null);
+  const playerRef = useRef<any>(null);
+  const phaseRef = useRef(0);
+  const transitionedRef = useRef(false);
   useEffect(() => {
     const root = rootRef.current;
     if (!root || typeof IntersectionObserver === undefined) return;
@@ -45,6 +57,80 @@ export default function About() {
       document.body.style.overflow = "";
     };
   }, [videoOpen, closeVideo]);
+  useEffect(() => {
+    if (!videoOpen) {
+      if (playerRef.current) {
+        try { playerRef.current.destroy(); } catch { /* ignore */ }
+        playerRef.current = null;
+      }
+      phaseRef.current = 0;
+      transitionedRef.current = false;
+      return;
+    }
+    let cancelled = false;
+    const init = () => {
+      if (cancelled) return;
+      if (!playerContainerRef.current || !window.YT || !window.YT.Player) return;
+      if (playerRef.current) return;
+      const player = new window.YT.Player(playerContainerRef.current, {
+        videoId: VIDEO_1,
+        playerVars: {
+          start: 0,
+          rel: 0,
+          modestbranding: 1,
+          enablejsapi: 1,
+          playsinline: 1,
+          autoplay: 1,
+          origin: typeof window !== "undefined" ? window.location.origin : undefined,
+        },
+        events: {
+          onStateChange: (e: any) => {
+            const YT = window.YT;
+            const target = e?.target;
+            if (!YT || !target) return;
+            if (phaseRef.current === 0 && e.data === YT.PlayerState.ENDED) {
+              if (transitionedRef.current) return;
+              transitionedRef.current = true;
+              phaseRef.current = 1;
+              try { target.loadVideoById({ videoId: VIDEO_2, startSeconds: 7 }); } catch { /* ignore */ }
+              setTimeout(() => { try { target.playVideo(); } catch { /* ignore */ } }, 300);
+            } else if (phaseRef.current === 1 && (e.data === YT.PlayerState.PLAYING || e.data === YT.PlayerState.BUFFERING)) {
+              phaseRef.current = 2;
+            } else if (phaseRef.current === 2 && e.data === YT.PlayerState.ENDED) {
+              phaseRef.current = 3;
+              try { target.stopVideo(); } catch { /* ignore */ }
+            }
+          },
+          onError: () => { /* ignore */ },
+        },
+      });
+      playerRef.current = player;
+    };
+    if (window.YT && window.YT.Player) {
+      // small delay to ensure container mounted
+      setTimeout(init, 50);
+    } else {
+      const prev = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => {
+        if (prev) { try { prev(); } catch { /* ignore */ } }
+        init();
+      };
+      if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+        const tag = document.createElement("script");
+        tag.src = "https://www.youtube.com/iframe_api";
+        tag.async = true;
+        document.body.appendChild(tag);
+      }
+    }
+    return () => {
+      cancelled = true;
+      if (playerRef.current) {
+        try { playerRef.current.destroy(); } catch { /* ignore */ }
+        playerRef.current = null;
+      }
+    };
+  }, [videoOpen]);
+
   return (
     <div ref={rootRef as any}>
     <section className="about-section-top" id="sobre" style={{ marginTop: "32px" }}>
@@ -54,46 +140,52 @@ export default function About() {
           <div className="image-content" />
           </div>
         <div className="about-top-card-grey" data-aos="fade-up" data-aos-delay="70">
-          <div className="card-content" />
-          </div>
-        <div className="about-top-card-green" data-aos="fade-up" data-aos-delay="140">
-          <div className="card-content" /></div>
-        <div className="about-top-eyebrow" data-aos="fade-up" data-aos-delay="280">
-          <div className="text-content"><p><span><b>Coleta licenciada</b>
-          </span>
-          </p>
-          </div>
-          </div>
-        <div className="about-top-title" data-aos="fade-up" data-aos-delay="350">
-          <div className="title-content"><h1><span><b>ORGÂNICA LOGÍSTICAS AMBIENTAIS</b>
-          </span>
-          <br />
-          </h1>
-          </div>
-          </div>
-        <div className="about-top-heading" data-aos="fade-up" data-aos-delay="420">
-          <div className="title-content" style={{ fontSize: "25px", lineHeight: "1.25" }}><h1 style={{ fontSize: "25px", lineHeight: "1.25" }}><span><span><b style={{ fontSize: "25px", lineHeight: "1.25" }}>Da coleta à destinação final</b>
+          <div className="card-content">
+            <div className="about-top-heading" data-aos="fade-up" data-aos-delay="420">
+              <div className="title-content" style={{ fontSize: "25px", lineHeight: "1.25" }}><h1 style={{ fontSize: "25px", lineHeight: "1.25" }}><span><span><b style={{ fontSize: "25px", lineHeight: "1.25" }}>Da coleta à destinação final</b>
           </span></span>
           </h1>
           </div>
           </div>
-        <div className="about-top-description" data-aos="fade-up" data-aos-delay="490">
-          <div className="text-content"><p><span><span><b>Coleta com frota própria e rastreabilidade total.</b>
+            <div className="about-top-description" data-aos="fade-up" data-aos-delay="490">
+              <div className="text-content"><p><span><span><b>Coleta com frota própria e rastreabilidade total.</b>
           </span>
           </span>
           </p>
           <p className="about-top-cta-line"><a className="about-top-cta-btn" href="https://wa.me/5567992401937" target="_blank" rel="noopener noreferrer">Fale com a <span translate="no">OLAM</span>.</a></p></div>
             </div>
-        <div className="about-top-caption" data-aos="fade-up" data-aos-delay="560">
-          <div className="text-content">
-            <p><span>
-              <span>
-              <b>Coleta segura e rastreável, do início ao fim.</b>
-              </span></span>
-              </p></div>
-              </div>
+          </div>
+        </div>
+        <div className="about-top-card-green" data-aos="fade-up" data-aos-delay="140">
+          <div className="card-content">
+            <div className="about-top-eyebrow" data-aos="fade-up" data-aos-delay="280">
+              <div className="text-content"><p><span><b>Coleta licenciada</b>
+          </span>
+          </p>
+          </div>
+          </div>
+            <div className="about-top-title" data-aos="fade-up" data-aos-delay="350">
+              <div className="title-content"><h1><span><b>ORGÂNICA LOGÍSTICAS AMBIENTAIS</b>
+          </span>
+          <br />
+          </h1>
+          </div>
+          </div>
+            <div className="about-top-caption" data-aos="fade-up" data-aos-delay="560">
+              <div className="text-content">
+                <p><span>
+                  <span>
+                  <b>Coleta segura e rastreável, do início ao fim.</b>
+                  </span></span>
+                  </p></div>
+                  </div>
+          </div>
+        </div>
       </div>
     </section>
+
+
+    
     <section className="about-section-bottom">
       <div className="block-overlay" />
       <div className="canvas">
@@ -139,12 +231,7 @@ export default function About() {
             <button type="button" className="about-lightbox-close" onClick={closeVideo} aria-label="Fechar vídeo">
               <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
             </button>
-            <iframe
-              src={"https://www.youtube.com/embed/" + YT_ID + "?autoplay=1&rel=0"}
-              title="Vídeo institucional Organoeste"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            />
+            <div ref={playerContainerRef} className="about-lightbox-player" style={{ width: "100%", height: "100%" }} />
           </div>
         </div>
       )}

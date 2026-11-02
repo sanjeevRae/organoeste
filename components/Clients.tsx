@@ -26,6 +26,7 @@ export default function Clients() {
           <div className="city-cta-title"><div className="title-content"><h2><span><span><b>Leve a Organoeste para sua cidade</b></span></span></h2></div></div>
           <div className="city-cta-description"><div className="text-content"><p><span>Atendemos municípios via licitação, com coleta, compostagem e destinação de resíduos orgânicos com frota própria, rastreabilidade e relatórios para sua gestão ambiental.</span></p></div></div>
           <div className="city-cta-button"><a className="button-content" href="https://wa.me/5561993791652">Quero saber mais</a></div>
+          <div className="city-cta-button-secondary"><a className="button-content city-cta-button-secondary-content" href="https://wa.me/5561993791652?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20quero%20saber%20mais%20sobre%20o%20Sistema%20LETE%20de%20Compostagem." target="_blank" rel="noopener">Sistema LETE de Compostagem</a></div>
         </div>
       </section>
     </div>

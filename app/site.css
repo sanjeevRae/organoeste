@@ -857,8 +857,8 @@ option:disabled{
 
 #site .about-section-top .about-top-eyebrow{
   width:153px;
-  left:-84.5px;
-  top:88.917px;
+  left:35px;
+  top:45.217px;
   transform:translate(0px,0px);
   z-index:1215;
 }
@@ -879,8 +879,8 @@ option:disabled{
 
 #site .about-section-top .about-top-title{
   width:336px;
-  left:-84.5px;
-  top:158.04599px;
+  left:35px;
+  top:114.346px;
   transform:translate(0px);
   z-index:1214;
 }
@@ -901,8 +901,8 @@ option:disabled{
 
 #site .about-section-top .about-top-heading{
   width:341px;
-  left:342px;
-  top:158.046005px;
+  left:33px;
+  top:115px;
   transform:translate(0px);
   z-index:1218;
 }
@@ -926,8 +926,8 @@ option:disabled{
 
 #site .about-section-top .about-top-description{
   width:372px;
-  left:342px;
-  top:244.048004px;
+  left:33px;
+  top:201px;
   transform:translate(0px);
   z-index:1217;
 }
@@ -1003,8 +1003,8 @@ option:disabled{
 
 #site .about-section-top .about-top-caption{
   width:343px;
-  left:-84.5px;
-  top:322.455994px;
+  left:35px;
+  top:278.756px;
   transform:translate(0px,0px);
   z-index:1219;
 }
@@ -7163,6 +7163,81 @@ body:has(.dash-editpage){padding-top:0;--dash-zoom:.95;zoom:var(--dash-zoom)}
 #site .dash-tree-parent[aria-expanded="true"] .dash-caret{transform:rotate(90deg)}
 /* The parent already shows a caret when expanded, so its own icon only appears
    in the collapsed rail (where the caret is hidden). */
+/* Secondary LETE button in city CTA section */
+#site .city-cta-section .city-cta-button-secondary {
+  position: absolute;
+  z-index: 1798;
+  width: 196px;
+  height: 46px;
+  left: 744.5px;
+  top: 479px;
+}
+#site .city-cta-section .city-cta-button-secondary .city-cta-button-secondary-content {
+  float: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 10px;
+  white-space: nowrap;
+  background: transparent;
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 4px;
+  box-shadow: none;
+  text-decoration: none;
+}
+@media (max-width: 800px) {
+  #site .city-cta-section .city-cta-description {
+    top: 96px;
+  }
+  #site .city-cta-section .city-cta-button {
+    top: 208px;
+  }
+  #site .city-cta-section .city-cta-button-secondary {
+    width: 150px;
+    height: 32px;
+    left: 194px;
+    top: 248px;
+  }
+  #site .city-cta-section .city-cta-button-secondary .city-cta-button-secondary-content {
+    font-size: 8px;
+    white-space: normal;
+    text-align: center;
+    text-decoration: none;
+  }
+}
+
+/* LETE videos in city CTA section */
+#site .city-cta-section .city-cta-video {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  width: min(92%, 560px);
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 20;
+}
+#site .city-cta-section .city-cta-video-player {
+  width: 100%;
+  height: 100%;
+}
+#site .city-cta-section .city-cta-video-player iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: 0;
+}
+@media (max-width: 800px) {
+  #site .city-cta-section .city-cta-video {
+    width: 92%;
+    bottom: 16px;
+  }
+}
+
 #site .dash-tree-ico{display:none;color:#8a97a3}
 #site .dash-count{margin-left:auto;min-width:24px;text-align:center;font-size:12px;font-weight:700;color:#0d7e6f;background:#e3f2ee;border-radius:6px;padding:2px 8px}
 #site .dash-side-blog{display:flex;align-items:center;gap:10px;margin-left:18px;padding:9px 10px;border-radius:6px;background:#0d7e6f;color:#fff;font-size:13.5px;font-weight:600;text-decoration:none;border-left:2px solid #0a6d60}
@@ -7933,20 +8008,66 @@ body:has(.dash-editpage){padding-top:0;--dash-zoom:.95;zoom:var(--dash-zoom)}
    ======================================================================== */
 @media (max-width: 800px){
   #site .about-section-top .about-top-heading,
-  #site .about-section-top .about-top-description{
+  #site .about-section-top .about-top-description,
+  #site .about-section-top .about-top-eyebrow,
+  #site .about-section-top .about-top-title,
+  #site .about-section-top .about-top-caption{
     position:static !important;
     top:auto !important;
     left:auto !important;
     width:auto !important;
     margin:0 0 12px 0;
+    z-index:1300 !important;
   }
   #site .about-section-top .about-top-heading .title-content{
-    font-size:10px !important;
+    font-size:11px !important;
     line-height:1.3 !important;
+    position:relative !important;
+    z-index:1300 !important;
+    padding-top:14px !important;
+    padding-left:10px !important;
+    padding-right:10px !important;
   }
   #site .about-section-top .about-top-description .text-content{
     font-size:11px !important;
     line-height:1.5 !important;
+    position:relative !important;
+    z-index:1300 !important;
+    padding-top:5px ! important;
+    padding-left:10px !important;
+    padding-right:10px !important;
+  }
+  #site .about-section-top .about-top-image .card-content,
+  #site .about-section-top .about-top-card-grey .card-content,
+  #site .about-section-top .about-top-card-green .card-content{
+    z-index:0 !important;
+  }
+  #site .about-section-top .about-top-card-grey .card-content,
+  #site .about-section-top .about-top-card-green .card-content{
+    position:relative !important;
+    width:100% !important;
+    height:100% !important;
+    left:0 !important;
+    top:0 !important;
+  }
+  #site .about-section-top .about-top-eyebrow .text-content{
+    padding-top:30px !important;
+    padding-left:8px !important;
+    padding-right:8px !important;
+    margin-bottom:8px !important;
+  }
+  #site .about-section-top .about-top-title .title-content{
+    font-size:15px !important;
+    line-height:1.4 !important;
+    margin-bottom:8px !important;
+    padding-top:26px !important;
+    padding-left:8px !important;
+    padding-right:8px !important;
+  }
+  #site .about-section-top .about-top-caption .text-content{
+    margin-top:8px !important;
+    padding-left:8px !important;
+    padding-right:8px !important;
   }
   #site .about-section-top .about-top-description .text-content p,
   #site .about-section-top .about-top-description .text-content span,
