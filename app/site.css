@@ -9034,3 +9034,200 @@ body:has(.dash-editpage){padding-top:0;--dash-zoom:.95;zoom:var(--dash-zoom)}
     font-size: 14.5px !important;
   }
 }
+
+/* ========================================================================
+   About — mobile green brand card: richer composition without text badges
+   This only affects the mobile green card; desktop styling is untouched.
+   ======================================================================== */
+@media (max-width: 800px) {
+  #site .about-section-top .about-top-card-green {
+    position: relative !important;
+    isolation: isolate;
+    box-sizing: border-box !important;
+    min-height: 278px !important;
+    padding: 29px 25px 27px !important;
+    gap: 0 !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    border-radius: 23px !important;
+    background: #246d3d !important;
+    box-shadow: 0 17px 36px rgba(25, 82, 43, 0.19),
+      0 3px 8px rgba(25, 82, 43, 0.08) !important;
+  }
+
+  #site .about-section-top .about-top-card-green .card-content {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    border-radius: inherit !important;
+    background:
+      radial-gradient(ellipse at 94% 8%, rgba(184, 238, 151, 0.22), transparent 36%),
+      radial-gradient(ellipse at 0% 100%, rgba(10, 48, 26, 0.35), transparent 48%),
+      linear-gradient(128deg, #1e6338 0%, #287844 54%, #3b8a4a 100%) !important;
+  }
+
+  /* Concentric organic rings add depth while staying behind the copy. */
+  #site .about-section-top .about-top-card-green .card-content::before {
+    content: "";
+    position: absolute;
+    top: -95px;
+    right: -66px;
+    width: 218px;
+    height: 218px;
+    border: 1px solid rgba(231, 255, 218, 0.24);
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 17px rgba(231, 255, 218, 0.055),
+      0 0 0 37px rgba(231, 255, 218, 0.045),
+      0 0 0 59px rgba(231, 255, 218, 0.035);
+    pointer-events: none;
+  }
+
+  /* A faint diagonal line motif sits in the lower-right corner. */
+  #site .about-section-top .about-top-card-green .card-content::after {
+    content: "";
+    position: absolute;
+    right: -20px;
+    bottom: -54px;
+    width: 170px;
+    height: 145px;
+    border-radius: 50%;
+    opacity: 0.25;
+    background: repeating-linear-gradient(
+      135deg,
+      transparent 0 10px,
+      rgba(239, 255, 231, 0.4) 10px 11px
+    );
+    pointer-events: none;
+  }
+
+  /* Oversized watermark is decorative, not a text-background treatment. */
+  #site .about-section-top .about-top-card-green::before {
+    content: "01";
+    position: absolute;
+    z-index: 1;
+    right: 21px;
+    bottom: 3px;
+    color: rgba(245, 255, 239, 0.105);
+    font-family: Montserrat, sans-serif;
+    font-size: clamp(88px, 24vw, 126px);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.09em;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  #site .about-section-top .about-top-eyebrow,
+  #site .about-section-top .about-top-title,
+  #site .about-section-top .about-top-caption {
+    position: relative !important;
+    z-index: 2 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+
+  #site .about-section-top .about-top-eyebrow .text-content,
+  #site .about-section-top .about-top-eyebrow .text-content p,
+  #site .about-section-top .about-top-eyebrow .text-content span,
+  #site .about-section-top .about-top-eyebrow .text-content b {
+    color: rgba(245, 255, 239, 0.92) !important;
+    font-size: 11px !important;
+    font-weight: 750 !important;
+    line-height: 1.4 !important;
+    letter-spacing: 0.16em !important;
+    text-transform: uppercase;
+  }
+
+  #site .about-section-top .about-top-eyebrow .text-content p {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 !important;
+  }
+
+  #site .about-section-top .about-top-eyebrow .text-content p::before {
+    content: "";
+    display: inline-block;
+    flex: 0 0 7px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #c5f59c;
+    box-shadow: 0 0 0 4px rgba(197, 245, 156, 0.13);
+  }
+
+  #site .about-section-top .about-top-title {
+    margin-top: 17px !important;
+  }
+
+  #site .about-section-top .about-top-title .title-content {
+    max-width: 25ch !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #fff !important;
+    font-size: clamp(27px, 7.1vw, 34px) !important;
+    font-weight: 800 !important;
+    line-height: 1.09 !important;
+    letter-spacing: -0.045em !important;
+    text-align: left !important;
+    text-wrap: balance;
+  }
+
+  #site .about-section-top .about-top-title .title-content h1,
+  #site .about-section-top .about-top-title .title-content h1 span,
+  #site .about-section-top .about-top-title .title-content h1 b {
+    margin: 0 !important;
+    color: #fff !important;
+    font-size: inherit !important;
+    font-weight: 800 !important;
+    line-height: inherit !important;
+    letter-spacing: inherit !important;
+  }
+
+  #site .about-section-top .about-top-caption {
+    max-width: 82% !important;
+    margin-top: 19px !important;
+    padding-top: 14px !important;
+    border-top: 1px solid rgba(239, 255, 231, 0.28);
+  }
+
+  #site .about-section-top .about-top-caption .text-content,
+  #site .about-section-top .about-top-caption .text-content p,
+  #site .about-section-top .about-top-caption .text-content span,
+  #site .about-section-top .about-top-caption .text-content b {
+    margin: 0 !important;
+    color: rgba(248, 255, 244, 0.92) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    line-height: 1.55 !important;
+    letter-spacing: 0 !important;
+  }
+
+  /* Once the card enters, keep its three text groups visible and settled. */
+  #site .about-section-top .about-top-card-green.reveal-in .about-top-eyebrow,
+  #site .about-section-top .about-top-card-green.reveal-in .about-top-title,
+  #site .about-section-top .about-top-card-green.reveal-in .about-top-caption {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+}
+
+@media (max-width: 380px) {
+  #site .about-section-top .about-top-card-green {
+    min-height: 264px !important;
+    padding: 25px 20px 24px !important;
+  }
+
+  #site .about-section-top .about-top-title .title-content {
+    font-size: clamp(25px, 7.4vw, 29px) !important;
+  }
+}
