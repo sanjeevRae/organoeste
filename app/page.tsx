@@ -4,6 +4,7 @@ import Navbar from "@/components/navbar";
 import Heading from "@/components/Heading";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
+import WhatWeDo from "@/components/whatwedo";
 import ProductsSection from "@/components/ProductsSection";
 import Clients from "@/components/Clients";
 import Contact from "@/components/contact";
@@ -27,6 +28,9 @@ export default function Home() {
       </Reveal>
       <Reveal delay={80}>
         <Clients />
+      </Reveal>
+      <Reveal delay={80}>
+        <WhatWeDo />
       </Reveal>
       <Reveal delay={80}>
         <Contact />
