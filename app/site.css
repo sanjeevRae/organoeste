@@ -9645,6 +9645,7 @@ body:has(.dash-editpage){padding-top:0;--dash-zoom:.95;zoom:var(--dash-zoom)}
 #site .np-head-wide {
   position: relative; left: 50%; transform: translateX(-50%);
   width: min(1360px, calc(100vw - 40px));
+  max-width: none;
 }
 #site .np-benefit { transition: transform 0.18s ease, box-shadow 0.18s ease; }
 #site .np-benefit:hover { transform: translateY(-3px); box-shadow: 0 14px 28px rgba(23, 58, 27, 0.1); }
