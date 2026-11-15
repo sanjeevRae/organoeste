@@ -9793,3 +9793,27 @@ body:has(.dash-editpage){padding-top:0;--dash-zoom:.95;zoom:var(--dash-zoom)}
   #site .np-checks { background: rgba(0, 0, 0, 0.16); padding: 12px; border-radius: 12px; }
   #site .np-feature-cta .np-btn { min-height: 48px; }
 }
+
+/* ========================================================================
+   v7.2 — mobile spacing rhythm (8pt scale) for the Produtos feature
+   band and page sections: even group gaps, roomier kit rows and
+   checks panel, a real divider above the audience chips, and
+   consistent 24px breathing room at the band's top and bottom.
+   ======================================================================== */
+@media (max-width: 880px) {
+  #site .np-section { padding: 56px 0; }
+  #site .np-section-head { margin-bottom: 28px; }
+  #site .np-feature-hero { padding: 24px 20px 0; gap: 18px; }
+  #site .np-feature-hero-text { gap: 6px; }
+  #site .np-feature-body { padding: 18px 20px 20px; gap: 16px; }
+  #site .np-kits { gap: 10px; }
+  #site .np-kit { padding: 12px; }
+  #site .np-checks { padding: 14px; gap: 12px; }
+  #site .np-feature .np-aud-dark {
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    padding-top: 16px;
+  }
+  #site .np-chips { gap: 8px; }
+  #site .np-feature-cta { gap: 12px; }
+  #site .np-feature-reel { margin: 0 20px 24px; }
+}
