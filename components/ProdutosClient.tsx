@@ -12,97 +12,72 @@ const poppins = Poppins({
 });
 
 const WA = "https://wa.me/5567992401937";
-const WA_QUOTE = `${WA}?text=${encodeURIComponent(
-  "Olá! Gostaria de solicitar um orçamento do OrganoSuper."
-)}`;
+const waText = (text: string) => `${WA}?text=${encodeURIComponent(text)}`;
+const WA_QUOTE = waText("Olá! Gostaria de solicitar um orçamento do OrganoSuper.");
 
-type Format = {
-  tag: string;
-  title: string;
-  description: string;
-  media:
-    | { kind: "image"; src: string; alt: string }
-    | { kind: "reel"; embedUrl: string; title: string };
-  instagram?: { label: string; href: string };
-};
-
-const FORMATS: Format[] = [
+const KITS = [
   {
-    tag: "Casa e jardim",
-    title: "Fertipower",
-    description:
-      "Composto orgânico multivitamínico concentrado de alta performance para as suas verdinhas. Ideal para vasos, jardins e hortas.",
-    media: {
-      kind: "reel",
-      embedUrl: "https://www.instagram.com/reel/DXqDcHHlbdx/embed",
-      title: "Reel do Fertipower no Instagram",
-    },
-    instagram: {
-      label: "@fertipowerbrasil",
-      href: "https://www.instagram.com/fertipowerbrasil",
-    },
+    name: "Kit Mais Vendido",
+    units: "2 unidades",
+    tagline:
+      "O kit perfeito para transformar mais ambientes da sua casa com o melhor custo-benefício.",
+    img: "/images/fertipower-kit2.png",
+    wa: waText("Olá! Quero saber mais sobre o Kit Mais Vendido (2 unidades) do Fertipower."),
   },
+  {
+    name: "Kit Casa Viva",
+    units: "3 unidades",
+    tagline: "Mais vida, beleza e equilíbrio para todos os ambientes.",
+    img: "/images/fertipower-kit3.png",
+    wa: waText("Olá! Quero saber mais sobre o Kit Casa Viva (3 unidades) do Fertipower."),
+  },
+  {
+    name: "Kit Premium",
+    units: "4 unidades",
+    tagline: "A experiência completa para quem quer ambientes realmente vivos.",
+    img: "/images/fertipower-kit4.png",
+    wa: waText("Olá! Quero saber mais sobre o Kit Premium (4 unidades) do Fertipower."),
+  },
+];
+
+const POUCH_POINTS = [
+  "Produto esterilizado e natural",
+  "Isento de patógenos e sementes daninhas",
+  "Rico em macro e micronutrientes",
+  "Ideal para todas as espécies de plantas",
+];
+
+const FORMATS = [
   {
     tag: "Produtor rural",
     title: "Vendas a granel",
     description:
       "Para produtores rurais, HF e cooperativas agrícolas. Pode ser enriquecido com fontes minerais (organomineral). Serve para todas as culturas: pastagem, HF, fruticultura, grãos e cana-de-açúcar. Rico em ácidos orgânicos, húmicos e fúlvicos.",
-    media: {
-      kind: "image",
-      src: "/images/produtos-granel.jpg",
-      alt: "Caminhão da Organoeste carregado para vendas a granel",
-    },
+    img: "/images/produtos-granel.jpg",
+    alt: "Caminhão da Organoeste carregado para vendas a granel",
+    audience: ["Produtores rurais", "Viveiros de mudas", "Cooperativas", "Grandes áreas"],
   },
   {
     tag: "Floricultura e paisagismo",
     title: "Sacos de 40 kg",
     description:
       "Para floricultura, jardinagem, hortas e paisagismo. Vendemos direto na fábrica e em casas agropecuárias.",
-    media: {
-      kind: "image",
-      src: "/images/produtos-sacos.jpg",
-      alt: "Sacos de fertilizante orgânico na fábrica da Organoeste",
-    },
+    img: "/images/produtos-sacos.jpg",
+    alt: "Sacos de fertilizante orgânico na fábrica da Organoeste",
+    audience: ["Viveiros", "Floriculturas", "Paisagismo", "Casas agropecuárias"],
   },
 ];
 
 const BENEFITS: { title: string; text: string }[] = [
-  {
-    title: "Fixação do nitrogênio",
-    text: "Potencializa a absorção do nitrogênio presente no ar, em frações disponíveis para a planta.",
-  },
-  {
-    title: "Rico em carbono e ácidos orgânicos",
-    text: "Cria um ciclo virtuoso de recuperação do solo e da sua capacidade produtiva.",
-  },
-  {
-    title: "Acelera a decomposição da matéria orgânica",
-    text: "Libera nutrientes e ácidos que ajudam a reter água e proteger os nutrientes.",
-  },
-  {
-    title: "Produção de fito-hormônios de crescimento",
-    text: "Microrganismos produzem hormônios semelhantes aos vegetais, estimulando o crescimento.",
-  },
-  {
-    title: "Tratamento e recuperação do solo",
-    text: "Reequilíbrio físico, químico e biológico da biota do solo.",
-  },
-  {
-    title: "Nutrição com macro e micronutrientes",
-    text: "Fornece seis macronutrientes e seis micronutrientes essenciais.",
-  },
-  {
-    title: "Solubilização de fósforo e potássio",
-    text: "Torna o fósforo e o potássio mais facilmente absorvíveis pelas plantas.",
-  },
-  {
-    title: "Maior capacidade de enraizamento",
-    text: "Os microrganismos estimulados promovem um enraizamento mais forte.",
-  },
-  {
-    title: "Capacidade de retenção de água",
-    text: "Planta mais resistente a veranicos e estiagem.",
-  },
+  { title: "Fixação do nitrogênio", text: "Potencializa a absorção do nitrogênio presente no ar, em frações disponíveis para a planta." },
+  { title: "Rico em carbono e ácidos orgânicos", text: "Cria um ciclo virtuoso de recuperação do solo e da sua capacidade produtiva." },
+  { title: "Acelera a decomposição da matéria orgânica", text: "Libera nutrientes e ácidos que ajudam a reter água e proteger os nutrientes." },
+  { title: "Produção de fito-hormônios de crescimento", text: "Microrganismos produzem hormônios semelhantes aos vegetais, estimulando o crescimento." },
+  { title: "Tratamento e recuperação do solo", text: "Reequilíbrio físico, químico e biológico da biota do solo." },
+  { title: "Nutrição com macro e micronutrientes", text: "Fornece seis macronutrientes e seis micronutrientes essenciais." },
+  { title: "Solubilização de fósforo e potássio", text: "Torna o fósforo e o potássio mais facilmente absorvíveis pelas plantas." },
+  { title: "Maior capacidade de enraizamento", text: "Os microrganismos estimulados promovem um enraizamento mais forte." },
+  { title: "Capacidade de retenção de água", text: "Planta mais resistente a veranicos e estiagem." },
 ];
 
 const GUARANTEES: { item: string; value: string }[] = [
@@ -122,8 +97,8 @@ export default function ProdutosClient() {
     <main ref={rootRef} className={`np-page ${poppins.variable}`}>
       {/* ---------- HERO ---------- */}
       <section className="np-hero">
-        <div className="np-wrap np-hero-grid">
-          <div>
+        <div className="np-wrap">
+          <div className="np-hero-content">
             <span className="np-eyebrow">Fertilizante orgânico de alta performance</span>
             <h1>
               ORGANO<span className="np-lime">SUPER</span>
@@ -137,12 +112,9 @@ export default function ProdutosClient() {
               Solicite orçamento <span aria-hidden="true">→</span>
             </a>
           </div>
-          <div className="np-hero-img">
-            <img
-              src="/images/produtos-hero.jpg"
-              alt="Muda brotando em solo fértil tratado com OrganoSuper"
-            />
-          </div>
+        </div>
+        <div className="np-hero-media" aria-hidden="true">
+          <img src="/images/produtos-hero.jpg" alt="" />
         </div>
       </section>
 
@@ -155,45 +127,111 @@ export default function ProdutosClient() {
               <h2 className="np-title">Escolha a forma ideal para você</h2>
             </div>
           </Reveal>
-          <div className="np-grid3">
+
+          {/* Fertipower — feature band */}
+          <article className="np-feature">
+            <div className="np-feature-visual">
+              <img
+                src="/images/fertipower-pouch.png"
+                alt="Embalagem de 1 kg do Fertipower, fertilizante orgânico Classe A"
+              />
+              <span className="np-feature-chip">NPK+9 Orgânico · Classe A · 1 kg</span>
+            </div>
+            <div className="np-feature-body">
+              <span className="np-tag np-tag-static">Casa e jardim</span>
+              <h3>Fertipower</h3>
+              <p>
+                Composto orgânico multivitamínico concentrado de alta
+                performance para as suas verdinhas. Ideal para vasos, jardins e
+                hortas.
+              </p>
+              <div className="np-kits">
+                {KITS.map((kit) => (
+                  <div className="np-kit" key={kit.name}>
+                    <img src={kit.img} alt="" aria-hidden="true" />
+                    <div className="np-kit-info">
+                      <strong>
+                        {kit.name} <span>· {kit.units}</span>
+                      </strong>
+                      <small>{kit.tagline}</small>
+                    </div>
+                    <a
+                      className="np-kit-btn"
+                      href={kit.wa}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Pedir o ${kit.name} no WhatsApp`}
+                    >
+                      →
+                    </a>
+                  </div>
+                ))}
+              </div>
+              <ul className="np-checks">
+                {POUCH_POINTS.map((point) => (
+                  <li key={point}>✓ {point}</li>
+                ))}
+              </ul>
+              <div className="np-aud np-aud-dark">
+                <span className="np-partners-label">Ideal para</span>
+                <div className="np-chips">
+                  {["Casas e apartamentos", "Vasos e jardins", "Hortas domésticas", "Urban jungle"].map(
+                    (chip) => (
+                      <span className="np-chip np-chip-dark" key={chip}>
+                        {chip}
+                      </span>
+                    )
+                  )}
+                </div>
+              </div>
+              <div className="np-card-links">
+                <a
+                  className="np-link np-link-light"
+                  href="https://www.instagram.com/fertipowerbrasil"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  @fertipowerbrasil
+                </a>
+                <a className="np-btn np-btn-sm" href={WA_QUOTE} target="_blank" rel="noopener noreferrer">
+                  Solicite orçamento
+                </a>
+              </div>
+            </div>
+            <div className="np-feature-reel">
+              <iframe
+                src="https://www.instagram.com/reel/DXqDcHHlbdx/embed"
+                title="Reel do Fertipower no Instagram"
+                loading="lazy"
+                allowFullScreen
+                scrolling="no"
+              />
+            </div>
+          </article>
+
+          {/* Granel + 40 kg */}
+          <div className="np-grid2 np-formats-row">
             {FORMATS.map((f) => (
               <article className="np-card" key={f.title}>
                 <div className="np-card-media">
-                  {f.media.kind === "image" ? (
-                    <img src={f.media.src} alt={f.media.alt} />
-                  ) : (
-                    <div className="np-reel">
-                      <iframe
-                        src={f.media.embedUrl}
-                        title={f.media.title}
-                        loading="lazy"
-                        allowFullScreen
-                        scrolling="no"
-                      />
-                    </div>
-                  )}
+                  <img src={f.img} alt={f.alt} />
                   <span className="np-tag">{f.tag}</span>
                 </div>
                 <div className="np-card-body">
                   <h3>{f.title}</h3>
                   <p>{f.description}</p>
+                  <div className="np-aud">
+                    <span className="np-partners-label">Ideal para</span>
+                    <div className="np-chips">
+                      {f.audience.map((chip) => (
+                        <span className="np-chip" key={chip}>
+                          {chip}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                   <div className="np-card-links">
-                    {f.instagram ? (
-                      <a
-                        className="np-link"
-                        href={f.instagram.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {f.instagram.label}
-                      </a>
-                    ) : null}
-                    <a
-                      className="np-link"
-                      href={WA_QUOTE}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <a className="np-link" href={WA_QUOTE} target="_blank" rel="noopener noreferrer">
                       Solicite orçamento
                     </a>
                   </div>

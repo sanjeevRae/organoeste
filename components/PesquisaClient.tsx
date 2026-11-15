@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Poppins } from "next/font/google";
 import Reveal from "./Reveal";
 import { useAosReveal } from "./useAosReveal";
@@ -16,6 +16,46 @@ const WA_PROJECTS = `${WA}?text=${encodeURIComponent(
   "Olá! Gostaria de saber mais sobre os projetos de Pesquisa & Desenvolvimento da Organoeste."
 )}`;
 
+const VIDEO_SRC = "https://organoeste-biometano.pages.dev/video/master.m3u8";
+
+function UvroVideo() {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+    if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      video.src = VIDEO_SRC;
+      return;
+    }
+    let hls: { destroy: () => void } | undefined;
+    let cancelled = false;
+    import("hls.js").then(({ default: Hls }) => {
+      if (cancelled || !Hls.isSupported()) return;
+      const instance = new Hls();
+      instance.loadSource(VIDEO_SRC);
+      instance.attachMedia(video);
+      hls = instance;
+    });
+    return () => {
+      cancelled = true;
+      hls?.destroy();
+    };
+  }, []);
+
+  return (
+    <video
+      ref={ref}
+      className="np-video-el"
+      controls
+      playsInline
+      preload="none"
+      poster="/images/uvro-poster.webp"
+      aria-label="Vídeo do processo de biogás em rota seca do projeto UVRO-SECA"
+    />
+  );
+}
+
 type Project = {
   title: string;
   subtitle: string;
@@ -26,7 +66,7 @@ type Project = {
   partners: string[];
   media:
     | { kind: "image"; src: string; alt: string }
-    | { kind: "video-slot"; poster: string; alt: string; label: string };
+    | { kind: "video"; alt: string };
 };
 
 /** New approved projects are added here — the cards render from this list. */
@@ -62,51 +102,127 @@ const PROJECTS: Project[] = [
       rest: " para frotas logísticas: um passo rumo à transição energética e à descarbonização.",
     },
     partners: ["CIBiogás", "UTFPR"],
-    media: {
-      kind: "video-slot",
-      poster: "/images/pd-uvro.jpg",
-      alt: "Galpões da planta da Organoeste em Campo Grande/MS",
-      label: "Vídeo do projeto em edição",
-    },
+    media: { kind: "video", alt: "Vídeo do processo UVRO-SECA" },
   },
 ];
 
-type Flow = { label: string; steps: { name: string; isNew?: boolean }[] };
+const STATS = [
+  { value: "5.000 t/mês", label: "de resíduos agroindustriais orgânicos recebidos" },
+  { value: "500 t/mês", label: "de biomassa vegetal processada" },
+  { value: "100.000 t", label: "de adubo orgânico disponível" },
+  { value: "até 10 dias", label: "para a bioconversão pelas larvas — 4× mais rápida que a compostagem" },
+];
+
+type StepIcon = "recepcao" | "compostagem" | "beneficiamento" | "energia" | "bioconversao";
+type FlowStep = { name: string; desc: string; icon: StepIcon; isNew?: boolean };
+type Flow = { id: string; label: string; isNew?: boolean; summary: string; steps: FlowStep[] };
 
 const FLOWS: Flow[] = [
   {
+    id: "hoje",
     label: "Hoje",
-    steps: [{ name: "Recepção" }, { name: "Compostagem" }, { name: "Beneficiamento" }],
-  },
-  {
-    label: "UVRO-SECA",
+    summary:
+      "O processo atual da Organoeste Campo Grande/MS: os resíduos orgânicos são recebidos, compostados e beneficiados até virarem o fertilizante OrganoSuper.",
     steps: [
-      { name: "Recepção" },
-      { name: "Geração energética em garagens", isNew: true },
-      { name: "Compostagem" },
-      { name: "Beneficiamento" },
+      { name: "Recepção", desc: "Recebimento e triagem dos resíduos orgânicos", icon: "recepcao" },
+      { name: "Compostagem", desc: "Leiras controladas transformam o resíduo em composto", icon: "compostagem" },
+      { name: "Beneficiamento", desc: "Peneiramento e preparo do fertilizante OrganoSuper", icon: "beneficiamento" },
     ],
   },
   {
-    label: "BioFrass",
+    id: "uvro",
+    label: "UVRO-SECA",
+    isNew: true,
+    summary:
+      "Com o UVRO-SECA, antes da compostagem o resíduo passa pelas garagens de digestão anaeróbica em rota seca e gera biometano como combustível veicular.",
     steps: [
-      { name: "Recepção" },
-      { name: "Bioconversão / vermicompostagem", isNew: true },
-      { name: "Beneficiamento" },
+      { name: "Recepção", desc: "Recebimento e triagem dos resíduos orgânicos", icon: "recepcao" },
+      { name: "Geração energética em garagens", desc: "Garagens vedadas captam o biogás e geram biometano", icon: "energia", isNew: true },
+      { name: "Compostagem", desc: "Leiras controladas transformam o resíduo em composto", icon: "compostagem" },
+      { name: "Beneficiamento", desc: "Peneiramento e preparo do fertilizante OrganoSuper", icon: "beneficiamento" },
+    ],
+  },
+  {
+    id: "biofrass",
+    label: "BioFrass",
+    isNew: true,
+    summary:
+      "Com o BioFrass, as larvas da mosca-soldado-negra fazem a bioconversão do resíduo em até 10 dias, gerando o frass — base do biofertilizante de nova geração.",
+    steps: [
+      { name: "Recepção", desc: "Recebimento e triagem dos resíduos orgânicos", icon: "recepcao" },
+      { name: "Bioconversão / vermicompostagem", desc: "Larvas convertem o resíduo em frass em até 10 dias", icon: "bioconversao", isNew: true },
+      { name: "Beneficiamento", desc: "Inoculação dos microrganismos e preparo do produto", icon: "beneficiamento" },
     ],
   },
 ];
+
+function StepIconSvg({ icon }: { icon: StepIcon }) {
+  const common = {
+    viewBox: "0 0 24 24",
+    width: 26,
+    height: 26,
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.8,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    "aria-hidden": true,
+    focusable: false,
+  };
+  switch (icon) {
+    case "recepcao":
+      return (
+        <svg {...common}>
+          <path d="M12 3v10" />
+          <path d="m7.5 9.5 4.5 4 4.5-4" />
+          <path d="M3.5 15.5h4l1.7 2.6h5.6l1.7-2.6h4" />
+          <path d="M4.5 21h15" />
+        </svg>
+      );
+    case "compostagem":
+      return (
+        <svg {...common}>
+          <path d="M20.5 12a8.5 8.5 0 1 1-2.5-6" />
+          <path d="M21.5 3.5v4h-4" />
+        </svg>
+      );
+    case "beneficiamento":
+      return (
+        <svg {...common}>
+          <path d="M12 21v-7" />
+          <path d="M12 14c0-3.8 2.9-5.9 7.5-5.9 0 4.6-2.1 7.4-7.5 5.9Z" />
+          <path d="M12 14c0-3.8-2.9-5.9-7.5-5.9 0 4.6 2.1 7.4 7.5 5.9Z" />
+        </svg>
+      );
+    case "energia":
+      return (
+        <svg {...common}>
+          <path d="M13 2.5 4.5 13.5H11L9.8 21.5l8.7-11H12l1-8Z" />
+        </svg>
+      );
+    case "bioconversao":
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="5.5" r="2" />
+          <rect x="8" y="8.5" width="8" height="10" rx="4" />
+          <path d="M8.5 12H4.8M8.5 16.5l-3 2M15.5 12h3.7M15.5 16.5l3 2" />
+        </svg>
+      );
+  }
+}
 
 export default function PesquisaClient() {
   const rootRef = useRef<HTMLElement | null>(null);
   useAosReveal(rootRef);
+  const [activeFlow, setActiveFlow] = useState(1);
+  const flow = FLOWS[activeFlow];
 
   return (
     <main ref={rootRef} className={`np-page ${poppins.variable}`}>
       {/* ---------- HERO ---------- */}
       <section className="np-hero">
-        <div className="np-wrap np-hero-grid">
-          <div>
+        <div className="np-wrap">
+          <div className="np-hero-content">
             <span className="np-eyebrow">Inovação é o que nos move</span>
             <h1>Pesquisa &amp; Desenvolvimento</h1>
             <p>
@@ -115,12 +231,9 @@ export default function PesquisaClient() {
               incluir duas novas fases produtivas.
             </p>
           </div>
-          <div className="np-hero-img">
-            <img
-              src="/images/pd-hero.jpg"
-              alt="Planta de compostagem da Organoeste em Campo Grande/MS"
-            />
-          </div>
+        </div>
+        <div className="np-hero-media" aria-hidden="true">
+          <img src="/images/pd-hero.jpg" alt="" />
         </div>
       </section>
 
@@ -140,15 +253,7 @@ export default function PesquisaClient() {
                   {p.media.kind === "image" ? (
                     <img src={p.media.src} alt={p.media.alt} />
                   ) : (
-                    <div className="np-video">
-                      <img src={p.media.poster} alt={p.media.alt} />
-                      <div className="np-video-overlay">
-                        <span className="np-play" aria-hidden="true">
-                          ▶
-                        </span>
-                        <span className="np-video-label">{p.media.label}</span>
-                      </div>
-                    </div>
+                    <UvroVideo />
                   )}
                 </div>
                 <div className="np-card-body">
@@ -184,37 +289,94 @@ export default function PesquisaClient() {
         </div>
       </section>
 
-      {/* ---------- PROCESSO ---------- */}
+      {/* ---------- ECONOMIA CIRCULAR / NÚMEROS ---------- */}
+      <section className="np-section np-section-white">
+        <div className="np-wrap">
+          <Reveal>
+            <div className="np-section-head">
+              <span className="np-eyebrow np-eyebrow-brown">Economia circular</span>
+              <h2 className="np-title">Do resíduo ao recurso</h2>
+            </div>
+          </Reveal>
+          <div className="np-cycle">
+            <div className="np-cycle-img">
+              <img
+                src="/images/pd-ciclo.jpg"
+                alt="Diagrama da economia circular: resíduos orgânicos viram fertilizante, proteína e energia"
+              />
+            </div>
+            <div>
+              <p className="np-cycle-text">
+                A Organoeste já transforma resíduos orgânicos em fertilizante.
+                Com os dois projetos aprovados, o mesmo resíduo passa a gerar
+                ainda mais valor: biometano como combustível renovável
+                (UVRO-SECA) e um biofertilizante de nova geração a partir da
+                bioconversão pelas larvas da mosca-soldado-negra (BioFrass) —
+                fechando o ciclo do resíduo ao recurso.
+              </p>
+              <div className="np-stats">
+                {STATS.map((s) => (
+                  <div className="np-stat" key={s.label}>
+                    <strong>{s.value}</strong>
+                    <span>{s.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- PROCESSO INTERATIVO ---------- */}
       <section className="np-section np-section-alt">
         <div className="np-wrap">
           <Reveal>
             <div className="np-section-head">
               <span className="np-eyebrow np-eyebrow-brown">Como o processo muda</span>
               <h2 className="np-title">Duas novas fases produtivas</h2>
+              <p className="np-section-sub">
+                Toque em cada fluxo e veja, passo a passo, como o processo
+                evolui com os projetos aprovados.
+              </p>
             </div>
           </Reveal>
-          <div className="np-flows">
-            {FLOWS.map((flow) => (
-              <div className="np-flow" key={flow.label}>
-                <span className="np-flow-label">{flow.label}</span>
-                <div className="np-steps">
-                  {flow.steps.map((step, i) => (
-                    <span className="np-step-wrap" key={step.name}>
-                      <span className={step.isNew ? "np-step np-step-new" : "np-step"}>
-                        {step.name}
-                        {step.isNew ? <em className="np-new-tag">Nova fase</em> : null}
-                      </span>
-                      {i < flow.steps.length - 1 ? (
-                        <span className="np-arrow" aria-hidden="true">
-                          →
-                        </span>
-                      ) : null}
-                    </span>
-                  ))}
+          <div className="np-ptabs" role="tablist" aria-label="Fluxos do processo">
+            {FLOWS.map((f, i) => (
+              <button
+                key={f.id}
+                role="tab"
+                aria-selected={i === activeFlow}
+                className={i === activeFlow ? "np-ptab np-ptab-active" : "np-ptab"}
+                onClick={() => setActiveFlow(i)}
+                type="button"
+              >
+                {f.label}
+                {f.isNew ? <span className="np-ptab-dot">Novo</span> : null}
+              </button>
+            ))}
+          </div>
+          <div className="np-pflow" key={flow.id}>
+            {flow.steps.map((step, i) => (
+              <div className="np-pstep-wrap" key={step.name} style={{ animationDelay: `${i * 130}ms` }}>
+                <div className={step.isNew ? "np-pstep np-pstep-new" : "np-pstep"}>
+                  <span className="np-pstep-icon">
+                    <StepIconSvg icon={step.icon} />
+                  </span>
+                  <strong>
+                    {step.name}
+                    {step.isNew ? <em className="np-new-tag">Nova fase</em> : null}
+                  </strong>
+                  <small>{step.desc}</small>
                 </div>
+                {i < flow.steps.length - 1 ? (
+                  <span className="np-parrow" aria-hidden="true">
+                    →
+                  </span>
+                ) : null}
               </div>
             ))}
           </div>
+          <p className="np-pflow-summary">{flow.summary}</p>
         </div>
       </section>
 

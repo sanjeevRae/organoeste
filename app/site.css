@@ -9434,3 +9434,154 @@ body:has(.dash-editpage){padding-top:0;--dash-zoom:.95;zoom:var(--dash-zoom)}
   #site .np-card-body { padding: 22px; }
   #site .np-hero h1 { font-size: 36px; }
 }
+
+/* ========================================================================
+   NEW PAGES v2 — hero blend, Fertipower feature band, playable video,
+   circular-economy stats, interactive process tabs.
+   ======================================================================== */
+
+/* ---------- hero v2: photo blends into the green, no floating card ---------- */
+#site .np-hero { position: relative; padding: 104px 0; }
+#site .np-hero-media { position: absolute; top: 0; right: 0; bottom: 0; width: 48%; z-index: 0; }
+#site .np-hero-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+#site .np-hero-media::before {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(90deg, #173a1b 4%, rgba(23, 58, 27, 0.55) 46%, rgba(23, 58, 27, 0.05) 82%);
+}
+#site .np-hero .np-wrap { position: relative; z-index: 2; }
+#site .np-hero-content { max-width: 560px; }
+
+/* ---------- Fertipower feature band ---------- */
+#site .np-feature {
+  background: linear-gradient(125deg, #173a1b 62%, #21512a 100%);
+  border-radius: 24px; overflow: hidden; color: #f7f7f5;
+  display: grid; grid-template-columns: 0.92fr 1.35fr 0.78fr;
+  box-shadow: 0 22px 48px rgba(23, 58, 27, 0.28); margin-bottom: 28px;
+}
+#site .np-feature-visual {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  padding: 34px 22px;
+  background: radial-gradient(circle at 50% 42%, rgba(108, 192, 74, 0.32), rgba(108, 192, 74, 0) 68%);
+}
+#site .np-feature-visual img { width: 100%; max-width: 300px; height: auto; display: block; filter: drop-shadow(0 18px 26px rgba(0, 0, 0, 0.35)); }
+#site .np-feature-chip {
+  position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+  background: rgba(10, 26, 12, 0.85); color: #cfe8c2; white-space: nowrap;
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.08em;
+  padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(108, 192, 74, 0.45);
+}
+#site .np-feature-body { padding: 36px 34px; display: flex; flex-direction: column; gap: 16px; }
+#site .np-feature-body h3 { font-size: 32px; font-weight: 800; color: #ffffff; }
+#site .np-feature-body > p { color: #dfe9dc; font-size: 15.5px; line-height: 1.65; }
+#site .np-tag-static { position: static; align-self: flex-start; background: #6cc04a; color: #173a1b; }
+#site .np-kits { display: flex; flex-direction: column; gap: 10px; }
+#site .np-kit {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px; padding: 10px 12px;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+#site .np-kit:hover { background: rgba(255, 255, 255, 0.11); border-color: rgba(108, 192, 74, 0.55); }
+#site .np-kit img { width: 62px; height: 52px; object-fit: cover; object-position: top; border-radius: 9px; background: #ffffff; flex: 0 0 62px; }
+#site .np-kit-info { flex: 1; min-width: 0; }
+#site .np-kit-info strong { display: block; color: #ffffff; font-size: 14.5px; font-weight: 700; }
+#site .np-kit-info strong span { color: #6cc04a; font-weight: 700; }
+#site .np-kit-info small { display: block; color: #b9cdb2; font-size: 12.5px; line-height: 1.45; margin-top: 2px; }
+#site .np-kit-btn {
+  flex: 0 0 38px; width: 38px; height: 38px; border-radius: 50%;
+  background: #6cc04a; color: #173a1b; font-weight: 800; font-size: 17px;
+  display: flex; align-items: center; justify-content: center; text-decoration: none;
+  transition: transform 0.18s ease;
+}
+#site .np-kit-btn:hover { transform: translateX(3px); }
+#site .np-checks { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 7px 16px; padding: 0; margin: 0; }
+#site .np-checks li { color: #cfe8c2; font-size: 13px; font-weight: 500; }
+#site .np-aud-dark { border-top: 1px solid rgba(255, 255, 255, 0.16); padding-top: 14px; }
+#site .np-aud-dark .np-partners-label { color: #6cc04a; }
+#site .np-chip-dark { border-color: rgba(207, 232, 194, 0.4); color: #e6f2dd; background: rgba(255, 255, 255, 0.05); }
+#site .np-link-light { color: #ffffff; }
+#site .np-link-light:hover { color: #6cc04a; }
+#site .np-btn-sm { padding: 11px 20px; font-size: 14px; box-shadow: none; }
+#site .np-feature-reel { position: relative; min-height: 430px; background: #0d200e; }
+#site .np-feature-reel iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+#site .np-formats-row { margin-top: 4px; }
+#site .np-aud { margin-top: 2px; }
+#site .np-card-body .np-aud { padding-top: 12px; border-top: 1px solid #e7ece5; }
+#site .np-section-white { background: #ffffff; }
+
+/* ---------- playable video ---------- */
+#site .np-video-el { width: 100%; height: 250px; object-fit: cover; display: block; background: #0d200e; }
+
+/* ---------- circular economy / stats ---------- */
+#site .np-cycle { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 40px; align-items: center; }
+#site .np-cycle-img { border-radius: 20px; overflow: hidden; box-shadow: 0 14px 34px rgba(23, 58, 27, 0.12); background: #eef4ea; }
+#site .np-cycle-img img { width: 100%; height: auto; display: block; }
+#site .np-cycle-text { font-size: 16px; line-height: 1.7; color: #43543f; margin-bottom: 26px; }
+#site .np-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+#site .np-stat { background: #f7f7f5; border: 1.5px solid #e0e9d8; border-radius: 16px; padding: 20px; }
+#site .np-stat strong { display: block; font-size: 27px; font-weight: 800; color: #173a1b; line-height: 1.1; }
+#site .np-stat span { display: block; font-size: 13.5px; line-height: 1.5; color: #5a6b57; margin-top: 6px; }
+
+/* ---------- interactive process ---------- */
+#site .np-section-sub { font-size: 15.5px; line-height: 1.6; color: #5a6b57; margin-top: 12px; }
+#site .np-ptabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 26px; }
+#site .np-ptab {
+  font-family: var(--font-poppins), "Poppins", sans-serif;
+  background: #ffffff; color: #24402a; border: 1.5px solid #cfdcc9;
+  font-size: 15px; font-weight: 700; padding: 12px 22px; border-radius: 999px;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 9px;
+  transition: all 0.18s ease;
+}
+#site .np-ptab:hover { border-color: #6cc04a; transform: translateY(-1px); }
+#site .np-ptab-active { background: #173a1b; color: #ffffff; border-color: #173a1b; }
+#site .np-ptab-dot {
+  background: #6cc04a; color: #173a1b; font-size: 10px; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px;
+}
+#site .np-pflow { display: flex; align-items: stretch; gap: 10px; }
+#site .np-pstep-wrap { display: flex; align-items: center; gap: 10px; flex: 1; animation: npStepIn 0.5s ease both; }
+@keyframes npStepIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+#site .np-pstep {
+  flex: 1; background: #ffffff; border: 1.5px solid #d5e2cc; border-radius: 18px;
+  padding: 22px 16px; text-align: center; height: 100%;
+  display: flex; flex-direction: column; align-items: center; gap: 9px;
+  box-shadow: 0 8px 22px rgba(23, 58, 27, 0.06);
+}
+#site .np-pstep-icon {
+  width: 54px; height: 54px; border-radius: 50%; background: #eef4ea; color: #2c5a33;
+  display: flex; align-items: center; justify-content: center;
+}
+#site .np-pstep strong { font-size: 15.5px; font-weight: 700; color: #173a1b; line-height: 1.3; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+#site .np-pstep small { font-size: 13px; line-height: 1.5; color: #5a6b57; }
+#site .np-pstep-new { border-color: #6cc04a; background: #f2faec; box-shadow: 0 10px 26px rgba(108, 192, 74, 0.28); }
+#site .np-pstep-new .np-pstep-icon { background: #6cc04a; color: #173a1b; }
+#site .np-parrow { color: #8b5523; font-weight: 800; font-size: 19px; flex: 0 0 auto; }
+#site .np-pflow-summary {
+  margin-top: 22px; background: #ffffff; border-left: 4px solid #6cc04a;
+  border-radius: 10px; padding: 16px 20px; font-size: 15px; line-height: 1.65; color: #43543f;
+  max-width: 860px;
+}
+
+/* ---------- v2 responsive ---------- */
+@media (max-width: 1080px) {
+  #site .np-feature { grid-template-columns: 1fr 1.3fr; }
+  #site .np-feature-reel { grid-column: 1 / -1; min-height: 380px; }
+}
+@media (max-width: 880px) {
+  #site .np-hero { padding: 54px 0 0; }
+  #site .np-hero-media { position: relative; width: 100%; height: 250px; margin-top: 38px; }
+  #site .np-hero-media::before { background: linear-gradient(180deg, #173a1b 2%, rgba(23, 58, 27, 0) 42%); }
+  #site .np-hero-content { max-width: none; }
+  #site .np-cycle { grid-template-columns: 1fr; }
+  #site .np-feature { grid-template-columns: 1fr; }
+  #site .np-feature-reel { min-height: 420px; }
+  #site .np-pflow { flex-direction: column; }
+  #site .np-pstep-wrap { flex-direction: column; align-items: stretch; }
+  #site .np-parrow { transform: rotate(90deg); align-self: center; }
+}
+@media (max-width: 600px) {
+  #site .np-checks { grid-template-columns: 1fr; }
+  #site .np-stats { grid-template-columns: 1fr; }
+  #site .np-feature-body { padding: 26px 22px; }
+  #site .np-feature-visual img { max-width: 230px; }
+}
