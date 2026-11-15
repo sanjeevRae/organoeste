@@ -17,7 +17,7 @@ const WA_PROJECTS = `${WA}?text=${encodeURIComponent(
 )}`;
 
 const VIDEO_SRC = "https://organoeste-biometano.pages.dev/video/master.m3u8";
-const HLS_CDN = "https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js";
+const HLS_CDN = "https://cdn.jsdelivr.net/npm/hls.js@1.7.4/dist/hls.min.js";
 
 type HlsInstance = {
   loadSource: (src: string) => void;
@@ -27,29 +27,32 @@ type HlsInstance = {
 type HlsCtor = { isSupported: () => boolean; new (): HlsInstance };
 
 /** Loads hls.js in the browser from a CDN — no npm dependency, so the
- *  build can never fail on a missing module. Safari plays HLS natively
- *  and never reaches this. */
+ *  build can never fail on a missing module. The load is shared through
+ *  one module-level promise (safe under React StrictMode double-mounts)
+ *  and resets on error so a failed load can be retried. Safari plays
+ *  HLS natively and never reaches this. */
+let hlsPromise: Promise<HlsCtor | null> | null = null;
+
 function loadHls(): Promise<HlsCtor | null> {
-  return new Promise((resolve) => {
-    const win = window as unknown as { Hls?: HlsCtor };
-    if (win.Hls) {
-      resolve(win.Hls);
-      return;
-    }
-    const existing = document.querySelector<HTMLScriptElement>(
-      `script[src="${HLS_CDN}"]`
-    );
-    const script = existing ?? document.createElement("script");
+  const win = window as unknown as { Hls?: HlsCtor };
+  if (win.Hls) return Promise.resolve(win.Hls);
+  if (hlsPromise) return hlsPromise;
+
+  hlsPromise = new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = HLS_CDN;
+    script.async = true;
     script.addEventListener("load", () =>
       resolve((window as unknown as { Hls?: HlsCtor }).Hls ?? null)
     );
-    script.addEventListener("error", () => resolve(null));
-    if (!existing) {
-      script.src = HLS_CDN;
-      script.async = true;
-      document.head.appendChild(script);
-    }
+    script.addEventListener("error", () => {
+      hlsPromise = null;
+      resolve(null);
+    });
+    document.head.appendChild(script);
   });
+
+  return hlsPromise;
 }
 
 function UvroVideo() {
@@ -60,7 +63,11 @@ function UvroVideo() {
     if (!video) return;
     if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = VIDEO_SRC;
-      return;
+      return () => {
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
+      };
     }
     let hls: HlsInstance | undefined;
     let cancelled = false;
