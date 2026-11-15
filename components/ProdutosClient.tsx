@@ -101,6 +101,7 @@ const GUARANTEES: { item: string; value: string }[] = [
 ];
 
 
+/** Benefit icons: official Lucide icon paths (lucide-static, ISC licensed). */
 function BenefitIcon({ icon }: { icon: BenefitIconName }) {
   const common = {
     viewBox: "0 0 24 24",
@@ -108,7 +109,7 @@ function BenefitIcon({ icon }: { icon: BenefitIconName }) {
     height: 25,
     fill: "none",
     stroke: "currentColor",
-    strokeWidth: 1.8,
+    strokeWidth: 2,
     strokeLinecap: "round" as const,
     strokeLinejoin: "round" as const,
     "aria-hidden": true,
@@ -118,73 +119,78 @@ function BenefitIcon({ icon }: { icon: BenefitIconName }) {
     case "nitrogenio":
       return (
         <svg {...common}>
-          <circle cx="12" cy="12" r="2.4" />
-          <circle cx="5.8" cy="6.2" r="1.7" />
-          <circle cx="18.2" cy="6.2" r="1.7" />
-          <circle cx="12" cy="19" r="1.7" />
-          <path d="M10.2 10.2 7.2 7.6M13.8 10.2l3-2.6M12 14.4v2.9" />
+          <circle cx="12" cy="12" r="1" />
+          <path d="M20.2 20.2c2.04-2.03.02-7.36-4.5-11.9-4.54-4.52-9.87-6.54-11.9-4.5-2.04 2.03-.02 7.36 4.5 11.9 4.54 4.52 9.87 6.54 11.9 4.5Z" />
+          <path d="M15.7 15.7c4.52-4.54 6.54-9.87 4.5-11.9-2.03-2.04-7.36-.02-11.9 4.5-4.52 4.54-6.54 9.87-4.5 11.9 2.03 2.04 7.36.02 11.9-4.5Z" />
         </svg>
       );
     case "carbono":
       return (
         <svg {...common}>
-          <path d="M10 3h4M10.5 3v5L5.8 17a2.3 2.3 0 0 0 2 3.5h8.4a2.3 2.3 0 0 0 2-3.5L13.5 8V3" />
-          <path d="M8 15h8" />
+          <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" />
+          <path d="M6.453 15h11.094" />
+          <path d="M8.5 2h7" />
         </svg>
       );
     case "decomposicao":
       return (
         <svg {...common}>
-          <path d="M20.5 12a8.5 8.5 0 1 1-2.5-6" />
-          <path d="M21.5 3.5v4h-4" />
+          <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5" />
+          <path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12" />
+          <path d="m14 16-3 3 3 3" />
+          <path d="M8.293 13.596 7.196 9.5 3.1 10.598" />
+          <path d="m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 11.985 3a1.784 1.784 0 0 1 1.546.888l3.943 6.843" />
+          <path d="m13.378 9.633 4.096 1.098 1.097-4.096" />
         </svg>
       );
     case "crescimento":
       return (
         <svg {...common}>
-          <path d="M11 21v-7" />
-          <path d="M11 14c0-3.6 2.7-5.6 7-5.6 0 4.3-2 6.9-7 5.6Z" />
-          <path d="M11 14c0-3.6-2.7-5.6-7-5.6 0 4.3 2 6.9 7 5.6Z" />
-          <path d="M19.5 8.5v-5M16.8 5.8l2.7-2.7 2.7 2.7" />
+          <path d="M14 9.536V7a4 4 0 0 1 4-4h1.5a.5.5 0 0 1 .5.5V5a4 4 0 0 1-4 4 4 4 0 0 0-4 4c0 2 1 3 1 5a5 5 0 0 1-1 3" />
+          <path d="M4 9a5 5 0 0 1 8 4 5 5 0 0 1-8-4" />
+          <path d="M5 21h14" />
         </svg>
       );
     case "solo":
       return (
         <svg {...common}>
-          <path d="M12 3l7 2.4v5.1c0 4.6-2.9 7.6-7 9.5-4.1-1.9-7-4.9-7-9.5V5.4L12 3Z" />
-          <path d="m9 11.6 2.1 2.1 4-4.2" />
+          <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+          <path d="m9 12 2 2 4-4" />
         </svg>
       );
     case "nutrientes":
       return (
         <svg {...common}>
-          <rect x="4" y="4" width="16" height="16" rx="4" />
-          <circle cx="9" cy="9" r="0.6" fill="currentColor" />
-          <circle cx="15" cy="9" r="0.6" fill="currentColor" />
-          <circle cx="9" cy="15" r="0.6" fill="currentColor" />
-          <circle cx="15" cy="15" r="0.6" fill="currentColor" />
+          <path d="M2 22 16 8" />
+          <path d="M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z" />
+          <path d="M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z" />
+          <path d="M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z" />
+          <path d="M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z" />
+          <path d="M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z" />
+          <path d="M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z" />
+          <path d="M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z" />
         </svg>
       );
     case "soluvel":
       return (
         <svg {...common}>
-          <path d="M12 3.5s6.3 6.8 6.3 11.2a6.3 6.3 0 1 1-12.6 0C5.7 10.3 12 3.5 12 3.5Z" />
-          <path d="M9.4 14.8a2.8 2.8 0 0 0 2 3" />
+          <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z" />
         </svg>
       );
     case "raizes":
       return (
         <svg {...common}>
-          <path d="M4 4h16" />
-          <path d="M12 4v5" />
-          <path d="M12 9c-2.2 1.2-3.2 3.2-3.6 6.5M12 9c2.2 1.2 3.2 3.2 3.6 6.5M12 9v11" />
+          <path d="M15 16a1 1 0 0 0-7-7q-4 4-5.987 12.385a.5.5 0 0 0 .602.602Q11 20 15 16l-3-3" />
+          <path d="M15 9q4 4 7 0-3-4-7 0 4-4 0-7-4 3 0 7" />
+          <path d="m8 15-2.58-2.58" />
         </svg>
       );
     case "agua":
       return (
         <svg {...common}>
-          <path d="M12 3s3.7 4.1 3.7 6.7a3.7 3.7 0 1 1-7.4 0C8.3 7.1 12 3 12 3Z" />
-          <path d="M2.8 17.2c2.9-2.1 5.8-2.1 8.7 0 2.9-2.1 5.8-2.1 8.7 0M2.8 21c2.9-2.1 5.8-2.1 8.7 0 2.9-2.1 5.8-2.1 8.7 0" />
+          <path d="M2 12q2.5 2 5 0t5 0 5 0 5 0" />
+          <path d="M2 19q2.5 2 5 0t5 0 5 0 5 0" />
+          <path d="M2 5q2.5 2 5 0t5 0 5 0 5 0" />
         </svg>
       );
   }

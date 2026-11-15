@@ -9660,3 +9660,6 @@ body:has(.dash-editpage){padding-top:0;--dash-zoom:.95;zoom:var(--dash-zoom)}
   #site .np-formats-row, #site .np-head-wide { left: 0; transform: none; width: 100%; }
   #site .np-formats-row { gap: 28px; }
 }
+
+/* v5 — center the process-flow arrows vertically between the step cards */
+#site .np-parrow { align-self: center; font-size: 21px; }
