@@ -237,6 +237,17 @@ export default function ProdutosClient() {
 
           {/* Fertipower — feature band */}
           <article className="np-feature">
+            <div className="np-feature-hero">
+              <img
+                src="/images/fertipower-pouch.png"
+                alt="Embalagem de 1 kg do Fertipower, fertilizante orgânico Classe A"
+              />
+              <div className="np-feature-hero-text">
+                <span className="np-tag np-tag-static">Casa e jardim</span>
+                <h3>Fertipower</h3>
+                <p className="np-feature-spec">NPK+9 Orgânico · Classe A · 1 kg</p>
+              </div>
+            </div>
             <div className="np-feature-visual">
               <img
                 src="/images/fertipower-pouch.png"
@@ -254,7 +265,14 @@ export default function ProdutosClient() {
               </p>
               <div className="np-kits">
                 {KITS.map((kit) => (
-                  <div className="np-kit" key={kit.name}>
+                  <a
+                    className="np-kit"
+                    key={kit.name}
+                    href={kit.wa}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Pedir o ${kit.name} no WhatsApp`}
+                  >
                     <img src={kit.img} alt="" aria-hidden="true" />
                     <div className="np-kit-info">
                       <strong>
@@ -262,16 +280,10 @@ export default function ProdutosClient() {
                       </strong>
                       <small>{kit.tagline}</small>
                     </div>
-                    <a
-                      className="np-kit-btn"
-                      href={kit.wa}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`Pedir o ${kit.name} no WhatsApp`}
-                    >
+                    <span className="np-kit-btn" aria-hidden="true">
                       →
-                    </a>
-                  </div>
+                    </span>
+                  </a>
                 ))}
               </div>
               <ul className="np-checks">
@@ -313,6 +325,17 @@ export default function ProdutosClient() {
                 allowFullScreen
                 scrolling="no"
               />
+              <a
+                className="np-reel-poster"
+                href="https://www.instagram.com/reel/DXqDcHHlbdx/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Assistir ao vídeo do Fertipower no Instagram"
+              >
+                <img src="/images/fertipower-reel.jpg" alt="Vídeo do Fertipower no Instagram" loading="lazy" />
+                <span className="np-reel-play" aria-hidden="true">▶</span>
+                <span className="np-reel-label">@fertipowerbrasil · Assistir no Instagram</span>
+              </a>
             </div>
           </article>
 
