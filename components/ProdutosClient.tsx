@@ -68,16 +68,27 @@ const FORMATS = [
   },
 ];
 
-const BENEFITS: { title: string; text: string }[] = [
-  { title: "Fixação do nitrogênio", text: "Potencializa a absorção do nitrogênio presente no ar, em frações disponíveis para a planta." },
-  { title: "Rico em carbono e ácidos orgânicos", text: "Cria um ciclo virtuoso de recuperação do solo e da sua capacidade produtiva." },
-  { title: "Acelera a decomposição da matéria orgânica", text: "Libera nutrientes e ácidos que ajudam a reter água e proteger os nutrientes." },
-  { title: "Produção de fito-hormônios de crescimento", text: "Microrganismos produzem hormônios semelhantes aos vegetais, estimulando o crescimento." },
-  { title: "Tratamento e recuperação do solo", text: "Reequilíbrio físico, químico e biológico da biota do solo." },
-  { title: "Nutrição com macro e micronutrientes", text: "Fornece seis macronutrientes e seis micronutrientes essenciais." },
-  { title: "Solubilização de fósforo e potássio", text: "Torna o fósforo e o potássio mais facilmente absorvíveis pelas plantas." },
-  { title: "Maior capacidade de enraizamento", text: "Os microrganismos estimulados promovem um enraizamento mais forte." },
-  { title: "Capacidade de retenção de água", text: "Planta mais resistente a veranicos e estiagem." },
+type BenefitIconName =
+  | "nitrogenio"
+  | "carbono"
+  | "decomposicao"
+  | "crescimento"
+  | "solo"
+  | "nutrientes"
+  | "soluvel"
+  | "raizes"
+  | "agua";
+
+const BENEFITS: { title: string; text: string; icon: BenefitIconName }[] = [
+  { icon: "nitrogenio", title: "Fixação do nitrogênio", text: "Potencializa a absorção do nitrogênio presente no ar, em frações disponíveis para a planta." },
+  { icon: "carbono", title: "Rico em carbono e ácidos orgânicos", text: "Cria um ciclo virtuoso de recuperação do solo e da sua capacidade produtiva." },
+  { icon: "decomposicao", title: "Acelera a decomposição da matéria orgânica", text: "Libera nutrientes e ácidos que ajudam a reter água e proteger os nutrientes." },
+  { icon: "crescimento", title: "Produção de fito-hormônios de crescimento", text: "Microrganismos produzem hormônios semelhantes aos vegetais, estimulando o crescimento." },
+  { icon: "solo", title: "Tratamento e recuperação do solo", text: "Reequilíbrio físico, químico e biológico da biota do solo." },
+  { icon: "nutrientes", title: "Nutrição com macro e micronutrientes", text: "Fornece seis macronutrientes e seis micronutrientes essenciais." },
+  { icon: "soluvel", title: "Solubilização de fósforo e potássio", text: "Torna o fósforo e o potássio mais facilmente absorvíveis pelas plantas." },
+  { icon: "raizes", title: "Maior capacidade de enraizamento", text: "Os microrganismos estimulados promovem um enraizamento mais forte." },
+  { icon: "agua", title: "Capacidade de retenção de água", text: "Planta mais resistente a veranicos e estiagem." },
 ];
 
 const GUARANTEES: { item: string; value: string }[] = [
@@ -88,6 +99,96 @@ const GUARANTEES: { item: string; value: string }[] = [
   { item: "Nitrogênio total", value: "0,5%" },
   { item: "CTC", value: "80 mmolc/kg" },
 ];
+
+
+function BenefitIcon({ icon }: { icon: BenefitIconName }) {
+  const common = {
+    viewBox: "0 0 24 24",
+    width: 25,
+    height: 25,
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.8,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    "aria-hidden": true,
+    focusable: false,
+  };
+  switch (icon) {
+    case "nitrogenio":
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="12" r="2.4" />
+          <circle cx="5.8" cy="6.2" r="1.7" />
+          <circle cx="18.2" cy="6.2" r="1.7" />
+          <circle cx="12" cy="19" r="1.7" />
+          <path d="M10.2 10.2 7.2 7.6M13.8 10.2l3-2.6M12 14.4v2.9" />
+        </svg>
+      );
+    case "carbono":
+      return (
+        <svg {...common}>
+          <path d="M10 3h4M10.5 3v5L5.8 17a2.3 2.3 0 0 0 2 3.5h8.4a2.3 2.3 0 0 0 2-3.5L13.5 8V3" />
+          <path d="M8 15h8" />
+        </svg>
+      );
+    case "decomposicao":
+      return (
+        <svg {...common}>
+          <path d="M20.5 12a8.5 8.5 0 1 1-2.5-6" />
+          <path d="M21.5 3.5v4h-4" />
+        </svg>
+      );
+    case "crescimento":
+      return (
+        <svg {...common}>
+          <path d="M11 21v-7" />
+          <path d="M11 14c0-3.6 2.7-5.6 7-5.6 0 4.3-2 6.9-7 5.6Z" />
+          <path d="M11 14c0-3.6-2.7-5.6-7-5.6 0 4.3 2 6.9 7 5.6Z" />
+          <path d="M19.5 8.5v-5M16.8 5.8l2.7-2.7 2.7 2.7" />
+        </svg>
+      );
+    case "solo":
+      return (
+        <svg {...common}>
+          <path d="M12 3l7 2.4v5.1c0 4.6-2.9 7.6-7 9.5-4.1-1.9-7-4.9-7-9.5V5.4L12 3Z" />
+          <path d="m9 11.6 2.1 2.1 4-4.2" />
+        </svg>
+      );
+    case "nutrientes":
+      return (
+        <svg {...common}>
+          <rect x="4" y="4" width="16" height="16" rx="4" />
+          <circle cx="9" cy="9" r="0.6" fill="currentColor" />
+          <circle cx="15" cy="9" r="0.6" fill="currentColor" />
+          <circle cx="9" cy="15" r="0.6" fill="currentColor" />
+          <circle cx="15" cy="15" r="0.6" fill="currentColor" />
+        </svg>
+      );
+    case "soluvel":
+      return (
+        <svg {...common}>
+          <path d="M12 3.5s6.3 6.8 6.3 11.2a6.3 6.3 0 1 1-12.6 0C5.7 10.3 12 3.5 12 3.5Z" />
+          <path d="M9.4 14.8a2.8 2.8 0 0 0 2 3" />
+        </svg>
+      );
+    case "raizes":
+      return (
+        <svg {...common}>
+          <path d="M4 4h16" />
+          <path d="M12 4v5" />
+          <path d="M12 9c-2.2 1.2-3.2 3.2-3.6 6.5M12 9c2.2 1.2 3.2 3.2 3.6 6.5M12 9v11" />
+        </svg>
+      );
+    case "agua":
+      return (
+        <svg {...common}>
+          <path d="M12 3s3.7 4.1 3.7 6.7a3.7 3.7 0 1 1-7.4 0C8.3 7.1 12 3 12 3Z" />
+          <path d="M2.8 17.2c2.9-2.1 5.8-2.1 8.7 0 2.9-2.1 5.8-2.1 8.7 0M2.8 21c2.9-2.1 5.8-2.1 8.7 0 2.9-2.1 5.8-2.1 8.7 0" />
+        </svg>
+      );
+  }
+}
 
 export default function ProdutosClient() {
   const rootRef = useRef<HTMLElement | null>(null);
@@ -122,7 +223,7 @@ export default function ProdutosClient() {
       <section className="np-section">
         <div className="np-wrap">
           <Reveal>
-            <div className="np-section-head">
+            <div className="np-section-head np-head-wide">
               <span className="np-eyebrow np-eyebrow-brown">Como comprar</span>
               <h2 className="np-title">Escolha a forma ideal para você</h2>
             </div>
@@ -254,7 +355,12 @@ export default function ProdutosClient() {
           <div className="np-bgrid">
             {BENEFITS.map((b, i) => (
               <article className="np-benefit" key={b.title}>
-                <span className="np-bnum">{i + 1}</span>
+                <div className="np-benefit-top">
+                  <span className="np-bicon">
+                    <BenefitIcon icon={b.icon} />
+                  </span>
+                  <span className="np-bindex">{String(i + 1).padStart(2, "0")}</span>
+                </div>
                 <h4>{b.title}</h4>
                 <p>{b.text}</p>
               </article>

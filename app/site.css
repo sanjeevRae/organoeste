@@ -9632,3 +9632,30 @@ body:has(.dash-editpage){padding-top:0;--dash-zoom:.95;zoom:var(--dash-zoom)}
   #site .np-ptabs { margin-bottom: 34px; }
   #site .np-pflow { margin-bottom: 28px; }
 }
+
+/* ========================================================================
+   NEW PAGES v4 — cards + heading aligned to the feature band width;
+   minimal icons for the benefits grid.
+   ======================================================================== */
+#site .np-formats-row {
+  position: relative; left: 50%; transform: translateX(-50%);
+  width: min(1360px, calc(100vw - 40px));
+  gap: 36px;
+}
+#site .np-head-wide {
+  position: relative; left: 50%; transform: translateX(-50%);
+  width: min(1360px, calc(100vw - 40px));
+}
+#site .np-benefit { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+#site .np-benefit:hover { transform: translateY(-3px); box-shadow: 0 14px 28px rgba(23, 58, 27, 0.1); }
+#site .np-benefit-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+#site .np-bicon {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: #eef4ea; color: #2c5a33;
+  display: flex; align-items: center; justify-content: center;
+}
+#site .np-bindex { font-size: 13px; font-weight: 800; letter-spacing: 0.06em; color: #b9cdb2; }
+@media (max-width: 880px) {
+  #site .np-formats-row, #site .np-head-wide { left: 0; transform: none; width: 100%; }
+  #site .np-formats-row { gap: 28px; }
+}
