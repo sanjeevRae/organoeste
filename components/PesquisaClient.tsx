@@ -17,6 +17,40 @@ const WA_PROJECTS = `${WA}?text=${encodeURIComponent(
 )}`;
 
 const VIDEO_SRC = "https://organoeste-biometano.pages.dev/video/master.m3u8";
+const HLS_CDN = "https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js";
+
+type HlsInstance = {
+  loadSource: (src: string) => void;
+  attachMedia: (el: HTMLVideoElement) => void;
+  destroy: () => void;
+};
+type HlsCtor = { isSupported: () => boolean; new (): HlsInstance };
+
+/** Loads hls.js in the browser from a CDN — no npm dependency, so the
+ *  build can never fail on a missing module. Safari plays HLS natively
+ *  and never reaches this. */
+function loadHls(): Promise<HlsCtor | null> {
+  return new Promise((resolve) => {
+    const win = window as unknown as { Hls?: HlsCtor };
+    if (win.Hls) {
+      resolve(win.Hls);
+      return;
+    }
+    const existing = document.querySelector<HTMLScriptElement>(
+      `script[src="${HLS_CDN}"]`
+    );
+    const script = existing ?? document.createElement("script");
+    script.addEventListener("load", () =>
+      resolve((window as unknown as { Hls?: HlsCtor }).Hls ?? null)
+    );
+    script.addEventListener("error", () => resolve(null));
+    if (!existing) {
+      script.src = HLS_CDN;
+      script.async = true;
+      document.head.appendChild(script);
+    }
+  });
+}
 
 function UvroVideo() {
   const ref = useRef<HTMLVideoElement>(null);
@@ -28,14 +62,13 @@ function UvroVideo() {
       video.src = VIDEO_SRC;
       return;
     }
-    let hls: { destroy: () => void } | undefined;
+    let hls: HlsInstance | undefined;
     let cancelled = false;
-    import("hls.js").then(({ default: Hls }) => {
-      if (cancelled || !Hls.isSupported()) return;
-      const instance = new Hls();
-      instance.loadSource(VIDEO_SRC);
-      instance.attachMedia(video);
-      hls = instance;
+    loadHls().then((Hls) => {
+      if (cancelled || !Hls || !Hls.isSupported()) return;
+      hls = new Hls();
+      hls.loadSource(VIDEO_SRC);
+      hls.attachMedia(video);
     });
     return () => {
       cancelled = true;
