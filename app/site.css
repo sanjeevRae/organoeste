@@ -9585,3 +9585,50 @@ body:has(.dash-editpage){padding-top:0;--dash-zoom:.95;zoom:var(--dash-zoom)}
   #site .np-feature-body { padding: 26px 22px; }
   #site .np-feature-visual img { max-width: 230px; }
 }
+
+/* ========================================================================
+   NEW PAGES v3 — roomier Fertipower band (wider/taller, softer corners),
+   process-section spacing + overlap fix.
+   ======================================================================== */
+
+/* ---------- Fertipower band: breakout width, more air, less round ---------- */
+#site .np-feature {
+  border-radius: 14px;
+  position: relative; left: 50%; transform: translateX(-50%);
+  width: min(1360px, calc(100vw - 40px));
+  grid-template-columns: 1fr 1.45fr 0.85fr;
+  margin-bottom: 34px;
+}
+#site .np-feature-visual { padding: 52px 30px; }
+#site .np-feature-visual img { max-width: 340px; }
+#site .np-feature-body { padding: 50px 46px; gap: 21px; }
+#site .np-feature-body h3 { font-size: 37px; }
+#site .np-feature-body > p { font-size: 16.5px; }
+#site .np-kits { gap: 12px; }
+#site .np-kit { border-radius: 10px; padding: 14px 16px; gap: 16px; }
+#site .np-kit img { width: 76px; height: 62px; flex: 0 0 76px; border-radius: 7px; }
+#site .np-kit-info strong { font-size: 15.5px; }
+#site .np-kit-info small { font-size: 13px; }
+#site .np-kit-btn { flex: 0 0 44px; width: 44px; height: 44px; font-size: 19px; }
+#site .np-checks li { font-size: 13.5px; }
+#site .np-feature-reel { min-height: 580px; }
+#site .np-card { border-radius: 14px; }
+
+/* ---------- process: clear separation, no overlap ---------- */
+#site .np-ptabs { margin-bottom: 46px; }
+#site .np-pflow { margin-bottom: 36px; position: relative; z-index: 1; }
+#site .np-pstep-wrap { align-items: stretch; }
+#site .np-pstep { height: auto; }
+#site .np-pflow-summary { margin-top: 0; position: relative; z-index: 1; }
+
+@media (max-width: 1080px) {
+  #site .np-feature-reel { min-height: 430px; }
+}
+@media (max-width: 880px) {
+  #site .np-feature { left: 0; transform: none; width: 100%; }
+  #site .np-feature-body { padding: 32px 24px; }
+  #site .np-feature-visual { padding: 36px 24px 8px; }
+  #site .np-feature-reel { min-height: 420px; }
+  #site .np-ptabs { margin-bottom: 34px; }
+  #site .np-pflow { margin-bottom: 28px; }
+}
