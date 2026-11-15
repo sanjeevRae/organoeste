@@ -7,6 +7,8 @@ export default async function sitemap() {
   const base = [
     { url: `${SITE_URL}/`, lastModified: new Date() },
     { url: `${SITE_URL}/solucoes`, lastModified: new Date() },
+    { url: `${SITE_URL}/produtos`, lastModified: new Date() },
+    { url: `${SITE_URL}/pesquisa-desenvolvimento`, lastModified: new Date() },
     { url: `${SITE_URL}/blog`, lastModified: new Date() },
   ];
   // A DB failure must not fail the sitemap build: list the base pages only.

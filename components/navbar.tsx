@@ -5,10 +5,11 @@ import { usePathname } from "next/navigation";
 import LanguageToggle from "./LanguageToggle";
 
 const WA_LINK = "https://wa.me/5567992401937";
-const NAV_LINKS = [
+const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
   { label: "Início", href: "/" },
   { label: "Soluções", href: "/solucoes" },
-  { label: "Produtos", href: "https://www.fertipower.com.br/", external: true },
+  { label: "Produtos", href: "/produtos" },
+  { label: "P&D", href: "/pesquisa-desenvolvimento" },
   { label: "Blog", href: "/blog" },
   { label: "Contato", href: "/#contato" },
 ];
