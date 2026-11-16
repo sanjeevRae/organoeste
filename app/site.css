@@ -1060,7 +1060,7 @@ option:disabled{
   border:0px solid rgb(163,186,198);
   filter:hue-rotate(0deg) saturate(1) brightness(1) contrast(1) invert(0) sepia(0) blur(0px) grayscale(0);
   border-radius:0px;
-  background-image:url("/images/d-3599093_1_17814623476a2ef54b5beb1366919951.png");
+  background-image:url("/images/sustentabilidade-banner.jpg");
   background-size:cover;
   background-color:rgb(231,231,231);
   background-position:50% 50%;
@@ -4573,8 +4573,8 @@ to{opacity:1;transform:none}}
 #site .about-section-bottom.about-section-bottom .about-bottom-description .text-content p,
 #site .about-section-bottom.about-section-bottom .about-bottom-description .text-content p span,
 #site .about-section-bottom.about-section-bottom .about-bottom-description .text-content p span b{font-size:10.5px !important;line-height:1.55 !important}
-#site .about-section-bottom .about-bottom-cta{width:34%;height:30px;left:auto;right:0;top:0}
-#site .about-section-bottom .about-bottom-cta .button-content{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#7dc257 !important;background-image:none !important;color:#fff !important;font-size:11px !important;font-weight:700;border:0;border-radius:0 0 0 14px !important;text-decoration:none;box-shadow:none}
+#site .about-section-bottom .about-bottom-cta{width:34%;height:30px;left:auto;right:0;top:calc((100vw - 16px) * .30667 - 30px)}
+#site .about-section-bottom .about-bottom-cta .button-content{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:#7dc257 !important;background-image:none !important;color:#fff !important;font-size:11px !important;font-weight:700;border:0;border-radius:14px 0 0 0 !important;text-decoration:none;box-shadow:none}
 }
 
 #site .hero-section.hero-section{background-image:url(/images/test.png);height:calc(75vh - 112px);min-height:480px;background-size:cover;background-position:center;background-color:#0e1a0e}
@@ -4669,11 +4669,12 @@ body{padding-top:101px}
 #site .about-section-bottom .canvas{width:100%;height:max(51.27vw,30.667vw + 215px);margin:0;transform:none}
 
 #site .about-section-bottom .about-bottom-media-card{left:0;top:0;width:100%;height:30.667vw;transform:none}
-#site .about-section-bottom .about-bottom-media-card .card-content{background-image:url("/images/d-3599093_1_17814623476a2ef54b5beb1366919951.png");background-size:cover;background-position:50% 50%;background-color:#16210f;border:0;border-radius:0;filter:none;box-shadow:none}
+#site .about-section-bottom .about-bottom-media-card .card-content{background-image:url("/images/sustentabilidade-banner.jpg");background-size:cover;background-position:50% 50%;background-color:#16210f;border:0;border-radius:0;filter:none;box-shadow:none}
 
-/* green tab — flush with the media's top-right corner, rounded bottom-left */
-#site .about-section-bottom .about-bottom-cta{left:auto;right:0;top:0;width:32.33vw;height:6.33vw;min-height:46px;transform:none}
-#site .about-section-bottom.about-section-bottom .about-bottom-cta .button-content{float:none;display:flex;align-items:center;justify-content:center;width:100%;height:100%;background-color:#7dc257 !important;background-image:none !important;color:#fff !important;font-size:clamp(13px,1.27vw,20px) !important;font-weight:700;border:0;border-radius:0 0 0 24px !important;text-decoration:none;text-align:center;box-shadow:none}
+/* green tab — flush with the media's bottom-right corner, rounded top-left,
+   so it never covers the banner title (moved from the top-right, 2026-11-16) */
+#site .about-section-bottom .about-bottom-cta{left:auto;right:0;top:calc(30.667vw - max(6.33vw,46px));width:32.33vw;height:6.33vw;min-height:46px;transform:none}
+#site .about-section-bottom.about-section-bottom .about-bottom-cta .button-content{float:none;display:flex;align-items:center;justify-content:center;width:100%;height:100%;background-color:#7dc257 !important;background-image:none !important;color:#fff !important;font-size:clamp(13px,1.27vw,20px) !important;font-weight:700;border:0;border-radius:24px 0 0 0 !important;text-decoration:none;text-align:center;box-shadow:none}
 #site .about-section-bottom.about-section-bottom .about-bottom-cta .button-content:hover,
 #site .about-section-bottom.about-section-bottom .about-bottom-cta .button-content:active{background-color:#63994a !important;color:#fff !important}
 
@@ -9817,3 +9818,17 @@ body:has(.dash-editpage){padding-top:0;--dash-zoom:.95;zoom:var(--dash-zoom)}
   #site .np-feature-cta { gap: 12px; }
   #site .np-feature-reel { margin: 0 20px 24px; }
 }
+
+/* ========================================================================
+   v8 — Produtos: three uniform product cards. Highlights read on the
+   white card (the shared .np-checks colour was made for the old dark
+   Fertipower band), the Fertipower pouch shot fits inside the same
+   250px media slot without cropping, and the WhatsApp button spans
+   the card so it sits at the same position on all three cards.
+   ======================================================================== */
+#site .np-pcard-checks { grid-template-columns: 1fr; gap: 7px; }
+#site .np-card-body .np-pcard-checks li { color: #43543f; font-size: 13.5px; }
+#site .np-card-media-contain { background: #ffffff; }
+#site .np-card-media-contain > img { object-fit: contain; padding: 12px; }
+#site .np-pcard-ig { font-size: 14px; }
+#site .np-pcard-btn { width: 100%; justify-content: center; }

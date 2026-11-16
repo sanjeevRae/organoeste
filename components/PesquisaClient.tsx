@@ -136,7 +136,7 @@ const PROJECTS: Project[] = [
       "Valorização da fração orgânica dos resíduos sólidos via digestão anaeróbica em rota seca, para produção de biometano como combustível veicular",
     description:
       "Captar biogás a partir de resíduos com menor umidade, por uma rota semi-sólida, compatível com a compostagem posterior. O material é acondicionado em “garagens” vedadas, com sistema de controle e circulação para captação do metano gerado.",
-    badges: ["Aprovado", "Projeto aprovado – FINEP"],
+    badges: ["Aprovado"],
     highlight: {
       strong: "Combustível renovável",
       rest: " para frotas logísticas: um passo rumo à transição energética e à descarbonização.",
@@ -283,7 +283,7 @@ export default function PesquisaClient() {
           <Reveal>
             <div className="np-section-head">
               <span className="np-eyebrow np-eyebrow-brown">Nossos projetos</span>
-              <h2 className="np-title">Dois projetos aprovados</h2>
+              <h2 className="np-title">Dois projetos aprovados pela FINEP</h2>
             </div>
           </Reveal>
           <div className="np-grid2">

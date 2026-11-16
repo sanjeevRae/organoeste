@@ -15,56 +15,57 @@ const WA = "https://wa.me/5567992401937";
 const waText = (text: string) => `${WA}?text=${encodeURIComponent(text)}`;
 const WA_QUOTE = waText("Olá! Gostaria de solicitar um orçamento do OrganoSuper.");
 
-const KITS = [
+/** The three ways to buy OrganoSuper, smallest to largest volume.
+    Every card renders the exact same structure: image, tag, name,
+    description, 3 highlights and a WhatsApp button. */
+const PRODUCTS = [
   {
-    name: "Kit Mais Vendido",
-    units: "2 unidades",
-    tagline:
-      "O kit perfeito para transformar mais ambientes da sua casa com o melhor custo-benefício.",
-    img: "/images/fertipower-kit2.png",
-    wa: waText("Olá! Quero saber mais sobre o Kit Mais Vendido (2 unidades) do Fertipower."),
-  },
-  {
-    name: "Kit Casa Viva",
-    units: "3 unidades",
-    tagline: "Mais vida, beleza e equilíbrio para todos os ambientes.",
-    img: "/images/fertipower-kit3.png",
-    wa: waText("Olá! Quero saber mais sobre o Kit Casa Viva (3 unidades) do Fertipower."),
-  },
-  {
-    name: "Kit Premium",
-    units: "4 unidades",
-    tagline: "A experiência completa para quem quer ambientes realmente vivos.",
-    img: "/images/fertipower-kit4.png",
-    wa: waText("Olá! Quero saber mais sobre o Kit Premium (4 unidades) do Fertipower."),
-  },
-];
-
-const POUCH_POINTS = [
-  "Produto esterilizado e natural",
-  "Isento de patógenos e sementes daninhas",
-  "Rico em macro e micronutrientes",
-  "Ideal para todas as espécies de plantas",
-];
-
-const FORMATS = [
-  {
-    tag: "Produtor rural",
-    title: "Vendas a granel",
+    tag: "Casa e jardim",
+    title: "Fertipower",
     description:
-      "Para produtores rurais, HF e cooperativas agrícolas. Pode ser enriquecido com fontes minerais (organomineral). Serve para todas as culturas: pastagem, HF, fruticultura, grãos e cana-de-açúcar. Rico em ácidos orgânicos, húmicos e fúlvicos.",
-    img: "/images/produtos-granel.jpg",
-    alt: "Caminhão da Organoeste carregado para vendas a granel",
-    audience: ["Produtores rurais", "Viveiros de mudas", "Cooperativas", "Grandes áreas"],
+      "Composto orgânico multivitamínico concentrado de alta performance para as suas verdinhas. Ideal para vasos, jardins e hortas.",
+    highlights: [
+      "Produto esterilizado e natural",
+      "Isento de patógenos e sementes daninhas",
+      "Rico em macro e micronutrientes",
+    ],
+    img: "/images/fertipower-pouch.png",
+    alt: "Embalagem de 1 kg do Fertipower, fertilizante orgânico Classe A",
+    contain: true,
+    instagram: true,
+    wa: waText("Olá, tenho interesse no Fertipower."),
   },
   {
     tag: "Floricultura e paisagismo",
-    title: "Sacos de 40 kg",
+    title: "OrganoSuper 40 kg",
     description:
       "Para floricultura, jardinagem, hortas e paisagismo. Vendemos direto na fábrica e em casas agropecuárias.",
+    highlights: [
+      "Direto na fábrica",
+      "Em casas agropecuárias",
+      "Para viveiros e floriculturas",
+    ],
     img: "/images/produtos-sacos.jpg",
     alt: "Sacos de fertilizante orgânico na fábrica da Organoeste",
-    audience: ["Viveiros", "Floriculturas", "Paisagismo", "Casas agropecuárias"],
+    contain: false,
+    instagram: false,
+    wa: waText("Olá, tenho interesse no OrganoSuper 40 kg."),
+  },
+  {
+    tag: "Produtores rurais e cooperativas",
+    title: "OrganoSuper a granel",
+    description:
+      "Para produtores rurais, HF e cooperativas agrícolas. Serve para todas as culturas: pastagem, HF, fruticultura, grãos e cana-de-açúcar.",
+    highlights: [
+      "Pode ser enriquecido com fontes minerais (organomineral)",
+      "Rico em ácidos orgânicos, húmicos e fúlvicos",
+      "Para grandes áreas",
+    ],
+    img: "/images/produtos-granel.jpg",
+    alt: "Caminhão da Organoeste carregado para vendas a granel",
+    contain: false,
+    instagram: false,
+    wa: waText("Olá, tenho interesse no OrganoSuper a granel."),
   },
 ];
 
@@ -220,8 +221,11 @@ export default function ProdutosClient() {
             </a>
           </div>
         </div>
-        <div className="np-hero-media" aria-hidden="true">
-          <img src="/images/produtos-hero.jpg" alt="" />
+        <div className="np-hero-media">
+          <img
+            src="/images/produtos-hero.jpg"
+            alt="Muda crescendo em solo fértil tratado com fertilizante orgânico OrganoSuper"
+          />
         </div>
       </section>
 
@@ -235,134 +239,40 @@ export default function ProdutosClient() {
             </div>
           </Reveal>
 
-          {/* Fertipower — feature band */}
-          <article className="np-feature">
-            <div className="np-feature-hero">
-              <img
-                src="/images/fertipower-pouch.png"
-                alt="Embalagem de 1 kg do Fertipower, fertilizante orgânico Classe A"
-              />
-              <div className="np-feature-hero-text">
-                <span className="np-tag np-tag-static">Casa e jardim</span>
-                <h3>Fertipower</h3>
-                <p className="np-feature-spec">NPK+9 Orgânico · Classe A · 1 kg</p>
-              </div>
-            </div>
-            <div className="np-feature-visual">
-              <img
-                src="/images/fertipower-pouch.png"
-                alt="Embalagem de 1 kg do Fertipower, fertilizante orgânico Classe A"
-              />
-              <span className="np-feature-chip">NPK+9 Orgânico · Classe A · 1 kg</span>
-            </div>
-            <div className="np-feature-body">
-              <span className="np-tag np-tag-static">Casa e jardim</span>
-              <h3>Fertipower</h3>
-              <p>
-                Composto orgânico multivitamínico concentrado de alta
-                performance para as suas verdinhas. Ideal para vasos, jardins e
-                hortas.
-              </p>
-              <div className="np-kits">
-                {KITS.map((kit) => (
-                  <a
-                    className="np-kit"
-                    key={kit.name}
-                    href={kit.wa}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Pedir o ${kit.name} no WhatsApp`}
-                  >
-                    <img src={kit.img} alt="" aria-hidden="true" />
-                    <div className="np-kit-info">
-                      <strong>
-                        {kit.name} <span>· {kit.units}</span>
-                      </strong>
-                      <small>{kit.tagline}</small>
-                    </div>
-                    <span className="np-kit-btn" aria-hidden="true">
-                      →
-                    </span>
-                  </a>
-                ))}
-              </div>
-              <ul className="np-checks">
-                {POUCH_POINTS.map((point) => (
-                  <li key={point}>✓ {point}</li>
-                ))}
-              </ul>
-              <div className="np-aud np-aud-dark">
-                <span className="np-partners-label">Ideal para</span>
-                <div className="np-chips">
-                  {["Casas e apartamentos", "Vasos e jardins", "Hortas domésticas", "Urban jungle"].map(
-                    (chip) => (
-                      <span className="np-chip np-chip-dark" key={chip}>
-                        {chip}
-                      </span>
-                    )
-                  )}
-                </div>
-              </div>
-              <div className="np-card-links">
-                <a
-                  className="np-link np-link-light"
-                  href="https://www.instagram.com/fertipowerbrasil"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  @fertipowerbrasil
-                </a>
-                <a className="np-btn np-btn-sm" href={WA_QUOTE} target="_blank" rel="noopener noreferrer">
-                  Solicite orçamento
-                </a>
-              </div>
-            </div>
-            <div className="np-feature-reel">
-              <iframe
-                src="https://www.instagram.com/reel/DXqDcHHlbdx/embed"
-                title="Reel do Fertipower no Instagram"
-                loading="lazy"
-                allowFullScreen
-                scrolling="no"
-              />
-              <a
-                className="np-reel-poster"
-                href="https://www.instagram.com/reel/DXqDcHHlbdx/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Assistir ao vídeo do Fertipower no Instagram"
-              >
-                <img src="/images/fertipower-reel.jpg" alt="Vídeo do Fertipower no Instagram" loading="lazy" />
-                <span className="np-reel-play" aria-hidden="true">▶</span>
-                <span className="np-reel-label">@fertipowerbrasil · Assistir no Instagram</span>
-              </a>
-            </div>
-          </article>
-
-          {/* Granel + 40 kg */}
-          <div className="np-grid2 np-formats-row">
-            {FORMATS.map((f) => (
-              <article className="np-card" key={f.title}>
-                <div className="np-card-media">
-                  <img src={f.img} alt={f.alt} />
-                  <span className="np-tag">{f.tag}</span>
+          {/* Os três produtos — cartões uniformes, do menor ao maior volume */}
+          <div className="np-grid3">
+            {PRODUCTS.map((p) => (
+              <article className="np-card" key={p.title}>
+                <div className={p.contain ? "np-card-media np-card-media-contain" : "np-card-media"}>
+                  <img src={p.img} alt={p.alt} />
+                  <span className="np-tag">{p.tag}</span>
                 </div>
                 <div className="np-card-body">
-                  <h3>{f.title}</h3>
-                  <p>{f.description}</p>
-                  <div className="np-aud">
-                    <span className="np-partners-label">Ideal para</span>
-                    <div className="np-chips">
-                      {f.audience.map((chip) => (
-                        <span className="np-chip" key={chip}>
-                          {chip}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+                  <h3>{p.title}</h3>
+                  <p>{p.description}</p>
+                  <ul className="np-checks np-pcard-checks">
+                    {p.highlights.map((h) => (
+                      <li key={h}>✓ {h}</li>
+                    ))}
+                  </ul>
+                  {p.instagram ? (
+                    <a
+                      className="np-link np-pcard-ig"
+                      href="https://www.instagram.com/fertipowerbrasil"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      @fertipowerbrasil
+                    </a>
+                  ) : null}
                   <div className="np-card-links">
-                    <a className="np-link" href={WA_QUOTE} target="_blank" rel="noopener noreferrer">
-                      Solicite orçamento
+                    <a
+                      className="np-btn np-btn-sm np-pcard-btn"
+                      href={p.wa}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Fale conosco
                     </a>
                   </div>
                 </div>

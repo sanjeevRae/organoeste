@@ -3,7 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const ABOUT_VIDEO_ID = "i2hexNUtN9Y";
-const ABOUT_VIDEO_THUMBNAIL = `https://img.youtube.com/vi/${ABOUT_VIDEO_ID}/maxresdefault.jpg`;
+/* Local copy of the video thumbnail with the title corrected to
+   "Sustentabilidade que transforma" — the YouTube original says
+   "Sutentabilidade" (missing an "s") and cannot be edited there. */
+const ABOUT_VIDEO_THUMBNAIL = "/images/sustentabilidade-banner.jpg";
 
 export default function About() {
   const [videoOpen, setVideoOpen] = useState(false);
