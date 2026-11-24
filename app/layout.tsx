@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 
+import ChatWidget from "@/components/ChatWidget";
 import { SITE_URL } from "@/lib/blog";
 import "./site.css";
 
@@ -38,6 +39,8 @@ export default function RootLayout({
         {/* GTranslate widget wrapper — hidden via CSS; only our custom toggle is visible. */}
         <div className="gtranslate_wrapper" aria-hidden="true" />
         <div id="site">{children}</div>
+        {/* Chat widget — public pages only; excluded routes handled inside. */}
+        <ChatWidget />
         <Script
           id="gtranslate-config"
           strategy="afterInteractive"
