@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 const WIDGET_SRC =
-  "https://test.onewaynepal.com/chat-api/widget.js?org=29febdf0-34b4-402a-95ec-70f4cb4e5810";
+  "https://test.onewaynepal.com/chat-api/widget.js?org=a25993e3-0cb8-4683-8c60-61554b2ec156";
 const SCRIPT_ID = "onewaynepal-chat-widget";
 
 /**
